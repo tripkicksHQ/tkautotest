@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Beta5.22pm.12.28.24 -->
+<!-- Beta 6:36pm.12.28.24 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,8 @@
     <!-- Latest compiled and minified CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://info.tripkicks.com/hubfs/system/mockup/tk-css.css" rel="stylesheet" type="text/css">
-    
-    <!-- Prism.js CSS for Syntax Highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
     
     <style>
         :root {
@@ -20,13 +19,11 @@
         .tk_css .row {
             display: flex;
             align-items: stretch;
-            margin: 0; /* Remove default margin */
         }
 
         .tk_css .col-2 {
             flex: 0 0 16.66%;
             max-width: 16.66%;
-            padding: 0; /* Remove default padding */
         }
 
         .tk_css .col-10 {
@@ -34,14 +31,12 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0;
-            padding: 0; /* Remove default padding */
         }
 
         .tk_css .col-10 > .tile {
             flex: 1 1 calc(33.33% - 0rem);
             display: flex;
             align-items: stretch;
-            padding: 0; /* Remove default padding */
         }
 
         .tile .card {
@@ -71,31 +66,24 @@
             margin-top: 20px;
         }
 
-        /* Modified #codeView to use Prism's styling */
-        pre {
+        #codeView {
             padding: 10px;
             background: #f8f9fa;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-family: monospace;
-            overflow: auto;
+            white-space: pre-wrap;
             max-height: 600px;
+            overflow: auto;
         }
 
-        /* New CSS for expanded inputs */
         .expanded {
-            height: 300px !important; /* Adjust as needed */
+            height: 100vh !important;
             transition: height 0.3s ease;
         }
 
         .tile-input, .tile-wysiwyg {
             transition: height 0.3s ease;
-            resize: vertical;
-        }
-
-        /* Remove margin-bottom from rendered full-width tile */
-        .col-12.mb-2 {
-            margin-bottom: 0 !important;
         }
     </style>
 </head>
@@ -117,7 +105,6 @@
     </nav>
 
     <div class="container">
-        <!-- Banner Type Toggle -->
         <div class="d-flex align-items-center mb-3">
             <label for="bannerType" class="me-3">Select Banner Type:</label>
             <select id="bannerType" class="form-select w-auto">
@@ -132,7 +119,6 @@
             </div>
         </div>
 
-        <!-- Main Banner -->
         <div class="tk_css" id="pageBanner">
             <div class="row">
                 <div class="col-12 mb-2">
@@ -153,367 +139,205 @@
             </div>
         </div>
 
-        <!-- Input for Number of Tiles -->
         <div class="form-group">
             <label for="numTiles">Number of Tiles:</label>
             <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles">
         </div>
         <button id="generateInputs" class="btn btn-primary">Generate Tile Inputs</button>
 
-        <!-- Dynamic Tile Inputs -->
         <div id="tileInputs"></div>
 
-        <!-- Render Buttons -->
         <button id="renderTiles" class="btn btn-success mt-3" disabled>Render Tiles</button>
         <button id="button2" class="btn btn-secondary mt-3">Render Tiles top full-width</button>
         <button id="button3" class="btn btn-secondary mt-3">Button 3</button>
 
-        <!-- Code View Section -->
         <div id="codeViewContainer" class="mt-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0">Rendered HTML</h5>
                 <button id="copyCodeButton" class="btn btn-secondary btn-sm">Copy Code</button>
             </div>
-            <!-- Updated to use <pre><code> with Prism.js classes -->
-            <pre><code id="codeView" class="language-html" hidden></code></pre>
+            <pre id="codeView" class="language-html" hidden></pre>
         </div>
     </div>
 
-    <!-- Prism.js Library for Syntax Highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <!-- Prism.js HTML Plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-    <!-- js-beautify Library for Formatting HTML -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
-    <!-- Bootstrap JS (for responsive navbar and any Bootstrap components) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const numTilesInput = document.getElementById('numTiles');
-            const generateInputsButton = document.getElementById('generateInputs');
-            const renderTilesButton = document.getElementById('renderTiles');
-            const tileInputsContainer = document.getElementById('tileInputs');
-            const bannerTypeSelector = document.getElementById('bannerType');
-            const bannerContent = document.getElementById('bannerContent');
-            const cityInputs = document.getElementById('cityInputs');
-            const cityNameInput = document.getElementById('cityName');
-            const cityImageUrlInput = document.getElementById('cityImageUrl');
-            const codeView = document.getElementById('codeView');
-            const copyCodeButton = document.getElementById('copyCodeButton');
-            const button2 = document.getElementById('button2');
-            const button3 = document.getElementById('button3');
-            const tileContainer = document.createElement('div');
-            tileContainer.id = "tileContainer";
-            tileContainer.className = "col-10";
-            tileContainer.style.borderRadius = "10px 0px 0px 10px";
+        const numTilesInput = document.getElementById('numTiles');
+        const generateInputsButton = document.getElementById('generateInputs');
+        const renderTilesButton = document.getElementById('renderTiles');
+        const tileInputsContainer = document.getElementById('tileInputs');
+        const bannerTypeSelector = document.getElementById('bannerType');
+        const bannerContent = document.getElementById('bannerContent');
+        const cityInputs = document.getElementById('cityInputs');
+        const cityNameInput = document.getElementById('cityName');
+        const cityImageUrlInput = document.getElementById('cityImageUrl');
+        const codeView = document.getElementById('codeView');
+        const copyCodeButton = document.getElementById('copyCodeButton');
+        const tileContainer = document.createElement('div');
+        tileContainer.id = "tileContainer";
+        tileContainer.className = "col-10";
+        tileContainer.style.borderRadius = "10px 0px 0px 10px";
 
-            let tileInputs = [];
-            let bannerType = bannerTypeSelector.value;
+        let tileInputs = [];
+        let cityName = cityNameInput.value;
+        let cityImageUrl = cityImageUrlInput.value;
 
-            // Initialize banner on page load
+        let bannerType = bannerTypeSelector.value;
+
+        cityNameInput.addEventListener('input', () => {
+            cityName = cityNameInput.value.trim();
             updateBannerType();
+        });
 
-            // Event listeners for dynamic updates of city inputs
-            cityNameInput.addEventListener('input', () => {
-                updateBannerType();
-            });
+        cityImageUrlInput.addEventListener('input', () => {
+            cityImageUrl = cityImageUrlInput.value.trim();
+            updateBannerType();
+        });
 
-            cityImageUrlInput.addEventListener('input', () => {
-                updateBannerType();
-            });
+        function updateBannerType() {
+            bannerContent.innerHTML = '';
 
-            // Event listener for banner type change
-            bannerTypeSelector.addEventListener('change', () => {
-                bannerType = bannerTypeSelector.value;
-                updateBannerType();
-            });
+            const currentCityName = cityNameInput.value.trim();
+            const currentCityImageUrl = cityImageUrlInput.value.trim();
 
-            // Function to update the banner based on selected type
-            function updateBannerType() {
-                bannerContent.innerHTML = ''; // Reset banner content
-
-                // Fetch current values of city inputs
-                const currentCityName = cityNameInput.value.trim();
-                const currentCityImageUrl = cityImageUrlInput.value.trim();
-
-                let cityImage;
-                if (bannerType === 'search') {
-                    cityInputs.classList.remove('d-none');
-                    cityImage = document.createElement('div');
-                    cityImage.className = "col-2";
-                    cityImage.style.cssText = "display: flex; flex-direction: column;";
-                    cityImage.innerHTML = `
-                        <div class="card card-full" style="height: 100%; min-height: 120px; border-radius: 8px 0px 0px 8px; background-image: url('${currentCityImageUrl}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                            <div class="card-img-overlay bg-gradient opacity-30 p-0">
-                                <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">${currentCityName}</h4>
-                            </div>
+            let cityImage;
+            if (bannerType === 'search') {
+                cityInputs.classList.remove('d-none');
+                cityImage = document.createElement('div');
+                cityImage.className = "col-2";
+                cityImage.style.cssText = "display: flex; flex-direction: column;";
+                cityImage.innerHTML = `
+                    <div class="card card-full" style="height: 100%; min-height: 120px; border-radius: 8px 0px 0px 8px; background-image: url('${currentCityImageUrl}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
+                        <div class="card-img-overlay bg-gradient opacity-30 p-0">
+                            <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">${currentCityName}</h4>
                         </div>
-                    `;
-                } else {
-                    cityInputs.classList.add('d-none');
-                }
-
-                // Clear previous tileContainer content
-                tileContainer.innerHTML = '';
-
-                // Append tileContainer to parentCol
-                const parentCol = document.createElement('div');
-                parentCol.className = "col-10 d-flex flex-wrap align-items-stretch";
-                parentCol.appendChild(tileContainer);
-
-                // Create a row containing both cityImage and tileContainer
-                const rowContainer = document.createElement('div');
-                rowContainer.className = "row g-0"; // Bootstrap row with no gutters
-                if (cityImage) rowContainer.appendChild(cityImage);
-                rowContainer.appendChild(parentCol);
-
-                // Append the rowContainer to bannerContent
-                bannerContent.appendChild(rowContainer);
+                    </div>
+                `;
+            } else {
+                cityInputs.classList.add('d-none');
             }
 
-            // Event listener for Generate Tile Inputs button
-            generateInputsButton.addEventListener('click', () => {
-                const numTiles = parseInt(numTilesInput.value, 10);
-                if (!numTiles || numTiles < 1) {
-                    alert('Please enter a valid number of tiles.');
-                    return;
-                }
-                tileInputsContainer.innerHTML = '';
-                tileInputs = [];
+            const parentCol = document.createElement('div');
+            parentCol.className = "col-10 d-flex flex-wrap align-items-stretch";
+            parentCol.appendChild(tileContainer);
 
-                for (let i = 0; i < numTiles; i++) {
-                    const inputGroup = document.createElement('div');
-                    inputGroup.classList.add('form-group', 'mb-3');
-                    inputGroup.innerHTML = `
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="d-flex align-items-center">
-                                <label for="tileContent${i + 1}" class="me-2">Tile ${i + 1}</label>
-                                <!-- New Expand Button -->
-                                <button type="button" class="btn btn-sm btn-outline-secondary ms-2 expand-btn" data-index="${i + 1}">Expand</button>
-                            </div>
-                            <select class="form-select w-auto toggleMode" data-index="${i}">
-                                <option value="html">HTML</option>
-                                <option value="wysiwyg">WYSIWYG</option>
-                            </select>
-                        </div>
-                        <textarea id="tileContent${i + 1}" class="form-control tile-input" rows="5" placeholder="Enter HTML for Tile ${i + 1}"></textarea>
-                        <div id="wysiwygEditor${i + 1}" class="form-control tile-wysiwyg d-none" contenteditable="true" style="min-height: 100px; border: 1px solid #ccc;"></div>
-                    `;
-                    tileInputsContainer.appendChild(inputGroup);
-                    tileInputs.push(inputGroup.querySelector('textarea'));
+            const rowContainer = document.createElement('div');
+            rowContainer.className = "row g-0";
+            if (cityImage) rowContainer.appendChild(cityImage);
+            rowContainer.appendChild(parentCol);
 
-                    // Add event listener for the toggleMode select
-                    const toggleSelect = inputGroup.querySelector('.toggleMode');
-                    toggleSelect.addEventListener('change', (event) => {
-                        const selectedMode = event.target.value;
-                        const textarea = inputGroup.querySelector(`textarea#tileContent${i + 1}`);
-                        const wysiwygEditor = inputGroup.querySelector(`div#wysiwygEditor${i + 1}`);
-
-                        if (selectedMode === 'wysiwyg') {
-                            // Show WYSIWYG editor and hide textarea
-                            wysiwygEditor.classList.remove('d-none');
-                            textarea.classList.add('d-none');
-                            // Set the WYSIWYG editor content to the textarea's value
-                            wysiwygEditor.innerHTML = textarea.value;
-                        } else {
-                            // Show textarea and hide WYSIWYG editor
-                            textarea.classList.remove('d-none');
-                            wysiwygEditor.classList.add('d-none');
-                            // Set the textarea's value to the WYSIWYG editor's content
-                            textarea.value = wysiwygEditor.innerHTML;
-                        }
-                    });
-
-                    // Add event listener for the new Expand button
-                    const expandButton = inputGroup.querySelector('.expand-btn');
-                    expandButton.addEventListener('click', () => {
-                        const textarea = inputGroup.querySelector(`textarea#tileContent${i + 1}`);
-                        const wysiwygEditor = inputGroup.querySelector(`div#wysiwygEditor${i + 1}`);
-
-                        // Determine which input is currently visible
-                        const isWysiwygVisible = !wysiwygEditor.classList.contains('d-none');
-
-                        if (isWysiwygVisible) {
-                            // Toggle expand on WYSIWYG editor
-                            wysiwygEditor.classList.toggle('expanded');
-                            // Update button text
-                            if (wysiwygEditor.classList.contains('expanded')) {
-                                expandButton.textContent = 'Collapse';
-                            } else {
-                                expandButton.textContent = 'Expand';
-                            }
-                        } else {
-                            // Toggle expand on textarea
-                            textarea.classList.toggle('expanded');
-                            // Adjust the 'height' style for textarea
-                            if (textarea.classList.contains('expanded')) {
-                                textarea.style.height = '300px'; // Adjust as needed
-                                expandButton.textContent = 'Collapse';
-                            } else {
-                                textarea.style.height = ''; // Reset to default
-                                expandButton.textContent = 'Expand';
-                            }
-                        }
-                    });
-                }
-
-                renderTilesButton.disabled = false;
-            });
-
-            // Event listener for Render Tiles button
-            renderTilesButton.addEventListener('click', () => {
-                renderTiles(false);
-            });
-
-            // Event listener for Render Tiles top full-width button
-            button2.addEventListener('click', () => {
-                renderTiles(true);
-            });
-
-            // Function to render tiles
-            function renderTiles(fullWidthFirstTile) {
-                tileContainer.innerHTML = '';
-                let renderedHTML = '';
-
-                tileInputs.forEach((input, i) => {
-                    const wysiwygEditor = document.getElementById(`wysiwygEditor${i + 1}`);
-                    const tileHTML = wysiwygEditor.classList.contains('d-none') ? input.value.trim() : wysiwygEditor.innerHTML.trim();
-
-                    const tileWrapper = document.createElement('div');
-                    tileWrapper.classList.add('tile');
-                    tileWrapper.innerHTML = tileHTML || '<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>';
-
-                    if (fullWidthFirstTile && i === 0) {
-                        const fullWidthContainer = document.createElement('div');
-                        fullWidthContainer.className = "col-12 mb-2"; // Removed margin-bottom for spacing
-                        fullWidthContainer.appendChild(tileWrapper);
-                        tileContainer.appendChild(fullWidthContainer);
-                        renderedHTML += `<div class="col-12 mb-2">${tileWrapper.outerHTML}</div>\n`;
-                    } else {
-                        tileContainer.appendChild(tileWrapper);
-                        renderedHTML += tileWrapper.outerHTML + '\n';
-                    }
-                });
-
-                // Format the rendered HTML using js-beautify
-                const formattedHTML = html_beautify(`<div class="col-10" id="tileContainer" style="border-radius: 10px 0px 0px 10px;">\n${renderedHTML}</div>`, {
-                    indent_size: 4,
-                    space_in_empty_paren: true
-                });
-
-                // Set the formatted HTML to the code view
-                codeView.textContent = formattedHTML;
-                Prism.highlightElement(codeView); // Apply syntax highlighting
-                codeView.parentElement.hidden = false;
-            }
-
-            // Event listener for Copy Code button
-            copyCodeButton.addEventListener('click', () => {
-                const code = codeView.textContent;
-                navigator.clipboard.writeText(code).then(() => {
-                    alert('Code copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy: ', err);
-                    alert('Failed to copy code. Please try manually.');
-                });
-            });
-
-            // Optional: Button 3 functionality (currently does nothing)
-            button3.addEventListener('click', () => {
-                alert('Button 3 clicked!');
-            });
-        </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        // Function to download the banner as PNG
-        function downloadBannerAsPNG() {
-            const banner = document.getElementById('pageBanner');
-            const scaleFactor = 3;
-            html2canvas(banner, {
-                scale: scaleFactor,
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: false,
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'banner.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }).catch(error => {
-                console.error('Error capturing banner:', error);
-                alert('Failed to capture banner. Check console for details.');
-            });
+            bannerContent.appendChild(rowContainer);
         }
 
-        // Function to copy the banner as PNG to clipboard
-        function copyBannerToClipboard() {
-            // Feature Detection
-            if (!navigator.clipboard || !window.ClipboardItem) {
-                alert('Copying images to the clipboard is not supported in your browser.');
+        updateBannerType();
+
+        generateInputsButton.addEventListener('click', () => {
+            const numTiles = parseInt(numTilesInput.value, 10);
+            if (!numTiles || numTiles < 1) {
+                alert('Please enter a valid number of tiles.');
                 return;
             }
+            tileInputsContainer.innerHTML = '';
+            tileInputs = [];
 
-            const banner = document.getElementById('pageBanner');
-            const scaleFactor = 3;
-            html2canvas(banner, {
-                scale: scaleFactor,
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: false,
-            }).then(canvas => {
-                canvas.toBlob(blob => {
-                    if (!blob) {
-                        alert('Failed to generate image blob.');
-                        return;
+            for (let i = 0; i < numTiles; i++) {
+                const inputGroup = document.createElement('div');
+                inputGroup.classList.add('form-group', 'mb-3');
+                inputGroup.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center">
+                            <label for="tileContent${i + 1}" class="me-2">Tile ${i + 1}</label>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-2 expand-btn" data-index="${i + 1}">Expand</button>
+                        </div>
+                        <select class="form-select w-auto toggleMode" data-index="${i}">
+                            <option value="html">HTML</option>
+                            <option value="wysiwyg">WYSIWYG</option>
+                        </select>
+                    </div>
+                    <textarea id="tileContent${i + 1}" class="form-control tile-input" rows="5" placeholder="Enter HTML for Tile ${i + 1}"></textarea>
+                    <div id="wysiwygEditor${i + 1}" class="form-control tile-wysiwyg d-none" contenteditable="true" style="min-height: 100px; border: 1px solid #ccc;"></div>
+                `;
+                tileInputsContainer.appendChild(inputGroup);
+                tileInputs.push(inputGroup.querySelector('textarea'));
+
+                const toggleSelect = inputGroup.querySelector('.toggleMode');
+                toggleSelect.addEventListener('change', (event) => {
+                    const selectedMode = event.target.value;
+                    const textarea = inputGroup.querySelector(`textarea#tileContent${i + 1}`);
+                    const wysiwygEditor = inputGroup.querySelector(`div#wysiwygEditor${i + 1}`);
+
+                    if (selectedMode === 'wysiwyg') {
+                        wysiwygEditor.classList.remove('d-none');
+                        textarea.classList.add('d-none');
+                        wysiwygEditor.innerHTML = textarea.value;
+                    } else {
+                        textarea.classList.remove('d-none');
+                        wysiwygEditor.classList.add('d-none');
+                        textarea.value = wysiwygEditor.innerHTML;
                     }
-                    const item = new ClipboardItem({ 'image/png': blob });
-                    navigator.clipboard.write([item]).then(() => {
-                        alert('Banner copied to clipboard!');
-                    }).catch(err => {
-                        console.error('Failed to copy image:', err);
-                        alert('Failed to copy banner. Your browser might not support this feature.');
-                    });
-                }, 'image/png');
-            }).catch(error => {
-                console.error('Error capturing banner:', error);
-                alert('Failed to capture banner. Check console for details.');
+                });
+
+                const expandButton = inputGroup.querySelector('.expand-btn');
+                expandButton.addEventListener('click', () => {
+                    const textarea = inputGroup.querySelector(`textarea#tileContent${i + 1}`);
+                    const wysiwygEditor = inputGroup.querySelector(`div#wysiwygEditor${i + 1}`);
+
+                    const isWysiwygVisible = !wysiwygEditor.classList.contains('d-none');
+
+                    if (isWysiwygVisible) {
+                        wysiwygEditor.classList.toggle('expanded');
+                    } else {
+                        textarea.classList.toggle('expanded');
+                        if (textarea.classList.contains('expanded')) {
+                            textarea.style.height = '300px';
+                            expandButton.textContent = 'Collapse';
+                        } else {
+                            textarea.style.height = '';
+                            expandButton.textContent = 'Expand';
+                        }
+                    }
+                });
+            }
+
+            renderTilesButton.disabled = false;
+        });
+
+        renderTilesButton.addEventListener('click', () => {
+            tileContainer.innerHTML = '';
+            let renderedHTML = '';
+
+            tileInputs.forEach((input, i) => {
+                const wysiwygEditor = document.getElementById(`wysiwygEditor${i + 1}`);
+                const tileHTML = wysiwygEditor.classList.contains('d-none') ? input.value.trim() : wysiwygEditor.innerHTML.trim();
+
+                const tileWrapper = document.createElement('div');
+                tileWrapper.classList.add('tile');
+                tileWrapper.innerHTML = tileHTML || '<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>';
+
+                tileContainer.appendChild(tileWrapper);
+                renderedHTML += tileWrapper.outerHTML + '\n';
             });
-        }
 
-        // Create buttons and append to the container
-        const container = document.querySelector('.container');
+            codeView.textContent = `<div class="col-10" id="tileContainer" style="border-radius: 10px 0px 0px 10px;">\n${renderedHTML}</div>`;
+            codeView.hidden = false;
+            Prism.highlightAll(); // Enable Prism syntax highlighting
+        });
 
-        // Create a wrapper div for the buttons to align them properly
-        const buttonWrapper = document.createElement('div');
-        buttonWrapper.classList.add('d-flex', 'gap-2', 'mt-4');
+        copyCodeButton.addEventListener('click', () => {
+            const code = codeView.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Code copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy code. Please try manually.');
+            });
+        });
 
-        // Create "Copy Banner" button
-        const copyButton = document.createElement('button');
-        copyButton.textContent = 'Copy Banner';
-        copyButton.classList.add('btn', 'btn-outline-warning');
-        copyButton.onclick = copyBannerToClipboard;
-
-        // Create "Download Banner PNG" button
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download Banner PNG';
-        downloadButton.classList.add('btn', 'btn-warning');
-        downloadButton.onclick = downloadBannerAsPNG;
-
-        // Append buttons to the wrapper
-        buttonWrapper.appendChild(copyButton);
-        buttonWrapper.appendChild(downloadButton);
-
-        // Append the wrapper to the container
-        container.appendChild(buttonWrapper);
-
-        // Disable the "Copy Banner" button if Clipboard API is not supported
-        if (!navigator.clipboard || !window.ClipboardItem) {
-            copyButton.disabled = true;
-            copyButton.title = 'Copying images to the clipboard is not supported in your browser.';
-        }
+        bannerTypeSelector.addEventListener('change', () => {
+            bannerType = bannerTypeSelector.value;
+            updateBannerType();
+        });
     </script>
+
 </body>
 </html>
