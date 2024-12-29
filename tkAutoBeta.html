@@ -93,23 +93,22 @@
         /* Styling for CodeMirror and Live Preview */
         .tile-editor-preview {
             display: flex;
+            flex-direction: column; /* Stack vertically */
             gap: 10px;
             margin-bottom: 20px;
         }
 
-        .code-editor {
-            width: 50%;
-            position: relative;
-        }
-
         .live-preview {
-            width: 50%;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
             background-color: #ffffff;
             overflow: auto;
             min-height: 200px;
+        }
+
+        .code-editor {
+            position: relative;
         }
 
         .copy-code-btn {
@@ -125,12 +124,22 @@
         }
 
         /* Responsive adjustments */
-        @media (max-width: 768px) {
+        @media (min-width: 768px) {
+            .tile-editor-preview {
+                flex-direction: column; /* Keep vertical stacking */
+            }
+
+            .live-preview, .code-editor {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 767.98px) {
             .tile-editor-preview {
                 flex-direction: column;
             }
 
-            .code-editor, .live-preview {
+            .live-preview, .code-editor {
                 width: 100%;
             }
         }
@@ -424,12 +433,12 @@
                         <label for="${editorId}" class="me-2">Tile ${i + 1}</label>
                     </div>
                     <div class="tile-editor-preview">
+                        <div class="live-preview" id="${previewId}">
+                            <!-- Live preview will be rendered here -->
+                        </div>
                         <div class="code-editor">
                             <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Tile ${i + 1}"></textarea>
                             <button type="button" class="btn btn-sm btn-outline-primary copy-code-btn">Copy Code</button>
-                        </div>
-                        <div id="${previewId}" class="live-preview">
-                            <!-- Live preview will be rendered here -->
                         </div>
                     </div>
                 `;
