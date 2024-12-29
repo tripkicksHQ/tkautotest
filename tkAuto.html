@@ -93,7 +93,7 @@
         /* Styling for CodeMirror and Live Preview */
         .tile-editor-preview {
             display: flex;
-            flex-direction: column; /* Stack vertically */
+            flex-direction: row; /* Align left-right */
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -105,10 +105,13 @@
             background-color: #ffffff;
             overflow: auto;
             min-height: 200px;
+            max-width: 30%; /* Ensure preview is no wider than 30% */
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .code-editor {
             position: relative;
+            flex-grow: 1;
         }
 
         .copy-code-btn {
@@ -124,89 +127,14 @@
         }
 
         /* Responsive adjustments */
-        @media (min-width: 768px) {
-            .tile-editor-preview {
-                flex-direction: column; /* Keep vertical stacking */
-            }
-
-            .live-preview, .code-editor {
-                width: 100%;
-            }
-        }
-
         @media (max-width: 767.98px) {
             .tile-editor-preview {
-                flex-direction: column;
+                flex-direction: column; /* Stack vertically on smaller screens */
             }
 
             .live-preview, .code-editor {
-                width: 100%;
+                width: 100%; /* Ensure full width on small screens */
             }
-        }
-
-        /* Custom Syntax Highlighting Colors for Dracula Theme */
-        /* Keywords */
-        .CodeMirror .cm-keyword {
-            color: #ff79c6; /* Pink */
-            font-weight: bold;
-        }
-
-        /* Strings */
-        .CodeMirror .cm-string {
-            color: #f1fa8c; /* Yellow */
-        }
-
-        /* Comments */
-        .CodeMirror .cm-comment {
-            color: #6272a4; /* Purple */
-            font-style: italic;
-        }
-
-        /* Variables */
-        .CodeMirror .cm-variable {
-            color: #50fa7b; /* Green */
-        }
-
-        /* Functions */
-        .CodeMirror .cm-def {
-            color: #8be9fd; /* Cyan */
-            font-weight: bold;
-        }
-
-        /* Operators */
-        .CodeMirror .cm-operator {
-            color: #ffb86c; /* Orange */
-        }
-
-        /* Tags */
-        .CodeMirror .cm-tag {
-            color: #ff79c6; /* Pink */
-            font-weight: bold;
-        }
-
-        /* Attribute Names */
-        .CodeMirror .cm-attribute {
-            color: #f8f8f2; /* Light Gray */
-        }
-
-        /* Attribute Values */
-        .CodeMirror .cm-string-2 {
-            color: #f1fa8c; /* Yellow */
-        }
-
-        /* Numbers */
-        .CodeMirror .cm-number {
-            color: #bd93f9; /* Violet */
-        }
-
-        /* Special Characters */
-        .CodeMirror .cm-special {
-            color: #ff79c6; /* Pink */
-        }
-
-        /* Function Calls */
-        .CodeMirror .cm-variable-2 {
-            color: #8be9fd; /* Cyan */
         }
     </style>
 </head>
@@ -283,7 +211,6 @@
         <div id="codeViewContainer" class="mt-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0">Rendered HTML</h5>
-                <!-- Removed the top "Copy Code" button as per the request -->
             </div>
             <pre id="codeView" hidden></pre>
         </div>
@@ -295,7 +222,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <!-- CodeMirror HTML Mode -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
-    <!-- CodeMirror CSS Mode (for syntax highlighting) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
     <!-- CodeMirror Active Line Addon -->
