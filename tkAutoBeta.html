@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<!-- Alpha 3.13pm12.28.24 -->
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <!-- Dracula Theme for CodeMirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-    <!-- Additional CSS -->
     <style>
         :root {
             --tk-white-rgb: 255, 255, 255;
@@ -80,20 +77,9 @@
             overflow: auto;
         }
 
-        /* New CSS for expanded inputs */
-        .expanded {
-            height: 100vh !important; /* Adjust as needed */
-            transition: height 0.3s ease;
-        }
-
-        .tile-input, .tile-preview {
-            transition: height 0.3s ease;
-        }
-
-        /* Styling for CodeMirror and Live Preview */
         .tile-editor-preview {
             display: flex;
-            flex-direction: column; /* Stack vertically */
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -105,17 +91,18 @@
             background-color: #ffffff;
             overflow: auto;
             min-height: 200px;
+            max-width: 30%;
         }
 
         .code-editor {
             position: relative;
+            max-width: 70%;
         }
 
         .copy-code-btn {
             margin-top: 10px;
         }
 
-        /* Adjust CodeMirror height */
         .CodeMirror {
             height: auto;
             min-height: 100px;
@@ -123,10 +110,10 @@
             overflow: auto;
         }
 
-        /* Responsive adjustments */
         @media (min-width: 768px) {
             .tile-editor-preview {
-                flex-direction: column; /* Keep vertical stacking */
+                flex-direction: row;
+                align-items: flex-start;
             }
 
             .live-preview, .code-editor {
@@ -143,92 +130,25 @@
                 width: 100%;
             }
         }
-
-        /* Custom Syntax Highlighting Colors for Dracula Theme */
-        /* Keywords */
-        .CodeMirror .cm-keyword {
-            color: #ff79c6; /* Pink */
-            font-weight: bold;
-        }
-
-        /* Strings */
-        .CodeMirror .cm-string {
-            color: #f1fa8c; /* Yellow */
-        }
-
-        /* Comments */
-        .CodeMirror .cm-comment {
-            color: #6272a4; /* Purple */
-            font-style: italic;
-        }
-
-        /* Variables */
-        .CodeMirror .cm-variable {
-            color: #50fa7b; /* Green */
-        }
-
-        /* Functions */
-        .CodeMirror .cm-def {
-            color: #8be9fd; /* Cyan */
-            font-weight: bold;
-        }
-
-        /* Operators */
-        .CodeMirror .cm-operator {
-            color: #ffb86c; /* Orange */
-        }
-
-        /* Tags */
-        .CodeMirror .cm-tag {
-            color: #ff79c6; /* Pink */
-            font-weight: bold;
-        }
-
-        /* Attribute Names */
-        .CodeMirror .cm-attribute {
-            color: #f8f8f2; /* Light Gray */
-        }
-
-        /* Attribute Values */
-        .CodeMirror .cm-string-2 {
-            color: #f1fa8c; /* Yellow */
-        }
-
-        /* Numbers */
-        .CodeMirror .cm-number {
-            color: #bd93f9; /* Violet */
-        }
-
-        /* Special Characters */
-        .CodeMirror .cm-special {
-            color: #ff79c6; /* Pink */
-        }
-
-        /* Function Calls */
-        .CodeMirror .cm-variable-2 {
-            color: #8be9fd; /* Cyan */
-        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-light bg-light justify-content-center">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand ps-1" href="#">tkAuto</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#">tkAuto</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarButtons" aria-controls="navbarButtons" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+            <div class="collapse navbar-collapse justify-content-end" id="navbarButtons">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link" href="https://info.tripkicks.com/hubfs/mock/tkAuto.html">Banner</a>
-                    <a class="nav-item nav-link" href="https://info.tripkicks.com/hubfs/mock/tkAuto.html">Fares</a>
-                    <a class="nav-item nav-link" href="https://info.tripkicks.com/hubfs/mock/tkAuto.html">Insights</a>
+                    <button id="copyBannerButton" class="btn btn-outline-warning me-2 btn-sm">Copy Banner</button>
+                    <button id="downloadBannerButton" class="btn btn-warning btn-sm">Download Banner PNG</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Banner Type Toggle -->
         <div class="d-flex align-items-center mb-3">
             <label for="bannerType" class="me-3">Select Banner Type:</label>
             <select id="bannerType" class="form-select w-auto">
@@ -243,70 +163,50 @@
             </div>
         </div>
 
-        <!-- Main Banner -->
         <div class="tk_css" id="pageBanner">
             <div class="row">
                 <div class="col-12 mb-2">
                     <div class="card border border-primary z-0" style="border-radius: 10px 10px 0px 10px;">
                         <div class="card-body p-0">
-                            <div class="row g-0" id="bannerContent">
-                                <!-- Dynamically adjusted content for Search/Anytime -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border border-primary border-top-0 z-3 bg-white ps-2" style="float:right; width: 136px; position: relative; top: -1px; border-bottom-left-radius: 8px; box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03);">
-                        <div style="justify-content: flex-start; align-items: center; display: flex;">
-                            <div style="margin-left: 2px; text-align: right; color: #32363E; font-size: 10px; font-family: Inter; font-weight: 400; line-height: 18px; word-wrap: break-word;">powered by</div>
-                            <img style="margin-left: 3px; width: 60px;" src="https://info.tripkicks.com/hubfs/system/tkLogo.png" alt="Tripkicks Logo">
+                            <div class="row g-0" id="bannerContent"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Input for Number of Tiles -->
-        <div class="form-group">
-            <label for="numTiles">Number of Tiles:</label>
-            <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles">
+        <div class="d-flex align-items-center mb-3">
+            <div class="form-group me-2">
+                <label for="numTiles">Number of Tiles:</label>
+                <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles">
+            </div>
+            <button id="generateInputs" class="btn btn-primary me-2">Generate Tile Inputs</button>
+            <button id="exportButton" class="btn btn-sm btn-light me-2">Export</button>
+            <button id="importButton" class="btn btn-sm btn-light">Import</button>
         </div>
-        <button id="generateInputs" class="btn btn-primary">Generate Tile Inputs</button>
 
-        <!-- Dynamic Tile Inputs -->
         <div id="tileInputs"></div>
 
-        <!-- Render Buttons -->
         <button id="renderTiles" class="btn btn-success mt-3" disabled>Render Tiles</button>
-        <button id="button2" class="btn btn-secondary mt-3">Render Tiles top full-width</button>
-        <button id="button3" class="btn btn-secondary mt-3">Button 3</button>
+        <button id="renderTilesFullWidth" class="btn btn-secondary mt-3">Render Tiles top full-width</button>
 
-        <!-- Code View Section -->
         <div id="codeViewContainer" class="mt-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0">Rendered HTML</h5>
-                <!-- Removed the top "Copy Code" button as per the request -->
             </div>
             <pre id="codeView" hidden></pre>
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- CodeMirror JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <!-- CodeMirror HTML Mode -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
-    <!-- CodeMirror CSS Mode (for syntax highlighting) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-    <!-- CodeMirror Active Line Addon -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
-    <!-- CodeMirror Placeholder Addon -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
 
     <script>
         const numTilesInput = document.getElementById('numTiles');
         const generateInputsButton = document.getElementById('generateInputs');
         const renderTilesButton = document.getElementById('renderTiles');
+        const renderTilesFullWidthButton = document.getElementById('renderTilesFullWidth');
         const tileInputsContainer = document.getElementById('tileInputs');
         const bannerTypeSelector = document.getElementById('bannerType');
         const bannerContent = document.getElementById('bannerContent');
@@ -325,21 +225,18 @@
 
         let bannerType = bannerTypeSelector.value;
 
-        // Add event listeners for dynamic updates of city inputs
         cityNameInput.addEventListener('input', () => {
-            cityName = cityNameInput.value.trim(); // Update the city name dynamically
-            updateBannerType(); // Refresh the banner
+            cityName = cityNameInput.value.trim(); 
+            updateBannerType(); 
         });
 
         cityImageUrlInput.addEventListener('input', () => {
-            cityImageUrl = cityImageUrlInput.value.trim(); // Update the city image URL dynamically
-            updateBannerType(); // Refresh the banner
+            cityImageUrl = cityImageUrlInput.value.trim(); 
+            updateBannerType(); 
         });
 
         function updateBannerType() {
-            bannerContent.innerHTML = ''; // Reset banner content
-
-            // Dynamically fetch the current values of the city inputs
+            bannerContent.innerHTML = ''; 
             const currentCityName = cityNameInput.value.trim();
             const currentCityImageUrl = cityImageUrlInput.value.trim();
 
@@ -360,56 +257,23 @@
                 cityInputs.classList.add('d-none');
             }
 
-            // Wrap tileContainer in a parent col-10
             const parentCol = document.createElement('div');
             parentCol.className = "col-10 d-flex flex-wrap align-items-stretch";
             parentCol.appendChild(tileContainer);
 
-            // Create a row containing both cityImage and tileContainer
             const rowContainer = document.createElement('div');
-            rowContainer.className = "row g-0"; // Bootstrap row with no gutters
+            rowContainer.className = "row g-0"; 
             if (cityImage) rowContainer.appendChild(cityImage);
             rowContainer.appendChild(parentCol);
-
-            // Append the rowContainer to bannerContent
             bannerContent.appendChild(rowContainer);
         }
 
-        updateBannerType(); // Initialize banner type on page load
+        bannerTypeSelector.addEventListener('change', () => {
+            bannerType = bannerTypeSelector.value;
+            updateBannerType();
+        });
 
-        const button2 = document.getElementById('button2');
-
-        if (!button2.hasAttribute('listener')) {
-            button2.addEventListener('click', () => {
-                tileContainer.innerHTML = ''; // Clear tiles
-                tileContainer.className = "col-10"; // Default to three-column layout for remaining tiles
-                let renderedHTML = '';
-
-                tileEditors.forEach((editor, i) => {
-                    const tileHTML = editor.getValue().trim() || '<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>';
-
-                    const tileWrapper = document.createElement('div');
-                    tileWrapper.classList.add('tile');
-                    tileWrapper.innerHTML = tileHTML;
-
-                    if (i === 0) {
-                        const fullWidthContainer = document.createElement('div');
-                        fullWidthContainer.className = "col-12";
-                        fullWidthContainer.appendChild(tileWrapper);
-                        tileContainer.appendChild(fullWidthContainer);
-                        renderedHTML += `<div class="col-12">${tileWrapper.outerHTML}</div>\n`;
-                    } else {
-                        tileContainer.appendChild(tileWrapper);
-                        renderedHTML += tileWrapper.outerHTML + '\n';
-                    }
-                });
-
-                codeView.textContent = `<div class="col-10" id="tileContainer" style="border-radius: 10px 0px 0px 10px;">\n${renderedHTML}</div>`;
-                codeView.hidden = false;
-            });
-
-            button2.setAttribute('listener', 'true');
-        }
+        updateBannerType();
 
         generateInputsButton.addEventListener('click', () => {
             const numTiles = parseInt(numTilesInput.value, 10);
@@ -417,25 +281,21 @@
                 alert('Please enter a valid number of tiles.');
                 return;
             }
+
             tileInputsContainer.innerHTML = '';
             tileEditors = [];
 
             for (let i = 0; i < numTiles; i++) {
                 const inputGroup = document.createElement('div');
                 inputGroup.classList.add('form-group', 'mb-3');
-
-                // Create unique IDs for editor and preview
                 const editorId = `codeMirrorEditor${i + 1}`;
                 const previewId = `livePreview${i + 1}`;
-
                 inputGroup.innerHTML = `
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <label for="${editorId}" class="me-2">Tile ${i + 1}</label>
                     </div>
                     <div class="tile-editor-preview">
-                        <div class="live-preview" id="${previewId}">
-                            <!-- Live preview will be rendered here -->
-                        </div>
+                        <div class="live-preview" id="${previewId}"></div>
                         <div class="code-editor">
                             <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Tile ${i + 1}"></textarea>
                             <button type="button" class="btn btn-sm btn-outline-primary copy-code-btn">Copy Code</button>
@@ -444,7 +304,6 @@
                 `;
                 tileInputsContainer.appendChild(inputGroup);
 
-                // Initialize CodeMirror for the new textarea
                 const textarea = inputGroup.querySelector(`#${editorId}`);
                 const editor = CodeMirror.fromTextArea(textarea, {
                     mode: "htmlmixed",
@@ -455,14 +314,13 @@
                     autoCloseTags: true,
                     matchBrackets: true,
                 });
+
                 tileEditors.push(editor);
 
-                // Add event listener for live preview
                 editor.on('change', () => {
                     updateLivePreview(editor, previewId);
                 });
 
-                // Add event listener for the "Copy Code" button
                 const copyButton = inputGroup.querySelector('.copy-code-btn');
                 copyButton.addEventListener('click', () => {
                     const content = editor.getValue();
@@ -496,7 +354,6 @@
 
             tileEditors.forEach((editor, i) => {
                 const tileHTML = editor.getValue().trim() || '<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>';
-
                 const tileWrapper = document.createElement('div');
                 tileWrapper.classList.add('tile');
                 tileWrapper.innerHTML = tileHTML;
@@ -509,102 +366,106 @@
             codeView.hidden = false;
         });
 
-        // Removed the top "Copy Code" button as per the request
+        renderTilesFullWidthButton.addEventListener('click', () => {
+            tileContainer.innerHTML = ''; 
+            let renderedHTML = '';
 
-        bannerTypeSelector.addEventListener('change', () => {
-            bannerType = bannerTypeSelector.value;
-            updateBannerType();
+            tileEditors.forEach((editor, i) => {
+                const tileHTML = editor.getValue().trim() || '<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>';
+                const tileWrapper = document.createElement('div');
+                tileWrapper.classList.add('tile');
+                tileWrapper.innerHTML = tileHTML;
+
+                if (i === 0) {
+                    const fullWidthContainer = document.createElement('div');
+                    fullWidthContainer.className = "col-12";
+                    fullWidthContainer.appendChild(tileWrapper);
+                    tileContainer.appendChild(fullWidthContainer);
+                } else {
+                    tileContainer.appendChild(tileWrapper);
+                }
+
+                renderedHTML += tileWrapper.outerHTML + '\n';
+            });
+
+            codeView.textContent = `<div class="col-10" id="tileContainer" style="border-radius: 10px 0px 0px 10px;">\n${renderedHTML}</div>`;
+            codeView.hidden = false;
         });
-    </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        // Function to download the banner as PNG
-        function downloadBannerAsPNG() {
-            const banner = document.getElementById('pageBanner');
-            const scaleFactor = 3;
-            html2canvas(banner, {
-                scale: scaleFactor,
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: false,
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'banner.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }).catch(error => {
-                console.error('Error capturing banner:', error);
-                alert('Failed to capture banner. Check console for details.');
-            });
+        function exportTileData() {
+            const tilesData = tileEditors.map(editor => editor.getValue());
+            const dataStr = JSON.stringify(tilesData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tileData.json';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
-        // Function to copy the banner as PNG to clipboard
-        function copyBannerToClipboard() {
-            // Feature Detection
-            if (!navigator.clipboard || !window.ClipboardItem) {
-                alert('Copying images to the clipboard is not supported in your browser.');
-                return;
-            }
+        function importTileData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const tilesData = JSON.parse(e.target.result);
+                    tileInputsContainer.innerHTML = '';
+                    tileEditors = [];
+                    tilesData.forEach((tileContent, i) => {
+                        const inputGroup = document.createElement('div');
+                        inputGroup.classList.add('form-group', 'mb-3');
+                        const editorId = `codeMirrorEditor${i + 1}`;
+                        const previewId = `livePreview${i + 1}`;
+                        inputGroup.innerHTML = `
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label for="${editorId}" class="me-2">Tile ${i + 1}</label>
+                            </div>
+                            <div class="tile-editor-preview">
+                                <div class="live-preview" id="${previewId}"></div>
+                                <div class="code-editor">
+                                    <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Tile ${i + 1}"></textarea>
+                                    <button type="button" class="btn btn-sm btn-outline-primary copy-code-btn">Copy Code</button>
+                                </div>
+                            </div>
+                        `;
+                        tileInputsContainer.appendChild(inputGroup);
 
-            const banner = document.getElementById('pageBanner');
-            const scaleFactor = 3;
-            html2canvas(banner, {
-                scale: scaleFactor,
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: false,
-            }).then(canvas => {
-                canvas.toBlob(blob => {
-                    if (!blob) {
-                        alert('Failed to generate image blob.');
-                        return;
-                    }
-                    const item = new ClipboardItem({ 'image/png': blob });
-                    navigator.clipboard.write([item]).then(() => {
-                        alert('Banner copied to clipboard!');
-                    }).catch(err => {
-                        console.error('Failed to copy image:', err);
-                        alert('Failed to copy banner. Your browser might not support this feature.');
+                        const textarea = inputGroup.querySelector(`#${editorId}`);
+                        const editor = CodeMirror.fromTextArea(textarea, {
+                            mode: "htmlmixed",
+                            theme: "dracula",
+                            lineNumbers: true,
+                            styleActiveLine: true,
+                            lineWrapping: true,
+                            autoCloseTags: true,
+                            matchBrackets: true,
+                        });
+                        editor.setValue(tileContent);
+                        tileEditors.push(editor);
                     });
-                }, 'image/png');
-            }).catch(error => {
-                console.error('Error capturing banner:', error);
-                alert('Failed to capture banner. Check console for details.');
-            });
+                    renderTilesButton.disabled = false;
+                    alert('Tile data imported successfully!');
+                } catch (error) {
+                    alert('Failed to import tile data. Ensure the file is a valid JSON.');
+                }
+            };
+            reader.readAsText(file);
         }
 
-        // Create buttons and append to the container
-        const container = document.querySelector('.container');
+        document.getElementById('exportButton').addEventListener('click', exportTileData);
 
-        // Create a wrapper div for the buttons to align them properly
-        const buttonWrapper = document.createElement('div');
-        buttonWrapper.classList.add('d-flex', 'gap-2', 'mt-4');
-
-        // Create "Copy Banner" button
-        const copyButton = document.createElement('button');
-        copyButton.textContent = 'Copy Banner';
-        copyButton.classList.add('btn', 'btn-outline-warning');
-        copyButton.onclick = copyBannerToClipboard;
-
-        // Create "Download Banner PNG" button
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download Banner PNG';
-        downloadButton.classList.add('btn', 'btn-warning');
-        downloadButton.onclick = downloadBannerAsPNG;
-
-        // Append buttons to the wrapper
-        buttonWrapper.appendChild(copyButton);
-        buttonWrapper.appendChild(downloadButton);
-
-        // Append the wrapper to the container
-        container.appendChild(buttonWrapper);
-
-        // Disable the "Copy Banner" button if Clipboard API is not supported
-        if (!navigator.clipboard || !window.ClipboardItem) {
-            copyButton.disabled = true;
-            copyButton.title = 'Copying images to the clipboard is not supported in your browser.';
-        }
+        document.getElementById('importButton').addEventListener('click', () => {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'application/json';
+            fileInput.style.display = 'none';
+            fileInput.onchange = importTileData;
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
+        });
     </script>
 </body>
 </html>
