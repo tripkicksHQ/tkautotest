@@ -139,25 +139,25 @@
     </style>
 </head>
 <body>
-    <header style="text-align: left; padding: 20px; background-color: #f8f9fa;">
-    <a href="#" style="font-size: 24px; font-weight: bold; text-decoration: none; color: #333; margin: 0 15px;">tkAuto</a>
-    <a href="https://info.tripkicks.com/hubfs/mock/tkAuto.html" style="font-size: 18px; text-decoration: none; color: #007bff; margin: 0 15px;">Banner</a>
-    <a href="https://info.tripkicks.com/hubfs/mock/tkAuto.html" style="font-size: 18px; text-decoration: none; color: #007bff; margin: 0 15px;">Fares</a>
-    <a href="https://info.tripkicks.com/hubfs/mock/tkAuto.html" style="font-size: 18px; text-decoration: none; color: #007bff; margin: 0 15px;">Insights</a>
+    <header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #e3e2e0;">
+    <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAuto</a>
+    <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a>
+    <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
+    <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
 </header>
 
     <div class="container">
         <!-- Banner Type Toggle -->
         <div class="d-flex align-items-center mb-3">
-            <label for="bannerType" class="me-3">Select Banner Type:</label>
+            <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
             <select id="bannerType" class="form-select w-auto">
                 <option value="search">Search (with city image)</option>
                 <option value="anytime">Anytime (without city image)</option>
             </select>
             <div id="cityInputs" class="d-flex align-items-center ms-4 d-none">
-                <label for="cityName" class="me-2">City:</label>
+                <label for="cityName" class="me-2 fs-6 fw-lighter">City:</label>
                 <input type="text" id="cityName" class="form-control me-3" placeholder="Enter city name" value="New York City">
-                <label for="cityImageUrl" class="me-2">URL:</label>
+                <label for="cityImageUrl" class="me-2 fs-6 fw-lighter">URL:</label>
                 <input type="text" id="cityImageUrl" class="form-control" placeholder="Enter image URL" value="https://info.tripkicks.com/hubfs/ClientInsights/tkDemo/cityimage_NYC.png">
             </div>
         </div>
@@ -184,19 +184,19 @@
         </div>
 
         <!-- Input for Number of Tiles -->
-        <div class="form-group">
+        <div class="form-group fs-6 fw-lighter col-sm-3 pb-2">
             <label for="numTiles">Number of Tiles:</label>
             <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles">
         </div>
-        <button id="generateInputs" class="btn btn-primary">Generate Tile Inputs</button>
+        <button id="generateInputs" class="btn btn-primary btn-sm">Generate Tile Inputs</button>
 
         <!-- Dynamic Tile Inputs -->
         <div id="tileInputs"></div>
 
         <!-- Render Buttons -->
-        <button id="renderTiles" class="btn btn-success mt-3" disabled>Render Tiles</button>
-        <button id="button2" class="btn btn-secondary mt-3">Render Tiles top full-width</button>
-        <button id="button3" class="btn btn-secondary mt-3">Button 3</button>
+        <button id="renderTiles" class="btn btn-success btn-sm mt-3" disabled>Render Tiles</button>
+        <button id="button2" class="btn btn-success btn-sm mt-3">Render Top Full-Width</button>
+        <button id="button3" class="btn btn-secondary btn-sm mt-3" disabled>Button 3</button>
 
         <!-- Code View Section -->
         <div id="codeViewContainer" class="mt-4">
