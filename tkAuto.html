@@ -24,15 +24,15 @@
   />
 
   <!-- CodeMirror 5 CSS -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css"
-/>
-<!-- Dracula Theme for CodeMirror 5 -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css"
-/>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css"
+  />
+  <!-- Dracula Theme for CodeMirror 5 -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css"
+  />
 
   <style>
     :root {
@@ -125,7 +125,7 @@
       margin-bottom: 10px;
     }
     .fare-preview-card {
-      max-width: 1000px;
+      max-width: 1500px;
     }
     .fare-preview-icons img {
       height: 35px;
@@ -134,7 +134,9 @@
     .fare-inputs .form-check {
       margin-left: 10px;
     }
-  </style>
+		
+		
+</style>
 </head>
 <body>
   <!-- PAGE HEADER -->
@@ -444,10 +446,10 @@
 
     <!-- FARE PREVIEW -->
     <div class="mt-4" id="farePreview">
-      <div class="card border-1 shadow p-3 fare-preview-card">
+      <div class="card border-1 shadow p-3 pb-5 fare-preview-card" style="min-height: 200px;">
         <div class="row g-3">
-          <!-- Hotel Image (col-md-3) -->
-          <div class="col-md-3">
+          <!-- Hotel Image (col-3) -->
+          <div class="col-3">
             <img
               id="farePreviewImage"
               src="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg"
@@ -739,8 +741,8 @@
     <div class="mt-4" id="airfarePreview">
       <div class="card border-1 shadow p-3 fare-preview-card">
         <div class="row g-3">
-          <!-- Airfare Image (col-md-3) -->
-          <div class="col-md-3">
+          <!-- Airfare Image (col-3) -->
+          <div class="col-3">
             <img
               id="airfarePreviewImage"
               src="https://www.example.com/plane.jpg"
@@ -1201,6 +1203,13 @@
   <!-- LODGING FARE LOGIC -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      // ***** ADDED THESE LINES: Declare references to lodging icons *****
+      const fareIconA = document.getElementById("fareIconA");
+      const fareIconB = document.getElementById("fareIconB");
+      const fareIconC = document.getElementById("fareIconC");
+      const fareIconD = document.getElementById("fareIconD");
+      const fareIconE = document.getElementById("fareIconE");
+
       // Default lodging values
       const defaultFareValues = {
         hotelName: "The James Nomad",
@@ -1350,7 +1359,7 @@
           return;
         }
         const boundingRect = farePreview.getBoundingClientRect();
-        const maxWidth = 900;
+        const maxWidth = 1400;
         const finalWidth = Math.min(boundingRect.width, maxWidth);
         const finalHeight = boundingRect.height;
 
@@ -1359,7 +1368,7 @@
           backgroundColor: null,
           useCORS: true,
           allowTaint: false,
-          windowWidth: finalWidth,
+          windowWidth: 1400,
           windowHeight: finalHeight
         })
           .then((canvas) => {
@@ -1378,8 +1387,8 @@
                   console.error("Failed to copy image:", err);
                   alert("Failed to copy fare. Your browser might not support this feature.");
                 });
-        }, "image/png");
-      })
+            }, "image/png");
+          })
           .catch((error) => {
             console.error("Error capturing fare:", error);
             alert("Failed to capture fare. Check console for details.");
@@ -1388,7 +1397,7 @@
 
       function downloadFareAsPNG() {
         const boundingRect = farePreview.getBoundingClientRect();
-        const maxWidth = 900;
+        const maxWidth = 1400;
         const finalWidth = Math.min(boundingRect.width, maxWidth);
         const finalHeight = boundingRect.height;
 
@@ -1397,7 +1406,7 @@
           backgroundColor: null,
           useCORS: true,
           allowTaint: false,
-          windowWidth: finalWidth,
+          windowWidth: 1400,
           windowHeight: finalHeight
         })
           .then((canvas) => {
@@ -1420,6 +1429,13 @@
   <!-- AIRFARE LOGIC -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      // ***** ADDED THESE LINES: Declare references to airfare icons *****
+      const airfareIconA = document.getElementById("airfareIconA");
+      const airfareIconB = document.getElementById("airfareIconB");
+      const airfareIconC = document.getElementById("airfareIconC");
+      const airfareIconD = document.getElementById("airfareIconD");
+      const airfareIconE = document.getElementById("airfareIconE");
+
       // Default airfare values
       const defaultAirfareValues = {
         name: "NYC to LAX",
@@ -1578,7 +1594,7 @@
           backgroundColor: null,
           useCORS: true,
           allowTaint: false,
-          windowWidth: finalWidth,
+          windowWidth: 1200,
           windowHeight: finalHeight
         })
           .then((canvas) => {
@@ -1597,8 +1613,8 @@
                   console.error("Failed to copy image:", err);
                   alert("Failed to copy airfare. Your browser might not support this feature.");
                 });
-      }, "image/png");
-    })
+            }, "image/png");
+          })
           .catch((error) => {
             console.error("Error capturing airfare:", error);
             alert("Failed to capture airfare. Check console for details.");
@@ -1607,7 +1623,7 @@
 
       function downloadAirfareAsPNG() {
         const boundingRect = airfarePreview.getBoundingClientRect();
-        const maxWidth = 900;
+        const maxWidth = 1400;
         const finalWidth = Math.min(boundingRect.width, maxWidth);
         const finalHeight = boundingRect.height;
 
@@ -1616,7 +1632,7 @@
           backgroundColor: null,
           useCORS: true,
           allowTaint: false,
-          windowWidth: finalWidth,
+          windowWidth: 1400,
           windowHeight: finalHeight
         })
           .then((canvas) => {
@@ -1711,12 +1727,12 @@
                 console.error("Failed to copy image:", err);
                 alert("Failed to copy banner. Your browser might not support this feature.");
               });
-      }, "image/png");
-    })
-        .catch((error) => {
-          console.error("Error capturing banner:", error);
-          alert("Failed to capture banner. Check console for details.");
-        });
+        }, "image/png");
+      })
+      .catch((error) => {
+        console.error("Error capturing banner:", error);
+        alert("Failed to capture banner. Check console for details.");
+      });
     }
   </script>
 </body>
