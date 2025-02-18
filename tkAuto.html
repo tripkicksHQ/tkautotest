@@ -6,7 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>tkAuto</title>
   <!-- Favicon -->
-  <link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon">
+  <link
+    rel="icon"
+    href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png"
+    type="image/x-icon"
+  />
 
   <!-- Latest compiled and minified CSS -->
   <link
@@ -471,7 +475,7 @@
                 style="
                   background-color: #e7f0ff;
                   color: #1d2d3e;
-									font-size: 0.9rem;
+                  font-size: 0.9rem;
                   border: 1px solid #427bff;
                   border-radius: 50px;
                   height: 35px;
@@ -936,6 +940,7 @@
         codeView.hidden = false;
       }
 
+      // Modified Render Top Full-Width Mode
       function renderTopFullWidthMode() {
         nestedRow.innerHTML = "";
         let renderedHTML = "";
@@ -960,35 +965,64 @@
   <div class="tile col-12">${tileHTML}</div>
 </div>\n`;
 
+          // now we handle leftover tiles
           let leftover = totalTiles - 1;
           let currentIndex = 1;
-          while (leftover > 0) {
-            const rowSize = Math.min(2, leftover);
+
+          // Special case: If leftover == 3, place them all in one row (col-4 each)
+          if (leftover === 3) {
             const rowDiv2 = document.createElement("div");
             rowDiv2.classList.add("row", "g-0");
-
             let leftoverHTML = "";
-            const colClass = rowSize === 2 ? "col-6" : "col-12";
-            for (let r = 0; r < rowSize; r++) {
+
+            for (let r = 0; r < 3; r++) {
               const index = currentIndex + r;
               const leftoverTileHTML =
                 tileEditors[index].getValue().trim() ||
                 `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
 
               const tileWrapper2 = document.createElement("div");
-              tileWrapper2.classList.add("tile", colClass);
+              tileWrapper2.classList.add("tile", "col-4");
               tileWrapper2.innerHTML = leftoverTileHTML;
               rowDiv2.appendChild(tileWrapper2);
-              leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
+              leftoverHTML += `<div class="tile col-4">${leftoverTileHTML}</div>\n`;
             }
             nestedRow.appendChild(rowDiv2);
+            leftover = 0; // done
             renderedHTML += `
 <div class="row g-0">
   ${leftoverHTML}
 </div>\n`;
+          } else {
+            // otherwise, do the standard leftover approach
+            while (leftover > 0) {
+              const rowSize = Math.min(2, leftover);
+              const rowDiv2 = document.createElement("div");
+              rowDiv2.classList.add("row", "g-0");
 
-            leftover -= rowSize;
-            currentIndex += rowSize;
+              let leftoverHTML = "";
+              const colClass = rowSize === 2 ? "col-6" : "col-12";
+              for (let r = 0; r < rowSize; r++) {
+                const index = currentIndex + r;
+                const leftoverTileHTML =
+                  tileEditors[index].getValue().trim() ||
+                  `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+
+                const tileWrapper2 = document.createElement("div");
+                tileWrapper2.classList.add("tile", colClass);
+                tileWrapper2.innerHTML = leftoverTileHTML;
+                rowDiv2.appendChild(tileWrapper2);
+                leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
+              }
+              nestedRow.appendChild(rowDiv2);
+              renderedHTML += `
+<div class="row g-0">
+  ${leftoverHTML}
+</div>\n`;
+
+              leftover -= rowSize;
+              currentIndex += rowSize;
+            }
           }
         }
 
@@ -1009,11 +1043,11 @@
         "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
         "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
         "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html",
-				"4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html",
+        "4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html",
         "5tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/5tileAuto.html",
         "6tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/6tileAuto.html",
         "7tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/7tileAuto.html",
-				"bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html",
+        "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html",
         "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html",
         "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html",
         "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
@@ -1344,8 +1378,8 @@
                   console.error("Failed to copy image:", err);
                   alert("Failed to copy fare. Your browser might not support this feature.");
                 });
-          }, "image/png");
-        })
+        }, "image/png");
+      })
           .catch((error) => {
             console.error("Error capturing fare:", error);
             alert("Failed to capture fare. Check console for details.");
@@ -1563,8 +1597,8 @@
                   console.error("Failed to copy image:", err);
                   alert("Failed to copy airfare. Your browser might not support this feature.");
                 });
-          }, "image/png");
-        })
+      }, "image/png");
+    })
           .catch((error) => {
             console.error("Error capturing airfare:", error);
             alert("Failed to capture airfare. Check console for details.");
@@ -1677,8 +1711,8 @@
                 console.error("Failed to copy image:", err);
                 alert("Failed to copy banner. Your browser might not support this feature.");
               });
-        }, "image/png");
-      })
+      }, "image/png");
+    })
         .catch((error) => {
           console.error("Error capturing banner:", error);
           alert("Failed to capture banner. Check console for details.");
