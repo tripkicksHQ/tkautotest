@@ -125,7 +125,7 @@
     }
     .fare-preview-icons img {
       height: 30px;
-      margin-right: 5px;
+      margin-right: 3px;
     }
     .fare-inputs .form-check {
       margin-left: 10px;
@@ -211,9 +211,9 @@
     </div>
   </div>
 
-  <!-- FARE SECTION -->
-  <div class="container fare-section" id="fareSection">
-    <h4>Auto Fare</h4>
+  <!-- LODGING FARE SECTION -->
+  <div class="container fare-section" id="lodgingFareSection">
+    <h4>Lodging Auto Fare</h4>
     <div class="row">
       <!-- Left column: Icon toggles/dropdowns -->
       <div class="col-md-6 fare-inputs">
@@ -418,6 +418,16 @@
             value="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg"
           />
         </div>
+        <!-- New input for controlling the width of the fare preview -->
+        <div class="mb-2">
+          <label for="lodgingWidth" class="form-label">Lodging Container Width (px)</label>
+          <input
+            type="number"
+            id="lodgingWidth"
+            class="form-control w-auto"
+            value="850"
+          />
+        </div>
       </div>
     </div>
     <!-- Buttons -->
@@ -432,7 +442,7 @@
     <div class="mt-4" id="farePreview">
       <div class="card border-1 shadow p-3 fare-preview-card">
         <div class="row g-3">
-          <!-- Hotel Image -->
+          <!-- Hotel Image (col-md-3) -->
           <div class="col-md-3">
             <img
               id="farePreviewImage"
@@ -441,8 +451,8 @@
               class="img-fluid rounded"
             />
           </div>
-          <!-- Hotel Details -->
-          <div class="col-md-6">
+          <!-- Hotel Details (col-md-7) -->
+          <div class="col-md-7">
             <!-- Supplier Attributes Section -->
             <div class="d-flex align-items-center fare-preview-icons" id="fareIconsContainer">
               <!-- A -->
@@ -463,7 +473,7 @@
                   color: #1d2d3e;
                   border: 1px solid #427bff;
                   border-radius: 50px;
-                  height: 30px;
+                  height: 35px;
                 "
               >
                 2 blocks from our HQ office
@@ -476,8 +486,8 @@
               <span id="farePreviewDistance">2.46 mi</span>
             </p>
           </div>
-          <!-- Price & CTA -->
-          <div class="col-md-3 text-end d-flex flex-column justify-content-end">
+          <!-- Price & CTA (col-md-2) -->
+          <div class="col-md-2 text-end d-flex flex-column justify-content-end">
             <p class="mb-1 text-muted small mt-3">From:</p>
             <h4 class="fw-bold text-dark" id="farePreviewPrice">$301</h4>
             <a
@@ -491,10 +501,303 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> <!-- /#lodgingFareSection container -->
+
+  <!-- AIRFARE FARE SECTION (DUPLICATE) -->
+  <div class="container fare-section" id="airfareSection">
+    <h4>Airfare Auto Fare</h4>
+    <div class="row">
+      <!-- Left column: Icon toggles/dropdowns -->
+      <div class="col-md-6 fare-inputs">
+        <p class="text-muted mb-2">Choose icons and toggles for A–E:</p>
+        <!-- Icon A -->
+        <div class="icon-input-row">
+          <select id="airfareSelectA" class="form-select w-auto">
+            <option value="">Default (A.png)</option>
+            <option value="greenLeaf">greenLeaf</option>
+            <option value="leaf">leaf</option>
+            <option value="business">business</option>
+            <option value="breakfast">breakfast</option>
+            <option value="dinova">dinova</option>
+            <option value="fitness">fitness</option>
+            <option value="credits">credits</option>
+            <option value="DEI">DEI</option>
+            <option value="layover">layover</option>
+            <option value="EVCharge">EVCharge</option>
+            <option value="minorityOwned">minorityOwned</option>
+            <option value="ontime">ontime</option>
+            <option value="parking">parking</option>
+            <option value="peloton">peloton</option>
+            <option value="womenFloor">womenFloor</option>
+            <option value="security">security</option>
+            <option value="preferred">preferred</option>
+            <option value="option18">option18</option>
+          </select>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="airfareToggleA" checked />
+            <label class="form-check-label" for="airfareToggleA">Show A</label>
+          </div>
+        </div>
+        <!-- Icon B -->
+        <div class="icon-input-row">
+          <select id="airfareSelectB" class="form-select w-auto">
+            <option value="">Default (B.png)</option>
+            <option value="greenLeaf">greenLeaf</option>
+            <option value="leaf">leaf</option>
+            <option value="business">business</option>
+            <option value="breakfast">breakfast</option>
+            <option value="dinova">dinova</option>
+            <option value="fitness">fitness</option>
+            <option value="credits">credits</option>
+            <option value="DEI">DEI</option>
+            <option value="layover">layover</option>
+            <option value="EVCharge">EVCharge</option>
+            <option value="minorityOwned">minorityOwned</option>
+            <option value="ontime">ontime</option>
+            <option value="parking">parking</option>
+            <option value="peloton">peloton</option>
+            <option value="womenFloor">womenFloor</option>
+            <option value="security">security</option>
+            <option value="preferred">preferred</option>
+            <option value="option18">option18</option>
+          </select>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="airfareToggleB" checked />
+            <label class="form-check-label" for="airfareToggleB">Show B</label>
+          </div>
+        </div>
+        <!-- Icon C -->
+        <div class="icon-input-row">
+          <select id="airfareSelectC" class="form-select w-auto">
+            <option value="">Default (C.png)</option>
+            <option value="greenLeaf">greenLeaf</option>
+            <option value="leaf">leaf</option>
+            <option value="business">business</option>
+            <option value="breakfast">breakfast</option>
+            <option value="dinova">dinova</option>
+            <option value="fitness">fitness</option>
+            <option value="credits">credits</option>
+            <option value="DEI">DEI</option>
+            <option value="layover">layover</option>
+            <option value="EVCharge">EVCharge</option>
+            <option value="minorityOwned">minorityOwned</option>
+            <option value="ontime">ontime</option>
+            <option value="parking">parking</option>
+            <option value="peloton">peloton</option>
+            <option value="womenFloor">womenFloor</option>
+            <option value="security">security</option>
+            <option value="preferred">preferred</option>
+            <option value="option18">option18</option>
+          </select>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="airfareToggleC" checked />
+            <label class="form-check-label" for="airfareToggleC">Show C</label>
+          </div>
+        </div>
+        <!-- Icon D -->
+        <div class="icon-input-row">
+          <select id="airfareSelectD" class="form-select w-auto">
+            <option value="">Default (D.png)</option>
+            <option value="greenLeaf">greenLeaf</option>
+            <option value="leaf">leaf</option>
+            <option value="business">business</option>
+            <option value="breakfast">breakfast</option>
+            <option value="dinova">dinova</option>
+            <option value="fitness">fitness</option>
+            <option value="credits">credits</option>
+            <option value="DEI">DEI</option>
+            <option value="layover">layover</option>
+            <option value="EVCharge">EVCharge</option>
+            <option value="minorityOwned">minorityOwned</option>
+            <option value="ontime">ontime</option>
+            <option value="parking">parking</option>
+            <option value="peloton">peloton</option>
+            <option value="womenFloor">womenFloor</option>
+            <option value="security">security</option>
+            <option value="preferred">preferred</option>
+            <option value="option18">option18</option>
+          </select>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="airfareToggleD" checked />
+            <label class="form-check-label" for="airfareToggleD">Show D</label>
+          </div>
+        </div>
+        <!-- Icon E -->
+        <div class="icon-input-row">
+          <select id="airfareSelectE" class="form-select w-auto">
+            <option value="">Default (E.png)</option>
+            <option value="greenLeaf">greenLeaf</option>
+            <option value="leaf">leaf</option>
+            <option value="business">business</option>
+            <option value="breakfast">breakfast</option>
+            <option value="dinova">dinova</option>
+            <option value="fitness">fitness</option>
+            <option value="credits">credits</option>
+            <option value="DEI">DEI</option>
+            <option value="layover">layover</option>
+            <option value="EVCharge">EVCharge</option>
+            <option value="minorityOwned">minorityOwned</option>
+            <option value="ontime">ontime</option>
+            <option value="parking">parking</option>
+            <option value="peloton">peloton</option>
+            <option value="womenFloor">womenFloor</option>
+            <option value="security">security</option>
+            <option value="preferred">preferred</option>
+            <option value="option18">option18</option>
+          </select>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="airfareToggleE" checked />
+            <label class="form-check-label" for="airfareToggleE">Show E</label>
+          </div>
+        </div>
+
+        <!-- BADGE SETTINGS -->
+        <p class="text-muted mt-3 mb-1">Badge Settings:</p>
+        <div class="icon-input-row">
+          <input
+            type="text"
+            id="airfareBadgeText"
+            class="form-control w-auto"
+            value="2 blocks from our HQ office"
+          />
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="airfareBadgeToggle" checked />
+            <label class="form-check-label" for="airfareBadgeToggle">Show Badge</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Airfare Info -->
+      <div class="col-md-6 fare-inputs">
+        <p class="text-muted mb-2">Airfare Info:</p>
+        <div class="mb-2">
+          <label for="airfareName" class="form-label">Airfare Name</label>
+          <input
+            type="text"
+            id="airfareName"
+            class="form-control"
+            value="NYC to LAX"
+          />
+        </div>
+        <div class="mb-2">
+          <label for="airfareAddress" class="form-label">Origin</label>
+          <input
+            type="text"
+            id="airfareAddress"
+            class="form-control"
+            value="JFK Airport"
+          />
+        </div>
+        <div class="mb-2">
+          <label for="airfareDistance" class="form-label">Distance</label>
+          <input
+            type="text"
+            id="airfareDistance"
+            class="form-control"
+            value="2,469 miles"
+          />
+        </div>
+        <div class="mb-2">
+          <label for="airfarePrice" class="form-label">Price</label>
+          <input type="text" id="airfarePrice" class="form-control" value="$550" />
+        </div>
+        <div class="mb-2">
+          <label for="airfareImage" class="form-label">Airfare Image URL</label>
+          <input
+            type="text"
+            id="airfareImage"
+            class="form-control"
+            value="https://www.example.com/plane.jpg"
+          />
+        </div>
+        <!-- New input for controlling the width of the airfare preview -->
+        <div class="mb-2">
+          <label for="airfareWidth" class="form-label">Airfare Container Width (px)</label>
+          <input
+            type="number"
+            id="airfareWidth"
+            class="form-control w-auto"
+            value="850"
+          />
+        </div>
+      </div>
+    </div>
+    <!-- Buttons -->
+    <div class="mt-3">
+      <button id="airfareResetBtn" class="btn btn-secondary btn-sm">Reset Airfare</button>
+      <button id="airfareRenderBtn" class="btn btn-primary btn-sm">Render Airfare</button>
+      <button id="copyAirfareBtn" class="btn btn-outline-warning btn-sm">Copy Airfare</button>
+      <button id="downloadAirfareBtn" class="btn btn-warning btn-sm">Download Airfare PNG</button>
+    </div>
+
+    <!-- AIRFARE PREVIEW -->
+    <div class="mt-4" id="airfarePreview">
+      <div class="card border-1 shadow p-3 fare-preview-card">
+        <div class="row g-3">
+          <!-- Airfare Image (col-md-3) -->
+          <div class="col-md-3">
+            <img
+              id="airfarePreviewImage"
+              src="https://www.example.com/plane.jpg"
+              alt="Sample Airfare"
+              class="img-fluid rounded"
+            />
+          </div>
+          <!-- Airfare Details (col-md-7) -->
+          <div class="col-md-7">
+            <!-- Supplier Attributes Section -->
+            <div class="d-flex align-items-center fare-preview-icons" id="airfareIconsContainer">
+              <!-- A -->
+              <img id="airfareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
+              <!-- B -->
+              <img id="airfareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" />
+              <!-- C -->
+              <img id="airfareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" />
+              <!-- D -->
+              <img id="airfareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
+              <!-- E -->
+              <img id="airfareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
+              <span
+                class="badge d-flex align-items-center px-3"
+                id="airfareBadge"
+                style="
+                  background-color: #e7f0ff;
+                  color: #1d2d3e;
+                  border: 1px solid #427bff;
+                  border-radius: 50px;
+                  height: 35px;
+                "
+              >
+                2 blocks from our HQ office
+              </span>
+            </div>
+            <h5 class="fw-bold mt-2" id="airfarePreviewName">NYC to LAX</h5>
+            <p class="text-muted mb-1">
+              <span id="airfarePreviewAddress">JFK Airport</span>
+              <i class="fa-solid fa-location-dot"></i>
+              <span id="airfarePreviewDistance">2,469 miles</span>
+            </p>
+          </div>
+          <!-- Price & CTA (col-md-2) -->
+          <div class="col-md-2 text-end d-flex flex-column justify-content-end">
+            <p class="mb-1 text-muted small mt-3">From:</p>
+            <h4 class="fw-bold text-dark" id="airfarePreviewPrice">$550</h4>
+            <a
+              href="#"
+              class="btn btn-outline-secondary btn-sm"
+              style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;"
+            >
+              Book Flight
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> <!-- /#airfareSection container -->
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
@@ -508,502 +811,780 @@
 
   <!-- BANNER + TILE LOGIC -->
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const bannerTypeSelector = document.getElementById("bannerType");
-    const cityInputs = document.getElementById("cityInputs");
-    const bannerContent = document.getElementById("bannerContent");
-    const cityNameInput = document.getElementById("cityName");
-    const cityImageUrlInput = document.getElementById("cityImageUrl");
+    document.addEventListener("DOMContentLoaded", () => {
+      const bannerTypeSelector = document.getElementById("bannerType");
+      const cityInputs = document.getElementById("cityInputs");
+      const bannerContent = document.getElementById("bannerContent");
+      const cityNameInput = document.getElementById("cityName");
+      const cityImageUrlInput = document.getElementById("cityImageUrl");
 
-    const tileInputsContainer = document.getElementById("tileInputs");
-    const numTilesInput = document.getElementById("numTiles");
-    const generateInputsButton = document.getElementById("generateInputs");
-    const renderTilesButton = document.getElementById("renderTiles");
-    const button2 = document.getElementById("button2");
-    const codeView = document.getElementById("codeView");
+      const tileInputsContainer = document.getElementById("tileInputs");
+      const numTilesInput = document.getElementById("numTiles");
+      const generateInputsButton = document.getElementById("generateInputs");
+      const renderTilesButton = document.getElementById("renderTiles");
+      const button2 = document.getElementById("button2");
+      const codeView = document.getElementById("codeView");
 
-    let tileEditors = [];
+      let tileEditors = [];
 
-    // Container for all tiles
-    const tileContainer = document.createElement("div");
-    tileContainer.id = "tileContainer";
-    tileContainer.className = "col-12";
-    tileContainer.style.borderRadius = "10px 0px 0px 10px";
+      // Container for all tiles
+      const tileContainer = document.createElement("div");
+      tileContainer.id = "tileContainer";
+      tileContainer.className = "col-12";
+      tileContainer.style.borderRadius = "10px 0px 0px 10px";
 
-    // We'll add a nested row inside tileContainer
-    const nestedRow = document.createElement("div");
-    nestedRow.className = "row g-0";
-    tileContainer.appendChild(nestedRow);
+      // We'll add a nested row inside tileContainer
+      const nestedRow = document.createElement("div");
+      nestedRow.className = "row g-0";
+      tileContainer.appendChild(nestedRow);
 
-    function updateBannerType() {
-      bannerContent.innerHTML = "";
-      const bannerType = bannerTypeSelector.value;
-      const cityName = cityNameInput.value.trim();
-      const cityImageUrl = cityImageUrlInput.value.trim();
+      function updateBannerType() {
+        bannerContent.innerHTML = "";
+        const bannerType = bannerTypeSelector.value;
+        const cityName = cityNameInput.value.trim();
+        const cityImageUrl = cityImageUrlInput.value.trim();
 
-      if (bannerType === "search") {
-        cityInputs.classList.remove("d-none");
-        // col-2 city, col-10 tile
-        const cityCol = document.createElement("div");
-        cityCol.className = "col-2";
-        cityCol.style.cssText = "display: flex; flex-direction: column;";
-        cityCol.innerHTML = `
-          <div class="card card-full"
-               style="height: 100%; min-height: 120px; border-radius: 8px 0px 0px 8px;
-                      background-image: url('${cityImageUrl}');
-                      background-repeat: no-repeat; background-position: center center;
-                      background-size: cover;">
-            <div class="card-img-overlay bg-gradient opacity-30 p-0">
-              <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">
-                ${cityName}
-              </h4>
+        if (bannerType === "search") {
+          cityInputs.classList.remove("d-none");
+          // col-2 city, col-10 tile
+          const cityCol = document.createElement("div");
+          cityCol.className = "col-2";
+          cityCol.style.cssText = "display: flex; flex-direction: column;";
+          cityCol.innerHTML = `
+            <div class="card card-full"
+                style="height: 100%; min-height: 120px; border-radius: 8px 0px 0px 8px;
+                        background-image: url('${cityImageUrl}');
+                        background-repeat: no-repeat; background-position: center center;
+                        background-size: cover;">
+              <div class="card-img-overlay bg-gradient opacity-30 p-0">
+                <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">
+                  ${cityName}
+                </h4>
+              </div>
             </div>
-          </div>
-        `;
+          `;
 
-        const tileCol = document.createElement("div");
-        tileCol.className = "col-10 d-flex flex-wrap align-items-stretch";
-        tileCol.appendChild(tileContainer);
+          const tileCol = document.createElement("div");
+          tileCol.className = "col-10 d-flex flex-wrap align-items-stretch";
+          tileCol.appendChild(tileContainer);
 
-        const rowContainer = document.createElement("div");
-        rowContainer.className = "row g-0";
-        rowContainer.appendChild(cityCol);
-        rowContainer.appendChild(tileCol);
+          const rowContainer = document.createElement("div");
+          rowContainer.className = "row g-0";
+          rowContainer.appendChild(cityCol);
+          rowContainer.appendChild(tileCol);
 
-        bannerContent.appendChild(rowContainer);
+          bannerContent.appendChild(rowContainer);
 
-      } else {
-        // "anytime" => col-12 for tiles
-        cityInputs.classList.add("d-none");
+        } else {
+          // "anytime" => col-12 for tiles
+          cityInputs.classList.add("d-none");
 
-        const tileCol = document.createElement("div");
-        tileCol.className = "col-12 d-flex flex-wrap align-items-stretch";
-        tileCol.appendChild(tileContainer);
+          const tileCol = document.createElement("div");
+          tileCol.className = "col-12 d-flex flex-wrap align-items-stretch";
+          tileCol.appendChild(tileContainer);
 
-        const rowContainer = document.createElement("div");
-        rowContainer.className = "row g-0";
-        rowContainer.appendChild(tileCol);
+          const rowContainer = document.createElement("div");
+          rowContainer.className = "row g-0";
+          rowContainer.appendChild(tileCol);
 
-        bannerContent.appendChild(rowContainer);
-      }
-    }
-
-    function renderTilesMode() {
-      nestedRow.innerHTML = "";
-      let renderedHTML = "";
-
-      const totalTiles = tileEditors.length;
-      let i = 0;
-      while (i < totalTiles) {
-        const rowSize = Math.min(3, totalTiles - i);
-        const rowDiv = document.createElement("div");
-        rowDiv.classList.add("row", "g-0");
-
-        let colClass = "col-4";
-        if (rowSize === 2) colClass = "col-6";
-        if (rowSize === 1) colClass = "col-12";
-
-        let groupHTML = "";
-        for (let r = 0; r < rowSize; r++) {
-          const index = i + r;
-          const tileHTML =
-            tileEditors[index].getValue().trim() ||
-            `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-
-          const tileWrapper = document.createElement("div");
-          tileWrapper.classList.add("tile", colClass);
-          tileWrapper.innerHTML = tileHTML;
-
-          rowDiv.appendChild(tileWrapper);
-          groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`;
+          bannerContent.appendChild(rowContainer);
         }
-        nestedRow.appendChild(rowDiv);
-
-        renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
-        i += rowSize;
       }
 
-      codeView.textContent = `
+      function renderTilesMode() {
+        nestedRow.innerHTML = "";
+        let renderedHTML = "";
+
+        const totalTiles = tileEditors.length;
+        let i = 0;
+        while (i < totalTiles) {
+          const rowSize = Math.min(3, totalTiles - i);
+          const rowDiv = document.createElement("div");
+          rowDiv.classList.add("row", "g-0");
+
+          let colClass = "col-4";
+          if (rowSize === 2) colClass = "col-6";
+          if (rowSize === 1) colClass = "col-12";
+
+          let groupHTML = "";
+          for (let r = 0; r < rowSize; r++) {
+            const index = i + r;
+            const tileHTML =
+              tileEditors[index].getValue().trim() ||
+              `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+
+            const tileWrapper = document.createElement("div");
+            tileWrapper.classList.add("tile", colClass);
+            tileWrapper.innerHTML = tileHTML;
+
+            rowDiv.appendChild(tileWrapper);
+            groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`;
+          }
+          nestedRow.appendChild(rowDiv);
+
+          renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
+          i += rowSize;
+        }
+
+        codeView.textContent = `
 <div class="col-12" id="tileContainer" style="border-radius: 10px 0px 0px 10px;">
   <div class="row g-0">
     ${renderedHTML}
   </div>
 </div>`;
-      codeView.hidden = false;
-    }
+        codeView.hidden = false;
+      }
 
-    function renderTopFullWidthMode() {
-      nestedRow.innerHTML = "";
-      let renderedHTML = "";
-      const totalTiles = tileEditors.length;
+      function renderTopFullWidthMode() {
+        nestedRow.innerHTML = "";
+        let renderedHTML = "";
+        const totalTiles = tileEditors.length;
 
-      if (totalTiles > 0) {
-        // first tile => col-12
-        const rowDiv = document.createElement("div");
-        rowDiv.classList.add("row", "g-0");
-        const tileHTML =
-          tileEditors[0].getValue().trim() ||
-          `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+        if (totalTiles > 0) {
+          // first tile => col-12
+          const rowDiv = document.createElement("div");
+          rowDiv.classList.add("row", "g-0");
+          const tileHTML =
+            tileEditors[0].getValue().trim() ||
+            `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
 
-        const tileWrapper = document.createElement("div");
-        tileWrapper.classList.add("tile", "col-12");
-        tileWrapper.innerHTML = tileHTML;
-        rowDiv.appendChild(tileWrapper);
-        nestedRow.appendChild(rowDiv);
+          const tileWrapper = document.createElement("div");
+          tileWrapper.classList.add("tile", "col-12");
+          tileWrapper.innerHTML = tileHTML;
+          rowDiv.appendChild(tileWrapper);
+          nestedRow.appendChild(rowDiv);
 
-        renderedHTML += `
+          renderedHTML += `
 <div class="row g-0">
   <div class="tile col-12">${tileHTML}</div>
 </div>\n`;
 
-        let leftover = totalTiles - 1;
-        let currentIndex = 1;
-        while (leftover > 0) {
-          const rowSize = Math.min(2, leftover);
-          const rowDiv2 = document.createElement("div");
-          rowDiv2.classList.add("row", "g-0");
+          let leftover = totalTiles - 1;
+          let currentIndex = 1;
+          while (leftover > 0) {
+            const rowSize = Math.min(2, leftover);
+            const rowDiv2 = document.createElement("div");
+            rowDiv2.classList.add("row", "g-0");
 
-          let leftoverHTML = "";
-          const colClass = rowSize === 2 ? "col-6" : "col-12";
-          for (let r = 0; r < rowSize; r++) {
-            const index = currentIndex + r;
-            const leftoverTileHTML =
-              tileEditors[index].getValue().trim() ||
-              `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+            let leftoverHTML = "";
+            const colClass = rowSize === 2 ? "col-6" : "col-12";
+            for (let r = 0; r < rowSize; r++) {
+              const index = currentIndex + r;
+              const leftoverTileHTML =
+                tileEditors[index].getValue().trim() ||
+                `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
 
-            const tileWrapper2 = document.createElement("div");
-            tileWrapper2.classList.add("tile", colClass);
-            tileWrapper2.innerHTML = leftoverTileHTML;
-            rowDiv2.appendChild(tileWrapper2);
-            leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
-          }
-          nestedRow.appendChild(rowDiv2);
-          renderedHTML += `
+              const tileWrapper2 = document.createElement("div");
+              tileWrapper2.classList.add("tile", colClass);
+              tileWrapper2.innerHTML = leftoverTileHTML;
+              rowDiv2.appendChild(tileWrapper2);
+              leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
+            }
+            nestedRow.appendChild(rowDiv2);
+            renderedHTML += `
 <div class="row g-0">
   ${leftoverHTML}
 </div>\n`;
 
-          leftover -= rowSize;
-          currentIndex += rowSize;
+            leftover -= rowSize;
+            currentIndex += rowSize;
+          }
         }
-      }
 
-      codeView.textContent = `
+        codeView.textContent = `
 <div class="col-12" id="tileContainer" style="border-radius: 10px 0px 0px 10px;">
   <div class="row g-0">
     ${renderedHTML}
   </div>
 </div>`;
-      codeView.hidden = false;
-    }
-
-    // event listeners
-    bannerTypeSelector.addEventListener("change", updateBannerType);
-
-    generateInputsButton.addEventListener("click", () => {
-      const numTiles = parseInt(numTilesInput.value, 10);
-      if (!numTiles || numTiles < 1) {
-        alert("Please enter a valid number of tiles.");
-        return;
+        codeView.hidden = false;
       }
-      tileInputsContainer.innerHTML = "";
-      tileEditors = [];
 
-      for (let i = 0; i < numTiles; i++) {
-        const inputGroup = document.createElement("div");
-        inputGroup.classList.add("form-group", "mb-3");
+      // Listen for banner type changes
+      bannerTypeSelector.addEventListener("change", updateBannerType);
 
-        const editorId = `codeMirrorEditor${i + 1}`;
-        const previewId = `livePreview${i + 1}`;
-        inputGroup.innerHTML = `
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <label for="${editorId}" class="me-2">Tile ${i + 1}</label>
-          </div>
-          <div class="tile-editor-preview">
-            <div class="live-preview" id="${previewId}"></div>
-            <div class="code-editor">
-              <textarea
-                id="${editorId}"
-                class="form-control code-editor-textarea"
-                placeholder="Enter HTML for Tile ${i + 1}"
-              ></textarea>
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-primary copy-code-btn"
-              >
-                Copy Code
-              </button>
-            </div>
-          </div>
-        `;
-        tileInputsContainer.appendChild(inputGroup);
+      // Map of template names -> external URLs
+      const templateURLs = {
+        "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
+        "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
+        "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html",
+        "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
+        "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
+      };
 
-        // Initialize CodeMirror
-        const textarea = inputGroup.querySelector(`#${editorId}`);
-        const editor = CodeMirror.fromTextArea(textarea, {
-          mode: "htmlmixed",
-          theme: "dracula",
-          lineNumbers: true,
-          styleActiveLine: true,
-          lineWrapping: true,
-          autoCloseTags: true,
-          matchBrackets: true,
-        });
-        tileEditors.push(editor);
-
-        // Live preview
-        editor.on("change", () => {
-          const content = editor.getValue();
-          const previewDiv = document.getElementById(previewId);
-          if (previewDiv) {
-            previewDiv.innerHTML = content;
-          }
-        });
-
-        // Copy code
-        const copyButton = inputGroup.querySelector(".copy-code-btn");
-        copyButton.addEventListener("click", () => {
-          const content = editor.getValue();
-          navigator.clipboard
-            .writeText(content)
-            .then(() => {
-              alert("Code copied to clipboard!");
-            })
-            .catch((err) => {
-              console.error("Failed to copy: ", err);
-              alert("Failed to copy code. Please try manually.");
-            });
-        });
-      }
-      renderTilesButton.disabled = false;
-    });
-
-    renderTilesButton.addEventListener("click", renderTilesMode);
-
-    if (!button2.hasAttribute("listener")) {
-      button2.addEventListener("click", renderTopFullWidthMode);
-      button2.setAttribute("listener", "true");
-    }
-
-    // On page load
-    updateBannerType();
-  });
-  </script>
-
-  <!-- FARE LOGIC -->
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Default values
-    const defaultFareValues = {
-      hotelName: "The James Nomad",
-      address: "22 East 29th Street, New York, NY 10016",
-      distance: "2.46 mi",
-      price: "$301",
-      image: "https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg",
-      badgeText: "2 blocks from our HQ office"
-    };
-
-    // Icon references
-    const fareSelectA = document.getElementById("fareSelectA");
-    const fareSelectB = document.getElementById("fareSelectB");
-    const fareSelectC = document.getElementById("fareSelectC");
-    const fareSelectD = document.getElementById("fareSelectD");
-    const fareSelectE = document.getElementById("fareSelectE");
-
-    const fareToggleA = document.getElementById("fareToggleA");
-    const fareToggleB = document.getElementById("fareToggleB");
-    const fareToggleC = document.getElementById("fareToggleC");
-    const fareToggleD = document.getElementById("fareToggleD");
-    const fareToggleE = document.getElementById("fareToggleE");
-
-    // Hotel info
-    const fareHotelName = document.getElementById("fareHotelName");
-    const fareAddress = document.getElementById("fareAddress");
-    const fareDistance = document.getElementById("fareDistance");
-    const farePrice = document.getElementById("farePrice");
-    const fareImage = document.getElementById("fareImage");
-
-    // Badge
-    const fareBadgeText = document.getElementById("fareBadgeText");
-    const fareBadgeToggle = document.getElementById("fareBadgeToggle");
-    const fareBadge = document.getElementById("fareBadge");
-
-    // Buttons
-    const fareResetBtn = document.getElementById("fareResetBtn");
-    const fareRenderBtn = document.getElementById("fareRenderBtn");
-    const copyFareBtn = document.getElementById("copyFareBtn");
-    const downloadFareBtn = document.getElementById("downloadFareBtn");
-
-    // Preview container
-    const farePreview = document.getElementById("farePreview");
-    const fareIconsContainer = document.getElementById("fareIconsContainer");
-    const farePreviewImage = document.getElementById("farePreviewImage");
-    const farePreviewHotelName = document.getElementById("farePreviewHotelName");
-    const farePreviewAddress = document.getElementById("farePreviewAddress");
-    const farePreviewDistance = document.getElementById("farePreviewDistance");
-    const farePreviewPrice = document.getElementById("farePreviewPrice");
-
-    // attach events
-    fareResetBtn.addEventListener("click", resetFare);
-    fareRenderBtn.addEventListener("click", renderFare);
-    copyFareBtn.addEventListener("click", copyFareToClipboard);
-    downloadFareBtn.addEventListener("click", downloadFareAsPNG);
-
-    function renderFare() {
-      // icons
-      updateIcon("A", fareToggleA.checked, fareSelectA.value, fareIconA);
-      updateIcon("B", fareToggleB.checked, fareSelectB.value, fareIconB);
-      updateIcon("C", fareToggleC.checked, fareSelectC.value, fareIconC);
-      updateIcon("D", fareToggleD.checked, fareSelectD.value, fareIconD);
-      updateIcon("E", fareToggleE.checked, fareSelectE.value, fareIconE);
-      reorderIcons();
-
-      // hotel info
-      farePreviewHotelName.textContent = fareHotelName.value.trim() || defaultFareValues.hotelName;
-      farePreviewAddress.textContent = fareAddress.value.trim() || defaultFareValues.address;
-      farePreviewDistance.textContent = fareDistance.value.trim() || defaultFareValues.distance;
-      farePreviewPrice.textContent = farePrice.value.trim() || defaultFareValues.price;
-
-      // image
-      const newImageUrl = fareImage.value.trim() || defaultFareValues.image;
-      farePreviewImage.src = newImageUrl;
-
-      // badge
-      if (fareBadgeToggle.checked) {
-        fareBadge.style.display = "";
-        fareBadge.textContent = fareBadgeText.value.trim() || defaultFareValues.badgeText;
-      } else {
-        fareBadge.style.display = "none";
-      }
-    }
-
-    function resetFare() {
-      // toggles
-      fareToggleA.checked = true;
-      fareToggleB.checked = true;
-      fareToggleC.checked = true;
-      fareToggleD.checked = true;
-      fareToggleE.checked = true;
-
-      // selects
-      fareSelectA.value = "";
-      fareSelectB.value = "";
-      fareSelectC.value = "";
-      fareSelectD.value = "";
-      fareSelectE.value = "";
-
-      // badge
-      fareBadgeToggle.checked = true;
-      fareBadgeText.value = defaultFareValues.badgeText;
-
-      // text fields
-      fareHotelName.value = defaultFareValues.hotelName;
-      fareAddress.value = defaultFareValues.address;
-      fareDistance.value = defaultFareValues.distance;
-      farePrice.value = defaultFareValues.price;
-      fareImage.value = defaultFareValues.image;
-
-      renderFare();
-    }
-
-    function updateIcon(letter, isOn, selectedValue, iconElement) {
-      const defaultIconUrl = `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${letter}.png`;
-      if (!isOn) {
-        iconElement.style.display = "none";
-      } else {
-        iconElement.style.display = "";
-        iconElement.src = selectedValue
-          ? `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png`
-          : defaultIconUrl;
-      }
-    }
-
-    function reorderIcons() {
-      const visibleIcons = [];
-      [fareIconA, fareIconB, fareIconC, fareIconD, fareIconE].forEach((icon) => {
-        if (icon.style.display !== "none") {
-          visibleIcons.push(icon);
+      // Generate tile inputs
+      generateInputsButton.addEventListener("click", () => {
+        const numTiles = parseInt(numTilesInput.value, 10);
+        if (!numTiles || numTiles < 1) {
+          alert("Please enter a valid number of tiles.");
+          return;
         }
-      });
-      fareIconsContainer.innerHTML = "";
-      visibleIcons.forEach((icon) => fareIconsContainer.appendChild(icon));
-      if (fareBadgeToggle.checked) {
-        fareIconsContainer.appendChild(fareBadge);
-      }
-    }
+        tileInputsContainer.innerHTML = "";
+        tileEditors = [];
 
-    function copyFareToClipboard() {
-      if (!navigator.clipboard || !window.ClipboardItem) {
-        alert("Copying images to the clipboard is not supported in your browser.");
-        return;
-      }
-      // boundingRect approach with maxWidth
-      const boundingRect = farePreview.getBoundingClientRect();
-      const maxWidth = 900;
-      const finalWidth = Math.min(boundingRect.width, maxWidth);
-      const finalHeight = boundingRect.height;
+        for (let i = 0; i < numTiles; i++) {
+          const inputGroup = document.createElement("div");
+          inputGroup.classList.add("form-group", "mb-3");
 
-      html2canvas(farePreview, {
-        scale: 4,
-        backgroundColor: null,
-        useCORS: true,
-        allowTaint: false,
-        windowWidth: finalWidth,
-        windowHeight: finalHeight
-      })
-        .then((canvas) => {
-          canvas.toBlob((blob) => {
-            if (!blob) {
-              alert("Failed to generate image blob.");
-              return;
+          const editorId = `codeMirrorEditor${i + 1}`;
+          const previewId = `livePreview${i + 1}`;
+
+          // HTML for each tile row
+          inputGroup.innerHTML = `
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <label for="${editorId}" class="me-2">Tile ${i + 1}</label>
+            </div>
+            <div class="tile-editor-preview">
+              <div class="live-preview" id="${previewId}"></div>
+              <div class="code-editor d-flex flex-column">
+                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                  <select class="tile-template-dropdown form-select w-auto">
+                    <option value="placeholder" selected>placeholder</option>
+                    <option value="1tileAuto">1tileAuto</option>
+                    <option value="2tileAuto">2tileAuto</option>
+                    <option value="3tileAuto">3tileAuto</option>
+                    <option value="rateTarget">rateTarget</option>
+                    <option value="gate4">gate4</option>
+                  </select>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary copy-code-btn"
+                  >
+                    Copy Code
+                  </button>
+                </div>
+                <textarea
+                  id="${editorId}"
+                  class="form-control code-editor-textarea"
+                  placeholder="Enter HTML for Tile ${i + 1}"
+                ></textarea>
+              </div>
+            </div>
+          `;
+          tileInputsContainer.appendChild(inputGroup);
+
+          // Initialize CodeMirror
+          const textarea = inputGroup.querySelector(`#${editorId}`);
+          const editor = CodeMirror.fromTextArea(textarea, {
+            mode: "htmlmixed",
+            theme: "dracula",
+            lineNumbers: true,
+            styleActiveLine: true,
+            lineWrapping: true,
+            autoCloseTags: true,
+            matchBrackets: true,
+          });
+          tileEditors.push(editor);
+
+          // Live preview
+          editor.on("change", () => {
+            const content = editor.getValue();
+            const previewDiv = document.getElementById(previewId);
+            if (previewDiv) {
+              previewDiv.innerHTML = content;
             }
-            const item = new ClipboardItem({ "image/png": blob });
+          });
+
+          // Copy code
+          const copyButton = inputGroup.querySelector(".copy-code-btn");
+          copyButton.addEventListener("click", () => {
+            const content = editor.getValue();
             navigator.clipboard
-              .write([item])
+              .writeText(content)
               .then(() => {
-                alert("Fare copied to clipboard!");
+                alert("Code copied to clipboard!");
               })
               .catch((err) => {
-                console.error("Failed to copy image:", err);
-                alert("Failed to copy fare. Your browser might not support this feature.");
+                console.error("Failed to copy: ", err);
+                alert("Failed to copy code. Please try manually.");
               });
+          });
+
+          // Template dropdown
+          const templateDropdown = inputGroup.querySelector(".tile-template-dropdown");
+          templateDropdown.addEventListener("change", async () => {
+            const selected = templateDropdown.value;
+            if (selected === "placeholder") {
+              // Overwrite with a basic placeholder tile
+              editor.setValue(`
+<div class="card border border-2 border-white text-dark bg-light">
+  <div class="card-body">Placeholder Tile</div>
+</div>
+              `.trim());
+            } else {
+              // fetch the HTML from the external URL
+              const url = templateURLs[selected];
+              if (!url) return;
+              try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                  throw new Error("Failed to load template: " + response.status);
+                }
+                const templateHTML = await response.text();
+                // Overwrite the editor content
+                editor.setValue(templateHTML.trim());
+              } catch (err) {
+                console.error("Error loading template:", err);
+                alert("Could not load template from " + url);
+              }
+            }
+          });
+        }
+
+        // Enable "Render Tiles" button
+        renderTilesButton.disabled = false;
+      });
+
+      // Attach tile rendering
+      renderTilesButton.addEventListener("click", renderTilesMode);
+
+      // Attach top full-width
+      if (!button2.hasAttribute("listener")) {
+        button2.addEventListener("click", renderTopFullWidthMode);
+        button2.setAttribute("listener", "true");
+      }
+
+      // Initial
+      updateBannerType();
+    });
+  </script>
+
+  <!-- LODGING FARE LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Default lodging values
+      const defaultFareValues = {
+        hotelName: "The James Nomad",
+        address: "22 East 29th Street, New York, NY 10016",
+        distance: "2.46 mi",
+        price: "$301",
+        image: "https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg",
+        badgeText: "2 blocks from our HQ office"
+      };
+
+      // Lodging references
+      const fareSelectA = document.getElementById("fareSelectA");
+      const fareSelectB = document.getElementById("fareSelectB");
+      const fareSelectC = document.getElementById("fareSelectC");
+      const fareSelectD = document.getElementById("fareSelectD");
+      const fareSelectE = document.getElementById("fareSelectE");
+
+      const fareToggleA = document.getElementById("fareToggleA");
+      const fareToggleB = document.getElementById("fareToggleB");
+      const fareToggleC = document.getElementById("fareToggleC");
+      const fareToggleD = document.getElementById("fareToggleD");
+      const fareToggleE = document.getElementById("fareToggleE");
+
+      const fareHotelName = document.getElementById("fareHotelName");
+      const fareAddress = document.getElementById("fareAddress");
+      const fareDistance = document.getElementById("fareDistance");
+      const farePrice = document.getElementById("farePrice");
+      const fareImage = document.getElementById("fareImage");
+
+      const fareBadgeText = document.getElementById("fareBadgeText");
+      const fareBadgeToggle = document.getElementById("fareBadgeToggle");
+      const fareBadge = document.getElementById("fareBadge");
+
+      const fareResetBtn = document.getElementById("fareResetBtn");
+      const fareRenderBtn = document.getElementById("fareRenderBtn");
+      const copyFareBtn = document.getElementById("copyFareBtn");
+      const downloadFareBtn = document.getElementById("downloadFareBtn");
+
+      const farePreview = document.getElementById("farePreview");
+      const fareIconsContainer = document.getElementById("fareIconsContainer");
+      const farePreviewImage = document.getElementById("farePreviewImage");
+      const farePreviewHotelName = document.getElementById("farePreviewHotelName");
+      const farePreviewAddress = document.getElementById("farePreviewAddress");
+      const farePreviewDistance = document.getElementById("farePreviewDistance");
+      const farePreviewPrice = document.getElementById("farePreviewPrice");
+
+      fareResetBtn.addEventListener("click", resetFare);
+      fareRenderBtn.addEventListener("click", renderFare);
+      copyFareBtn.addEventListener("click", copyFareToClipboard);
+      downloadFareBtn.addEventListener("click", downloadFareAsPNG);
+
+      function renderFare() {
+        // icons
+        updateIcon("A", fareToggleA.checked, fareSelectA.value, fareIconA);
+        updateIcon("B", fareToggleB.checked, fareSelectB.value, fareIconB);
+        updateIcon("C", fareToggleC.checked, fareSelectC.value, fareIconC);
+        updateIcon("D", fareToggleD.checked, fareSelectD.value, fareIconD);
+        updateIcon("E", fareToggleE.checked, fareSelectE.value, fareIconE);
+        reorderIcons();
+
+        farePreviewHotelName.textContent =
+          fareHotelName.value.trim() || defaultFareValues.hotelName;
+        farePreviewAddress.textContent =
+          fareAddress.value.trim() || defaultFareValues.address;
+        farePreviewDistance.textContent =
+          fareDistance.value.trim() || defaultFareValues.distance;
+        farePreviewPrice.textContent =
+          farePrice.value.trim() || defaultFareValues.price;
+
+        const newImageUrl = fareImage.value.trim() || defaultFareValues.image;
+        farePreviewImage.src = newImageUrl;
+
+        if (fareBadgeToggle.checked) {
+          fareBadge.style.display = "";
+          fareBadge.textContent =
+            fareBadgeText.value.trim() || defaultFareValues.badgeText;
+        } else {
+          fareBadge.style.display = "none";
+        }
+
+        // lodging width
+        const lodgingWidthInput = document.getElementById("lodgingWidth");
+        if (lodgingWidthInput) {
+          const newWidth = parseInt(lodgingWidthInput.value, 10);
+          if (!isNaN(newWidth) && newWidth > 0) {
+            farePreview.style.width = newWidth + "px";
+          } else {
+            farePreview.style.width = "auto";
+          }
+        }
+      }
+
+      function resetFare() {
+        fareToggleA.checked = true;
+        fareToggleB.checked = true;
+        fareToggleC.checked = true;
+        fareToggleD.checked = true;
+        fareToggleE.checked = true;
+
+        fareSelectA.value = "";
+        fareSelectB.value = "";
+        fareSelectC.value = "";
+        fareSelectD.value = "";
+        fareSelectE.value = "";
+
+        fareBadgeToggle.checked = true;
+        fareBadgeText.value = defaultFareValues.badgeText;
+
+        fareHotelName.value = defaultFareValues.hotelName;
+        fareAddress.value = defaultFareValues.address;
+        fareDistance.value = defaultFareValues.distance;
+        farePrice.value = defaultFareValues.price;
+        fareImage.value = defaultFareValues.image;
+
+        renderFare();
+      }
+
+      function updateIcon(letter, isOn, selectedValue, iconElement) {
+        const defaultIconUrl = `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${letter}.png`;
+        if (!isOn) {
+          iconElement.style.display = "none";
+        } else {
+          iconElement.style.display = "";
+          iconElement.src = selectedValue
+            ? `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png`
+            : defaultIconUrl;
+        }
+      }
+
+      function reorderIcons() {
+        const visibleIcons = [];
+        [fareIconA, fareIconB, fareIconC, fareIconD, fareIconE].forEach((icon) => {
+          if (icon.style.display !== "none") {
+            visibleIcons.push(icon);
+          }
+        });
+        fareIconsContainer.innerHTML = "";
+        visibleIcons.forEach((icon) => fareIconsContainer.appendChild(icon));
+        if (fareBadgeToggle.checked) {
+          fareIconsContainer.appendChild(fareBadge);
+        }
+      }
+
+      function copyFareToClipboard() {
+        if (!navigator.clipboard || !window.ClipboardItem) {
+          alert("Copying images to the clipboard is not supported in your browser.");
+          return;
+        }
+        const boundingRect = farePreview.getBoundingClientRect();
+        const maxWidth = 900;
+        const finalWidth = Math.min(boundingRect.width, maxWidth);
+        const finalHeight = boundingRect.height;
+
+        html2canvas(farePreview, {
+          scale: 4,
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false,
+          windowWidth: finalWidth,
+          windowHeight: finalHeight
+        })
+          .then((canvas) => {
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                alert("Failed to generate image blob.");
+                return;
+              }
+              const item = new ClipboardItem({ "image/png": blob });
+              navigator.clipboard
+                .write([item])
+                .then(() => {
+                  alert("Fare copied to clipboard!");
+                })
+                .catch((err) => {
+                  console.error("Failed to copy image:", err);
+                  alert("Failed to copy fare. Your browser might not support this feature.");
+                });
           }, "image/png");
         })
-        .catch((error) => {
-          console.error("Error capturing fare:", error);
-          alert("Failed to capture fare. Check console for details.");
-        });
-    }
+          .catch((error) => {
+            console.error("Error capturing fare:", error);
+            alert("Failed to capture fare. Check console for details.");
+          });
+      }
 
-    function downloadFareAsPNG() {
-      const boundingRect = farePreview.getBoundingClientRect();
-      const maxWidth = 900;
-      const finalWidth = Math.min(boundingRect.width, maxWidth);
-      const finalHeight = boundingRect.height;
+      function downloadFareAsPNG() {
+        const boundingRect = farePreview.getBoundingClientRect();
+        const maxWidth = 900;
+        const finalWidth = Math.min(boundingRect.width, maxWidth);
+        const finalHeight = boundingRect.height;
 
-      html2canvas(farePreview, {
-        scale: 4,
-        backgroundColor: null,
-        useCORS: true,
-        allowTaint: false,
-        windowWidth: finalWidth,
-        windowHeight: finalHeight
-      })
-        .then((canvas) => {
-          const link = document.createElement("a");
-          link.download = "fare.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
+        html2canvas(farePreview, {
+          scale: 4,
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false,
+          windowWidth: finalWidth,
+          windowHeight: finalHeight
         })
-        .catch((error) => {
-          console.error("Error capturing fare:", error);
-          alert("Failed to capture fare. Check console for details.");
-        });
-    }
+          .then((canvas) => {
+            const link = document.createElement("a");
+            link.download = "fare.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          })
+          .catch((error) => {
+            console.error("Error capturing fare:", error);
+            alert("Failed to capture fare. Check console for details.");
+          });
+      }
 
-    // On load
-    renderFare(); // so it's not blank
-  });
+      // On load
+      renderFare();
+    });
+  </script>
+
+  <!-- AIRFARE LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Default airfare values
+      const defaultAirfareValues = {
+        name: "NYC to LAX",
+        address: "JFK Airport",
+        distance: "2,469 miles",
+        price: "$550",
+        image: "https://www.example.com/plane.jpg",
+        badgeText: "2 blocks from our HQ office"
+      };
+
+      // Airfare references
+      const airfareSelectA = document.getElementById("airfareSelectA");
+      const airfareSelectB = document.getElementById("airfareSelectB");
+      const airfareSelectC = document.getElementById("airfareSelectC");
+      const airfareSelectD = document.getElementById("airfareSelectD");
+      const airfareSelectE = document.getElementById("airfareSelectE");
+
+      const airfareToggleA = document.getElementById("airfareToggleA");
+      const airfareToggleB = document.getElementById("airfareToggleB");
+      const airfareToggleC = document.getElementById("airfareToggleC");
+      const airfareToggleD = document.getElementById("airfareToggleD");
+      const airfareToggleE = document.getElementById("airfareToggleE");
+
+      const airfareName = document.getElementById("airfareName");
+      const airfareAddress = document.getElementById("airfareAddress");
+      const airfareDistance = document.getElementById("airfareDistance");
+      const airfarePrice = document.getElementById("airfarePrice");
+      const airfareImage = document.getElementById("airfareImage");
+
+      const airfareBadgeText = document.getElementById("airfareBadgeText");
+      const airfareBadgeToggle = document.getElementById("airfareBadgeToggle");
+      const airfareBadge = document.getElementById("airfareBadge");
+
+      const airfareResetBtn = document.getElementById("airfareResetBtn");
+      const airfareRenderBtn = document.getElementById("airfareRenderBtn");
+      const copyAirfareBtn = document.getElementById("copyAirfareBtn");
+      const downloadAirfareBtn = document.getElementById("downloadAirfareBtn");
+
+      const airfarePreview = document.getElementById("airfarePreview");
+      const airfareIconsContainer = document.getElementById("airfareIconsContainer");
+      const airfarePreviewImage = document.getElementById("airfarePreviewImage");
+      const airfarePreviewName = document.getElementById("airfarePreviewName");
+      const airfarePreviewAddress = document.getElementById("airfarePreviewAddress");
+      const airfarePreviewDistance = document.getElementById("airfarePreviewDistance");
+      const airfarePreviewPrice = document.getElementById("airfarePreviewPrice");
+
+      airfareResetBtn.addEventListener("click", resetAirfare);
+      airfareRenderBtn.addEventListener("click", renderAirfare);
+      copyAirfareBtn.addEventListener("click", copyAirfareToClipboard);
+      downloadAirfareBtn.addEventListener("click", downloadAirfareAsPNG);
+
+      function renderAirfare() {
+        // icons
+        updateAirfareIcon("A", airfareToggleA.checked, airfareSelectA.value, airfareIconA);
+        updateAirfareIcon("B", airfareToggleB.checked, airfareSelectB.value, airfareIconB);
+        updateAirfareIcon("C", airfareToggleC.checked, airfareSelectC.value, airfareIconC);
+        updateAirfareIcon("D", airfareToggleD.checked, airfareSelectD.value, airfareIconD);
+        updateAirfareIcon("E", airfareToggleE.checked, airfareSelectE.value, airfareIconE);
+        reorderAirfareIcons();
+
+        airfarePreviewName.textContent =
+          airfareName.value.trim() || defaultAirfareValues.name;
+        airfarePreviewAddress.textContent =
+          airfareAddress.value.trim() || defaultAirfareValues.address;
+        airfarePreviewDistance.textContent =
+          airfareDistance.value.trim() || defaultAirfareValues.distance;
+        airfarePreviewPrice.textContent =
+          airfarePrice.value.trim() || defaultAirfareValues.price;
+
+        const newImageUrl = airfareImage.value.trim() || defaultAirfareValues.image;
+        airfarePreviewImage.src = newImageUrl;
+
+        if (airfareBadgeToggle.checked) {
+          airfareBadge.style.display = "";
+          airfareBadge.textContent =
+            airfareBadgeText.value.trim() || defaultAirfareValues.badgeText;
+        } else {
+          airfareBadge.style.display = "none";
+        }
+
+        // set width from #airfareWidth
+        const airfareWidthInput = document.getElementById("airfareWidth");
+        if (airfareWidthInput) {
+          const newWidth = parseInt(airfareWidthInput.value, 10);
+          if (!isNaN(newWidth) && newWidth > 0) {
+            airfarePreview.style.width = newWidth + "px";
+          } else {
+            airfarePreview.style.width = "auto";
+          }
+        }
+      }
+
+      function resetAirfare() {
+        airfareToggleA.checked = true;
+        airfareToggleB.checked = true;
+        airfareToggleC.checked = true;
+        airfareToggleD.checked = true;
+        airfareToggleE.checked = true;
+
+        airfareSelectA.value = "";
+        airfareSelectB.value = "";
+        airfareSelectC.value = "";
+        airfareSelectD.value = "";
+        airfareSelectE.value = "";
+
+        airfareBadgeToggle.checked = true;
+        airfareBadgeText.value = defaultAirfareValues.badgeText;
+
+        airfareName.value = defaultAirfareValues.name;
+        airfareAddress.value = defaultAirfareValues.address;
+        airfareDistance.value = defaultAirfareValues.distance;
+        airfarePrice.value = defaultAirfareValues.price;
+        airfareImage.value = defaultAirfareValues.image;
+
+        renderAirfare();
+      }
+
+      function updateAirfareIcon(letter, isOn, selectedValue, iconElement) {
+        const defaultIconUrl = `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${letter}.png`;
+        if (!isOn) {
+          iconElement.style.display = "none";
+        } else {
+          iconElement.style.display = "";
+          iconElement.src = selectedValue
+            ? `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png`
+            : defaultIconUrl;
+        }
+      }
+
+      function reorderAirfareIcons() {
+        const visibleIcons = [];
+        [airfareIconA, airfareIconB, airfareIconC, airfareIconD, airfareIconE].forEach((icon) => {
+          if (icon.style.display !== "none") {
+            visibleIcons.push(icon);
+          }
+        });
+        airfareIconsContainer.innerHTML = "";
+        visibleIcons.forEach((icon) => airfareIconsContainer.appendChild(icon));
+        if (airfareBadgeToggle.checked) {
+          airfareIconsContainer.appendChild(airfareBadge);
+        }
+      }
+
+      function copyAirfareToClipboard() {
+        if (!navigator.clipboard || !window.ClipboardItem) {
+          alert("Copying images to the clipboard is not supported in your browser.");
+          return;
+        }
+        const boundingRect = airfarePreview.getBoundingClientRect();
+        const maxWidth = 900;
+        const finalWidth = Math.min(boundingRect.width, maxWidth);
+        const finalHeight = boundingRect.height;
+
+        html2canvas(airfarePreview, {
+          scale: 4,
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false,
+          windowWidth: finalWidth,
+          windowHeight: finalHeight
+        })
+          .then((canvas) => {
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                alert("Failed to generate image blob.");
+                return;
+              }
+              const item = new ClipboardItem({ "image/png": blob });
+              navigator.clipboard
+                .write([item])
+                .then(() => {
+                  alert("Airfare copied to clipboard!");
+                })
+                .catch((err) => {
+                  console.error("Failed to copy image:", err);
+                  alert("Failed to copy airfare. Your browser might not support this feature.");
+                });
+          }, "image/png");
+        })
+          .catch((error) => {
+            console.error("Error capturing airfare:", error);
+            alert("Failed to capture airfare. Check console for details.");
+          });
+      }
+
+      function downloadAirfareAsPNG() {
+        const boundingRect = airfarePreview.getBoundingClientRect();
+        const maxWidth = 900;
+        const finalWidth = Math.min(boundingRect.width, maxWidth);
+        const finalHeight = boundingRect.height;
+
+        html2canvas(airfarePreview, {
+          scale: 4,
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false,
+          windowWidth: finalWidth,
+          windowHeight: finalHeight
+        })
+          .then((canvas) => {
+            const link = document.createElement("a");
+            link.download = "airfare.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          })
+          .catch((error) => {
+            console.error("Error capturing airfare:", error);
+            alert("Failed to capture airfare. Check console for details.");
+          });
+      }
+
+      // On load
+      renderAirfare();
+    });
   </script>
 
   <!-- CREATE "Copy Banner" & "Download Banner" Buttons (existing) -->
@@ -1081,8 +1662,8 @@
                 console.error("Failed to copy image:", err);
                 alert("Failed to copy banner. Your browser might not support this feature.");
               });
-          }, "image/png");
-        })
+        }, "image/png");
+      })
         .catch((error) => {
           console.error("Error capturing banner:", error);
           alert("Failed to capture banner. Check console for details.");
