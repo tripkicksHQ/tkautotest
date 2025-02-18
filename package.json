@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@uiw/codemirror-theme-dracula": "^4.23.8"
+    "codemirror": "^5.65.18"
   }
 }
