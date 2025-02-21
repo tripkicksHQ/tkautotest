@@ -134,9 +134,7 @@
     .fare-inputs .form-check {
       margin-left: 10px;
     }
-		
-		
-</style>
+  </style>
 </head>
 <body>
   <!-- PAGE HEADER -->
@@ -1279,6 +1277,8 @@
         farePreviewPrice.textContent =
           farePrice.value.trim() || defaultFareValues.price;
 
+        // *** FIX: set crossOrigin before assigning the new src ***
+        farePreviewImage.crossOrigin = "anonymous";
         const newImageUrl = fareImage.value.trim() || defaultFareValues.image;
         farePreviewImage.src = newImageUrl;
 
@@ -1505,6 +1505,8 @@
         airfarePreviewPrice.textContent =
           airfarePrice.value.trim() || defaultAirfareValues.price;
 
+        // *** FIX: set crossOrigin before assigning the new src ***
+        airfarePreviewImage.crossOrigin = "anonymous";
         const newImageUrl = airfareImage.value.trim() || defaultAirfareValues.image;
         airfarePreviewImage.src = newImageUrl;
 
