@@ -1,4 +1,4 @@
-can you replace the banner preview at the top (above the tile & Modal Preview and below the tkaubeta top header banner) and embed this https://supercolorpalette.com/?scp=G0-hsl-FFDA1F-FBAC23-F68128-F25A2C-ED3731 i don't need the left bar, just the ability to manipulate 5 colors. make it full width and tell enough to be functional. update my full html code please. ensuring that the tile & modal preview 1/2/3 remain fully functional and not damaged.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -118,7 +118,7 @@ can you replace the banner preview at the top (above the tile & Modal Preview an
     [id^="tilePreview"], [id^="modalPreview"] {
         width: 100%;
         border: 1px solid #ddd;
-        border-radius: 8px;
+        border-radius: 8px;<h1></h1>
         margin-bottom: 10px;
         background-color: #fff; /* Default white background for previews */
     }
@@ -147,15 +147,9 @@ can you replace the banner preview at the top (above the tile & Modal Preview an
   </style>
 </head>
 <body>
-  <header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #ffc107;">
-  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBETA</a>
-  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a>
-  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
-  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
-</header>
-
-  <div class="container">
-    <div class="d-flex align-items-center mb-3">
+  <header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #ffc107;"> <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBETA</a> <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a> <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a> <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a> </header>
+<div class="container">
+  <div class="d-flex align-items-center mb-3">
       <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
       <select id="bannerType" class="form-select w-auto">
         <option value="search">Search (with city image)</option>
@@ -167,15 +161,14 @@ can you replace the banner preview at the top (above the tile & Modal Preview an
         <label for="cityImageUrl" class="me-2 fs-6 fw-lighter">URL:</label>
         <input type="text" id="cityImageUrl" class="form-control" placeholder="Enter image URL" value="https://info.tripkicks.com/hubfs/ClientInsights/tkDemo/cityimage_NYC.png" />
       </div>
-    </div>
+ </div>
 
     <div class="tk_css" id="pageBanner">
       <div class="row">
         <div class="col-12 mb-2">
           <div class="card border border-primary z-0" style="border-radius: 10px 10px 0 10px; z-index: 1;">
             <div class="card-body p-0">
-              <div class="row g-0" id="bannerContent">
-                </div>
+              
             </div>
           </div>
           <div class="border border-primary border-top-0 z-3 bg-white ps-2"
@@ -459,7 +452,7 @@ can you replace the banner preview at the top (above the tile & Modal Preview an
             <select id="fareSelectA" class="form-select w-auto">
                 <option value="">Default (A.png)</option>
                 <option value="greenLeaf">greenLeaf</option>
-                </select>
+           </select>
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" id="fareToggleA" checked />
               <label class="form-check-label" for="fareToggleA">Show A</label>
@@ -572,7 +565,7 @@ can you replace the banner preview at the top (above the tile & Modal Preview an
            <select id="airfareSelectA" class="form-select w-auto">
                 <option value="">Default (A.png)</option>
                 <option value="greenLeaf">greenLeaf</option>
-                </select>
+          </select>
             <div class="form-check form-switch">
              <input class="form-check-input" type="checkbox" id="airfareToggleA" checked />
              <label class="form-check-label" for="airfareToggleA">Show A</label>
@@ -649,7 +642,7 @@ can you replace the banner preview at the top (above the tile & Modal Preview an
           </div>
       </div>
 
-   </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
