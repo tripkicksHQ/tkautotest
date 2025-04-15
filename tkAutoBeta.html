@@ -1,20 +1,15 @@
 <!DOCTYPE html>
-<!-- Alpha 0110am12.29.24 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>tkAuto</title>
-  <!-- Favicon -->
   <link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon" />
 
-  <!-- Latest compiled and minified CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://info.tripkicks.com/hubfs/system/mockup/tk-css.css" rel="stylesheet" type="text/css" />
 
-  <!-- CodeMirror 5 CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
-  <!-- Dracula Theme for CodeMirror 5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css" />
 
   <style>
@@ -82,8 +77,9 @@
       max-height: 90vh;
       overflow: auto;
     }
-    /* Note: We leave the original media queries as they were, 
-       but the page is always viewed on desktop as per your instructions. */
+    /* Note: We leave the original media queries as they were,
+       but the page is always viewed on desktop as per your instructions.
+    */
     @media (max-width: 1200px) {
       .tile-editor-preview {
         flex-direction: column;
@@ -129,15 +125,13 @@
   </style>
 </head>
 <body>
-  <!-- PAGE HEADER -->
-<header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #ffc107;">
+  <header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #ffc107;">
   <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBETA</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
 </header>
 
-  <!-- BANNER SECTION -->
   <div class="container">
     <div class="d-flex align-items-center mb-3">
       <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
@@ -159,11 +153,10 @@
           <div class="card border border-primary z-0" style="border-radius: 10px 10px 0 10px; z-index: 1;">
             <div class="card-body p-0">
               <div class="row g-0" id="bannerContent">
-                <!-- Dynamically adjusted content for Search/Anytime -->
-              </div>
+                </div>
             </div>
           </div>
-          <div class="border border-primary border-top-0 z-3 bg-white ps-2" 
+          <div class="border border-primary border-top-0 z-3 bg-white ps-2"
                style="float: right; width: 136px; position: relative; z-index: 1000; border-top: 5px solid white; border-bottom-left-radius: 8px; box-shadow: 0 0 0 0 rgba(16, 24, 40, 0.03); margin-top: -1px;">
             <div style="justify-content: flex-start; align-items: center; display: flex;">
               <div style="text-align: right; color: #326bf4; font-size: 8px; font-family: 'Helvetica Neue', sans-serif; font-weight: 300; line-height: 18px; white-space: nowrap;">
@@ -176,34 +169,48 @@
       </div>
     </div>
 
-    <!-- Copy Banner & Download Banner Buttons (existing) -->
     <div class="d-flex gap-2 mt-4">
       <button id="copyBannerBtn" class="btn btn-outline-warning">Copy Banner</button>
       <button id="downloadBannerBtn" class="btn btn-warning">Download Banner PNG</button>
     </div>
 
-    <!-- NEW: Tile & Modal Preview Section (initially collapsed) -->
+    <div id="tileInputs">
+         <div class="form-group fs-6 fw-lighter col-sm-3 pb-2">
+          <label for="numTiles">Number of Tiles:</label>
+          <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles" />
+        </div>
+        <button id="generateInputs" class="btn btn-primary btn-sm">Generate Tile Inputs</button>
+        </div>
+
+    <button id="renderTiles" class="btn btn-success btn-sm mt-3" disabled>Render Tiles</button>
+    <button id="button2" class="btn btn-success btn-sm mt-3">Render Top Full-Width</button>
+    <button id="button3" class="btn btn-secondary btn-sm mt-3" disabled>Button 3</button>
+
+    <div id="codeViewContainer" class="mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Rendered HTML</h5>
+      </div>
+       <pre id="codeView" hidden></pre>
+    </div>
+
     <div class="container fare-section" id="tileModalSection" style="margin-top: 40px;">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h4>Tile & Modal Preview</h4>
         <button id="toggleTileModalBtn" class="btn btn-primary btn-sm">Open Tile & Modal</button>
       </div>
-      <!-- Collapsible content -->
       <div id="tileModalContent" style="display: none;">
         <div class="row">
-          <!-- Left Column: Code Editors -->
           <div class="col-md-6">
-            <!-- Tile HTML Editor -->
             <div class="form-group mb-3">
               <label for="tileHtmlEditor" class="fw-lighter">Tile HTML</label>
               <div class="d-flex align-items-center mb-2" style="gap: 10px;">
                 <select id="tileTemplateDropdown" class="form-select w-auto">
-                  <option value="placeholder" selected>placeholder</option>
+                   <option value="placeholder" selected>placeholder</option>
                   <option value="1tileAuto">1tileAuto</option>
                   <option value="2tileAuto">2tileAuto</option>
                   <option value="3tileAuto">3tileAuto</option>
                   <option value="4tileAuto">4tileAuto</option>
-                  <option value="5tileAuto">5tileAuto</option>
+                   <option value="5tileAuto">5tileAuto</option>
                   <option value="6tileAuto">6tileAuto</option>
                   <option value="7tileAuto">7tileAuto</option>
                   <option value="bookNow">bookNow</option>
@@ -214,36 +221,32 @@
                 </select>
                 <button id="copyTileCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
               </div>
-              <textarea id="tileHtmlEditor" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+               <textarea id="tileHtmlEditor" class="form-control" placeholder="Enter HTML for Tile"></textarea>
             </div>
-            <!-- Modal HTML Editor -->
             <div class="form-group mb-3">
               <label for="modalHtmlEditor" class="fw-lighter">Modal HTML</label>
               <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                <select id="modalTemplateDropdown" class="form-select w-auto">
+                 <select id="modalTemplateDropdown" class="form-select w-auto">
                   <option value="placeholder" selected>placeholder</option>
                   <option value="1modalAuto">1modalAuto</option>
                   <option value="2modalAuto">2modalAuto</option>
                   <option value="3modalAuto">3modalAuto</option>
-                  <option value="4modalAuto">4modalAuto</option>
+                   <option value="4modalAuto">4modalAuto</option>
                   <option value="5modalAuto">5modalAuto</option>
                   <option value="6modalAuto">6modalAuto</option>
                   <option value="7modalAuto">7modalAuto</option>
                   <option value="8modalAuto">8modalAuto</option>
                   <option value="9modalAuto">9modalAuto</option>
-                  <option value="10modalAuto">10modalAuto</option>
+                   <option value="10modalAuto">10modalAuto</option>
                 </select>
                 <button id="copyModalCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
               </div>
               <textarea id="modalHtmlEditor" class="form-control" placeholder="Enter HTML for Modal"></textarea>
-            </div>
+             </div>
           </div>
-          <!-- Right Column: Live Previews -->
           <div class="col-md-6">
             <div id="previewContainer">
-              <!-- Tile Preview (with border) -->
               <div id="tilePreview" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; width: 100%;"></div>
-              <!-- Modal Preview (no border; aspect ratio maintained) -->
               <div id="modalPreview" style="width: 100%; aspect-ratio: 464 / 600;"></div>
             </div>
             <div class="mt-2 d-flex gap-2">
@@ -251,43 +254,22 @@
               <button id="copyTileModalPreviewBtn" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
             </div>
           </div>
-        </div>
-      </div> <!-- End tileModalContent -->
-    </div>
-
-    <!-- Existing Tile Inputs Section (if any) -->
-    <div id="tileInputs"></div>
-
-    <button id="renderTiles" class="btn btn-success btn-sm mt-3" disabled>Render Tiles</button>
-    <button id="button2" class="btn btn-success btn-sm mt-3">Render Top Full-Width</button>
-    <button id="button3" class="btn btn-secondary btn-sm mt-3" disabled>Button 3</button>
-
-    <div id="codeViewContainer" class="mt-4">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h5 class="mb-0">Rendered HTML</h5>
-      </div>
-      <pre id="codeView" hidden></pre>
-    </div>
-  </div>
-
-  <!-- LODGING FARE SECTION -->
-  <div class="container fare-section" id="lodgingFareSection">
+         </div>
+      </div> </div> </div> <div class="container fare-section" id="lodgingFareSection">
     <h4>Lodging Auto Fare</h4>
     <div class="row">
-      <!-- Left column: Icon toggles/dropdowns -->
       <div class="col-md-6 fare-inputs">
         <p class="text-muted mb-2">Choose icons and toggles for A–E:</p>
-        <!-- Icon A -->
         <div class="icon-input-row">
           <select id="fareSelectA" class="form-select w-auto">
-            <option value="">Default (A.png)</option>
+             <option value="">Default (A.png)</option>
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
             <option value="business">business</option>
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
+             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
@@ -295,7 +277,7 @@
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
             <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
+             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
             <option value="preferred">preferred</option>
             <option value="option18">option18</option>
@@ -305,13 +287,12 @@
             <label class="form-check-label" for="fareToggleA">Show A</label>
           </div>
         </div>
-        <!-- Icon B -->
         <div class="icon-input-row">
           <select id="fareSelectB" class="form-select w-auto">
             <option value="">Default (B.png)</option>
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
-            <option value="business">business</option>
+             <option value="business">business</option>
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
@@ -319,7 +300,7 @@
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
+             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
             <option value="peloton">peloton</option>
@@ -333,9 +314,8 @@
             <label class="form-check-label" for="fareToggleB">Show B</label>
           </div>
         </div>
-        <!-- Icon C -->
         <div class="icon-input-row">
-          <select id="fareSelectC" class="form-select w-auto">
+           <select id="fareSelectC" class="form-select w-auto">
             <option value="">Default (C.png)</option>
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
@@ -343,14 +323,14 @@
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
+             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
+             <option value="peloton">peloton</option>
             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
             <option value="preferred">preferred</option>
@@ -358,23 +338,22 @@
           </select>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="fareToggleC" checked />
-            <label class="form-check-label" for="fareToggleC">Show C</label>
+             <label class="form-check-label" for="fareToggleC">Show C</label>
           </div>
         </div>
-        <!-- Icon D -->
         <div class="icon-input-row">
           <select id="fareSelectD" class="form-select w-auto">
             <option value="">Default (D.png)</option>
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
-            <option value="business">business</option>
+             <option value="business">business</option>
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
+             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
@@ -382,23 +361,22 @@
             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
             <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
+             <option value="option18">option18</option>
           </select>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="fareToggleD" checked />
             <label class="form-check-label" for="fareToggleD">Show D</label>
           </div>
         </div>
-        <!-- Icon E -->
         <div class="icon-input-row">
-          <select id="fareSelectE" class="form-select w-auto">
+           <select id="fareSelectE" class="form-select w-auto">
             <option value="">Default (E.png)</option>
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
             <option value="business">business</option>
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
+             <option value="fitness">fitness</option>
             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
@@ -406,7 +384,7 @@
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
+             <option value="peloton">peloton</option>
             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
             <option value="preferred">preferred</option>
@@ -414,26 +392,24 @@
           </select>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="fareToggleE" checked />
-            <label class="form-check-label" for="fareToggleE">Show E</label>
+             <label class="form-check-label" for="fareToggleE">Show E</label>
           </div>
         </div>
 
-        <!-- BADGE SETTINGS -->
         <p class="text-muted mt-3 mb-1">Badge Settings:</p>
         <div class="icon-input-row">
           <input type="text" id="fareBadgeText" class="form-control w-auto" value="2 blocks from our HQ office" />
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="fareBadgeToggle" checked />
+             <input class="form-check-input" type="checkbox" id="fareBadgeToggle" checked />
             <label class="form-check-label" for="fareBadgeToggle">Show Badge</label>
           </div>
         </div>
       </div>
 
-      <!-- Right column: Hotel Info -->
       <div class="col-md-6 fare-inputs">
         <p class="text-muted mb-2">Hotel Info:</p>
         <div class="mb-2">
-          <label for="fareHotelName" class="form-label">Hotel Name</label>
+           <label for="fareHotelName" class="form-label">Hotel Name</label>
           <input type="text" id="fareHotelName" class="form-control" value="The James Nomad" />
         </div>
         <div class="mb-2">
@@ -450,7 +426,7 @@
         </div>
         <div class="mb-2">
           <label for="fareImage" class="form-label">Hotel Image URL</label>
-          <input type="text" id="fareImage" class="form-control" value="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" />
+           <input type="text" id="fareImage" class="form-control" value="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" />
         </div>
         <div class="mb-2">
           <label for="lodgingWidth" class="form-label">Lodging Container Width (px)</label>
@@ -458,15 +434,13 @@
         </div>
       </div>
     </div>
-    <!-- Buttons -->
     <div class="mt-3">
       <button id="fareResetBtn" class="btn btn-secondary btn-sm">Reset Fare</button>
-      <button id="fareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
+       <button id="fareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
       <button id="copyFareBtn" class="btn btn-outline-warning btn-sm">Copy Fare</button>
       <button id="downloadFareBtn" class="btn btn-warning btn-sm">Download Fare PNG</button>
     </div>
 
-    <!-- FARE PREVIEW -->
     <div class="mt-4" id="farePreview">
       <div class="card border-1 p-3 pb-5 fare-preview-card" style="min-height: 200px;">
         <div class="row g-3">
@@ -478,9 +452,9 @@
               <img id="fareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
               <img id="fareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" />
               <img id="fareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" />
-              <img id="fareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
+               <img id="fareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
               <img id="fareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
-              <span class="badge d-flex align-items-center px-3" id="fareBadge" 
+              <span class="badge d-flex align-items-center px-3" id="fareBadge"
                     style="background-color: #e7f0ff; color: #1d2d3e; font-size: 0.9rem; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
                 2 blocks from our HQ office
               </span>
@@ -495,7 +469,7 @@
           <div class="col-md-2 text-end d-flex flex-column justify-content-end">
             <p class="mb-1 text-muted small mt-3">From:</p>
             <h4 class="fw-bold text-dark" id="farePreviewPrice">$301</h4>
-            <a href="#" class="btn btn-outline-secondary btn-sm" 
+            <a href="#" class="btn btn-outline-secondary btn-sm"
                style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
               View Rooms
             </a>
@@ -503,10 +477,7 @@
         </div>
       </div>
     </div>
-  </div> <!-- /#lodgingFareSection container -->
-
-  <!-- AIRFARE FARE SECTION (DUPLICATE) -->
-  <div class="container fare-section" id="airfareSection">
+  </div> <div class="container fare-section" id="airfareSection">
     <h4>Airfare Auto Fare</h4>
     <div class="row">
       <div class="col-md-6 fare-inputs">
@@ -517,7 +488,7 @@
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
             <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
+             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
             <option value="credits">credits</option>
@@ -525,7 +496,7 @@
             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
+             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
             <option value="peloton">peloton</option>
             <option value="womenFloor">womenFloor</option>
@@ -533,7 +504,7 @@
             <option value="preferred">preferred</option>
             <option value="option18">option18</option>
           </select>
-          <div class="form-check form-switch">
+           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="airfareToggleA" checked />
             <label class="form-check-label" for="airfareToggleA">Show A</label>
           </div>
@@ -541,7 +512,7 @@
         <div class="icon-input-row">
           <select id="airfareSelectB" class="form-select w-auto">
             <option value="">Default (B.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
+             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
             <option value="business">business</option>
             <option value="breakfast">breakfast</option>
@@ -549,14 +520,14 @@
             <option value="fitness">fitness</option>
             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
+             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
             <option value="peloton">peloton</option>
             <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
+             <option value="security">security</option>
             <option value="preferred">preferred</option>
             <option value="option18">option18</option>
           </select>
@@ -565,7 +536,7 @@
             <label class="form-check-label" for="airfareToggleB">Show B</label>
           </div>
         </div>
-        <div class="icon-input-row">
+         <div class="icon-input-row">
           <select id="airfareSelectC" class="form-select w-auto">
             <option value="">Default (C.png)</option>
             <option value="greenLeaf">greenLeaf</option>
@@ -574,13 +545,13 @@
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
+             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
+             <option value="parking">parking</option>
             <option value="peloton">peloton</option>
             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
@@ -588,7 +559,7 @@
             <option value="option18">option18</option>
           </select>
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="airfareToggleC" checked />
+             <input class="form-check-input" type="checkbox" id="airfareToggleC" checked />
             <label class="form-check-label" for="airfareToggleC">Show C</label>
           </div>
         </div>
@@ -596,7 +567,7 @@
           <select id="airfareSelectD" class="form-select w-auto">
             <option value="">Default (D.png)</option>
             <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
+             <option value="leaf">leaf</option>
             <option value="business">business</option>
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
@@ -604,7 +575,7 @@
             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
             <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
+             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
@@ -612,7 +583,7 @@
             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
             <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
+             <option value="option18">option18</option>
           </select>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="airfareToggleD" checked />
@@ -620,7 +591,7 @@
           </div>
         </div>
         <div class="icon-input-row">
-          <select id="airfareSelectE" class="form-select w-auto">
+           <select id="airfareSelectE" class="form-select w-auto">
             <option value="">Default (E.png)</option>
             <option value="greenLeaf">greenLeaf</option>
             <option value="leaf">leaf</option>
@@ -628,14 +599,14 @@
             <option value="breakfast">breakfast</option>
             <option value="dinova">dinova</option>
             <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
+             <option value="credits">credits</option>
             <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
+             <option value="layover">layover</option>
             <option value="EVCharge">EVCharge</option>
             <option value="minorityOwned">minorityOwned</option>
             <option value="ontime">ontime</option>
             <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
+             <option value="peloton">peloton</option>
             <option value="womenFloor">womenFloor</option>
             <option value="security">security</option>
             <option value="preferred">preferred</option>
@@ -643,16 +614,15 @@
           </select>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="airfareToggleE" checked />
-            <label class="form-check-label" for="airfareToggleE">Show E</label>
+             <label class="form-check-label" for="airfareToggleE">Show E</label>
           </div>
         </div>
 
-        <!-- BADGE SETTINGS -->
         <p class="text-muted mt-3 mb-1">Badge Settings:</p>
         <div class="icon-input-row">
           <input type="text" id="airfareBadgeText" class="form-control w-auto" value="2 blocks from our HQ office" />
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="airfareBadgeToggle" checked />
+             <input class="form-check-input" type="checkbox" id="airfareBadgeToggle" checked />
             <label class="form-check-label" for="airfareBadgeToggle">Show Badge</label>
           </div>
         </div>
@@ -670,7 +640,7 @@
         <div class="mb-2">
           <label for="airfareDistance" class="form-label">Distance</label>
           <input type="text" id="airfareDistance" class="form-control" value="2,469 miles" />
-        </div>
+           </div>
         <div class="mb-2">
           <label for="airfarePrice" class="form-label">Price</label>
           <input type="text" id="airfarePrice" class="form-control" value="$550" />
@@ -679,7 +649,7 @@
           <label for="airfareImage" class="form-label">Airfare Image URL</label>
           <input type="text" id="airfareImage" class="form-control" value="https://www.example.com/plane.jpg" />
         </div>
-        <div class="mb-2">
+         <div class="mb-2">
           <label for="airfareWidth" class="form-label">Airfare Container Width (px)</label>
           <input type="number" id="airfareWidth" class="form-control w-auto" value="1000" />
         </div>
@@ -699,47 +669,41 @@
           </div>
           <div class="col-md-7">
             <div class="d-flex align-items-center fare-preview-icons" id="airfareIconsContainer">
-              <img id="airfareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
+               <img id="airfareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
               <img id="airfareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" />
               <img id="airfareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" />
               <img id="airfareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
               <img id="airfareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
-              <span class="badge d-flex align-items-center px-3" id="airfareBadge" style="background-color: #e7f0ff; color: #1d2d3e; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
+               <span class="badge d-flex align-items-center px-3" id="airfareBadge" style="background-color: #e7f0ff; color: #1d2d3e; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
                 2 blocks from our HQ office
               </span>
             </div>
             <h5 class="fw-bold mt-2" id="airfarePreviewName">NYC to LAX</h5>
             <p class="text-muted mb-1">
               <span id="airfarePreviewAddress">JFK Airport</span>
-              <i class="fa-solid fa-location-dot"></i>
+               <i class="fa-solid fa-location-dot"></i>
               <span id="airfarePreviewDistance">2,469 miles</span>
             </p>
           </div>
           <div class="col-md-2 text-end d-flex flex-column justify-content-end">
             <p class="mb-1 text-muted small mt-3">From:</p>
             <h4 class="fw-bold text-dark" id="airfarePreviewPrice">$550</h4>
-            <a href="#" class="btn btn-outline-secondary btn-sm" style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
+             <a href="#" class="btn btn-outline-secondary btn-sm" style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
               Book Flight
             </a>
           </div>
         </div>
       </div>
     </div>
-  </div> <!-- /#airfareSection container -->
-
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- CodeMirror JS -->
+  </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
-  <!-- HTML2Canvas for copying/downloading images -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- BANNER + TILE LOGIC -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const bannerTypeSelector = document.getElementById("bannerType");
@@ -753,7 +717,8 @@
       const renderTilesButton = document.getElementById("renderTiles");
       const button2 = document.getElementById("button2");
       const codeView = document.getElementById("codeView");
-
+      const copyBannerBtn = document.getElementById("copyBannerBtn"); // Get existing button
+      const downloadBannerBtn = document.getElementById("downloadBannerBtn"); // Get existing button
       let tileEditors = [];
       const tileContainer = document.createElement("div");
       tileContainer.id = "tileContainer";
@@ -763,8 +728,86 @@
       nestedRow.className = "row g-0";
       tileContainer.appendChild(nestedRow);
 
+      // Define banner copy/download functions (ensure defined only once)
+      function downloadBannerAsPNG() {
+        const banner = document.getElementById("pageBanner");
+        if (!banner) {
+          console.error("Banner element not found for download.");
+          alert("Failed to find banner element.");
+          return;
+        }
+        const scaleFactor = 3;
+        html2canvas(banner, {
+          scale: scaleFactor,
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false
+        }).then((canvas) => {
+          const link = document.createElement("a");
+          link.download = "banner.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        }).catch((error) => {
+          console.error("Error capturing banner:", error);
+          alert("Failed to capture banner. Check console for details.");
+        });
+      }
+
+      function copyBannerToClipboard() {
+        if (!navigator.clipboard || !window.ClipboardItem) {
+          alert("Copying images to the clipboard is not supported in your browser.");
+          copyBannerBtn.disabled = true; // Disable button if not supported
+          copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
+          return;
+        }
+        const banner = document.getElementById("pageBanner");
+         if (!banner) {
+          console.error("Banner element not found for copy.");
+          alert("Failed to find banner element.");
+          return;
+        }
+        const scaleFactor = 3;
+        html2canvas(banner, {
+          scale: scaleFactor,
+          backgroundColor: null,
+          useCORS: true,
+          allowTaint: false
+        }).then((canvas) => {
+          canvas.toBlob((blob) => {
+            if (!blob) { alert("Failed to generate image blob."); return; }
+            const item = new ClipboardItem({ "image/png": blob });
+            navigator.clipboard.write([item]).then(() => { alert("Banner copied to clipboard!"); })
+              .catch((err) => {
+                  console.error("Failed to copy image:", err);
+                  alert("Failed to copy banner. Your browser might not support this feature.");
+               });
+          }, "image/png");
+        }).catch((error) => {
+          console.error("Error capturing banner:", error);
+          alert("Failed to capture banner. Check console for details.");
+        });
+      }
+
+      // Attach listeners to existing buttons
+      if (copyBannerBtn) {
+          copyBannerBtn.addEventListener('click', copyBannerToClipboard);
+          // Initial check for clipboard support
+          if (!navigator.clipboard || !window.ClipboardItem) {
+             copyBannerBtn.disabled = true;
+             copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
+          }
+      } else {
+          console.error("Copy Banner Button not found");
+      }
+      if (downloadBannerBtn) {
+          downloadBannerBtn.addEventListener('click', downloadBannerAsPNG);
+      } else {
+          console.error("Download Banner Button not found");
+      }
+
+
       function updateBannerType() {
-        bannerContent.innerHTML = "";
+        bannerContent.innerHTML = ""; // Clear previous content
         const bannerType = bannerTypeSelector.value;
         const cityName = cityNameInput.value.trim();
         const cityImageUrl = cityImageUrlInput.value.trim();
@@ -786,26 +829,32 @@
           `;
           const tileCol = document.createElement("div");
           tileCol.className = "col-10 d-flex flex-wrap align-items-stretch";
-          tileCol.appendChild(tileContainer);
+          tileCol.appendChild(tileContainer); // Append the container for tiles
           const rowContainer = document.createElement("div");
           rowContainer.className = "row g-0";
           rowContainer.appendChild(cityCol);
           rowContainer.appendChild(tileCol);
           bannerContent.appendChild(rowContainer);
-        } else {
+        } else { // "anytime"
           cityInputs.classList.add("d-none");
           const tileCol = document.createElement("div");
           tileCol.className = "col-12 d-flex flex-wrap align-items-stretch";
-          tileCol.appendChild(tileContainer);
+          tileCol.appendChild(tileContainer); // Append the container for tiles
           const rowContainer = document.createElement("div");
           rowContainer.className = "row g-0";
           rowContainer.appendChild(tileCol);
           bannerContent.appendChild(rowContainer);
         }
+        // Re-render tiles if they exist
+        if (tileEditors.length > 0) {
+           // Decide which render mode was last used or default to one
+           // For simplicity, let's assume default 'renderTilesMode' if needed after type change
+           renderTilesMode();
+        }
       }
 
       function renderTilesMode() {
-        nestedRow.innerHTML = "";
+        nestedRow.innerHTML = ""; // Clear previous tiles in the nested row
         let renderedHTML = "";
         const totalTiles = tileEditors.length;
         let i = 0;
@@ -822,10 +871,10 @@
             const tileWrapper = document.createElement("div");
             tileWrapper.classList.add("tile", colClass);
             tileWrapper.innerHTML = tileHTML;
-            rowDiv.appendChild(tileWrapper);
-            groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`;
+            rowDiv.appendChild(tileWrapper); // Append tile to the visual row
+            groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`; // For code view
           }
-          nestedRow.appendChild(rowDiv);
+          nestedRow.appendChild(rowDiv); // Append the visual row to the nested container
           renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
           i += rowSize;
         }
@@ -839,7 +888,7 @@
       }
 
       function renderTopFullWidthMode() {
-        nestedRow.innerHTML = "";
+        nestedRow.innerHTML = ""; // Clear previous tiles
         let renderedHTML = "";
         const totalTiles = tileEditors.length;
         if (totalTiles > 0) {
@@ -909,6 +958,7 @@
       }
 
       bannerTypeSelector.addEventListener("change", updateBannerType);
+      // Template URLs for BANNER tiles
       const templateURLs = {
         "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
         "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
@@ -920,161 +970,190 @@
         "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html",
         "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html",
         "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html",
-        "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
+         "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
         "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
       };
+      // --- Logic for Generating BANNER Tile Inputs ---
+       if (generateInputsButton) {
+          generateInputsButton.addEventListener("click", () => {
+            const numTiles = parseInt(numTilesInput.value, 10);
+            if (!numTiles || numTiles < 1) {
+              alert("Please enter a valid number of tiles for the banner.");
+              return;
+            }
+            const inputsTargetDiv = document.getElementById('tileInputs'); // Get the container
+            // Clear only the dynamically generated inputs, not the initial numTiles/button
+            inputsTargetDiv.querySelectorAll('.form-group.mb-3').forEach(el => el.remove());
+            tileEditors = []; // Reset editors array for banner tiles
 
-      generateInputsButton.addEventListener("click", () => {
-        const numTiles = parseInt(numTilesInput.value, 10);
-        if (!numTiles || numTiles < 1) {
-          alert("Please enter a valid number of tiles.");
-          return;
-        }
-        tileInputsContainer.innerHTML = "";
-        tileEditors = [];
-        for (let i = 0; i < numTiles; i++) {
-          const inputGroup = document.createElement("div");
-          inputGroup.classList.add("form-group", "mb-3");
-          const editorId = `codeMirrorEditor${i + 1}`;
-          const previewId = `livePreview${i + 1}`;
-          inputGroup.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between mb-2">
-              <label for="${editorId}" class="me-2">Tile ${i + 1}</label>
-            </div>
-            <div class="tile-editor-preview">
-              <div class="live-preview" id="${previewId}"></div>
-              <div class="code-editor d-flex flex-column">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select class="tile-template-dropdown form-select w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1tileAuto">1tileAuto</option>
-                    <option value="2tileAuto">2tileAuto</option>
-                    <option value="3tileAuto">3tileAuto</option>
-                    <option value="4tileAuto">4tileAuto</option>
-                    <option value="5tileAuto">5tileAuto</option>
-                    <option value="6tileAuto">6tileAuto</option>
-                    <option value="7tileAuto">7tileAuto</option>
-                    <option value="bookNow">bookNow</option>
-                    <option value="flexDates">flexDates</option>
-                    <option value="carbonFoot">carbonFoot</option>
-                    <option value="rateTarget">rateTarget</option>
-                    <option value="gate4">gate4</option>
-                  </select>
-                  <button type="button" class="btn btn-sm btn-outline-primary copy-code-btn">Copy Code</button>
+
+            for (let i = 0; i < numTiles; i++) {
+              const inputGroup = document.createElement("div");
+              inputGroup.classList.add("form-group", "mb-3"); // Class for easy clearing
+              const editorId = `codeMirrorEditor${i + 1}`;
+              const previewId = `livePreview${i + 1}`;
+              // Use innerHTML to create the structure for each banner tile input
+              inputGroup.innerHTML = `
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <label for="${editorId}" class="me-2">Banner Tile ${i + 1}</label>
                 </div>
-                <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Tile ${i + 1}"></textarea>
-              </div>
-            </div>
-          `;
-          tileInputsContainer.appendChild(inputGroup);
-          const textarea = inputGroup.querySelector(`#${editorId}`);
-          const editor = CodeMirror.fromTextArea(textarea, {
-            mode: "htmlmixed",
-            theme: "dracula",
-            lineNumbers: true,
-            styleActiveLine: true,
-            lineWrapping: true,
-            autoCloseTags: true,
-            matchBrackets: true
-          });
-          tileEditors.push(editor);
-          editor.on("change", () => {
-            const content = editor.getValue();
-            const previewDiv = document.getElementById(previewId);
-            if (previewDiv) {
-              previewDiv.innerHTML = content;
-            }
-          });
-          const copyButton = inputGroup.querySelector(".copy-code-btn");
-          copyButton.addEventListener("click", () => {
-            const content = editor.getValue();
-            navigator.clipboard.writeText(content)
-              .then(() => alert("Code copied to clipboard!"))
-              .catch((err) => {
-                console.error("Failed to copy: ", err);
-                alert("Failed to copy code. Please try manually.");
+                <div class="tile-editor-preview">
+                  <div class="live-preview" id="${previewId}"></div>
+                  <div class="code-editor d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select class="banner-tile-template-dropdown form-select w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1tileAuto">1tileAuto</option>
+                        <option value="2tileAuto">2tileAuto</option>
+                        <option value="3tileAuto">3tileAuto</option>
+                         <option value="4tileAuto">4tileAuto</option>
+                        <option value="5tileAuto">5tileAuto</option>
+                        <option value="6tileAuto">6tileAuto</option>
+                        <option value="7tileAuto">7tileAuto</option>
+                        <option value="bookNow">bookNow</option>
+                         <option value="flexDates">flexDates</option>
+                        <option value="carbonFoot">carbonFoot</option>
+                        <option value="rateTarget">rateTarget</option>
+                        <option value="gate4">gate4</option>
+                      </select>
+                       <button type="button" class="btn btn-sm btn-outline-primary copy-banner-tile-code-btn">Copy Code</button>
+                    </div>
+                    <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Banner Tile ${i + 1}"></textarea>
+                  </div>
+                </div>
+              `;
+              inputsTargetDiv.appendChild(inputGroup); // Append to the container
+
+              const textarea = inputGroup.querySelector(`#${editorId}`);
+              const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "htmlmixed", theme: "dracula", lineNumbers: true,
+                styleActiveLine: true, lineWrapping: true, autoCloseTags: true, matchBrackets: true
               });
+              tileEditors.push(editor); // Add editor to the array for banner tiles
+
+              editor.on("change", () => {
+                const content = editor.getValue();
+                const previewDiv = document.getElementById(previewId);
+                if (previewDiv) previewDiv.innerHTML = content;
+                 // Consider if live rendering the main banner is desired here.
+                 // renderTilesMode(); // Uncomment if banner should update live as tile code changes
+              });
+
+              const copyButton = inputGroup.querySelector(".copy-banner-tile-code-btn");
+              copyButton.addEventListener("click", () => {
+                const content = editor.getValue();
+                navigator.clipboard.writeText(content)
+                  .then(() => alert("Banner tile code copied to clipboard!"))
+                  .catch((err) => { console.error("Failed to copy: ", err); alert("Failed to copy code."); });
+              });
+
+              const templateDropdown = inputGroup.querySelector(".banner-tile-template-dropdown");
+              templateDropdown.addEventListener("change", async () => {
+                const selected = templateDropdown.value;
+                if (selected === "placeholder") {
+                  editor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim());
+                } else {
+                  const url = templateURLs[selected]; // Use the banner template URLs
+                  if (!url) return;
+                  try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error("Failed to load template: " + response.status);
+                    const templateHTML = await response.text();
+                    editor.setValue(templateHTML.trim());
+                  } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); }
+                }
+              });
+               // Trigger change for initial placeholder load
+               templateDropdown.dispatchEvent(new Event('change'));
+            } // end for loop
+
+            renderTilesButton.disabled = false; // Enable banner render buttons
+            if (button2) button2.disabled = false;
+             // renderTilesMode(); // Optionally render immediately after generating inputs
           });
-          const templateDropdown = inputGroup.querySelector(".tile-template-dropdown");
-          templateDropdown.addEventListener("change", async () => {
-            const selected = templateDropdown.value;
-            if (selected === "placeholder") {
-              editor.setValue(`
-<div class="card border border-2 border-white text-dark bg-light">
-  <div class="card-body">Placeholder Tile</div>
-</div>
-              `.trim());
-            } else {
-              const url = templateURLs[selected];
-              if (!url) return;
-              try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Failed to load template: " + response.status);
-                const templateHTML = await response.text();
-                editor.setValue(templateHTML.trim());
-              } catch (err) {
-                console.error("Error loading template:", err);
-                alert("Could not load template from " + url);
-              }
-            }
-          });
-        });
-        renderTilesButton.disabled = false;
-      });
+      } else {
+          console.error("Generate Inputs Button not found");
+      }
+      // --- End Banner Tile Input Logic ---
+
+
       renderTilesButton.addEventListener("click", renderTilesMode);
       if (!button2.hasAttribute("listener")) {
         button2.addEventListener("click", renderTopFullWidthMode);
         button2.setAttribute("listener", "true");
       }
-      updateBannerType();
+      updateBannerType(); // Initial setup
     });
   </script>
 
-  <!-- NEW: Tile & Modal Section Logic -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       // Toggle the Tile & Modal section visibility
       const toggleBtn = document.getElementById("toggleTileModalBtn");
       const tileModalContent = document.getElementById("tileModalContent");
-      toggleBtn.addEventListener("click", function () {
-        if (tileModalContent.style.display === "none" || tileModalContent.style.display === "") {
-          tileModalContent.style.display = "block";
-          toggleBtn.textContent = "Close Tile & Modal";
-        } else {
-          tileModalContent.style.display = "none";
-          toggleBtn.textContent = "Open Tile & Modal";
-        }
-      });
-      
+       if (toggleBtn && tileModalContent) {
+          toggleBtn.addEventListener("click", function () {
+            if (tileModalContent.style.display === "none" || tileModalContent.style.display === "") {
+              tileModalContent.style.display = "block";
+               toggleBtn.textContent = "Close Tile & Modal";
+            } else {
+              tileModalContent.style.display = "none";
+              toggleBtn.textContent = "Open Tile & Modal";
+            }
+          });
+       } else {
+           console.error("Toggle button or content for Tile/Modal section not found.");
+       }
+
+
       // Initialize CodeMirror editors for the new section
       const tileHtmlTextarea = document.getElementById("tileHtmlEditor");
       const modalHtmlTextarea = document.getElementById("modalHtmlEditor");
-      const tileEditor = CodeMirror.fromTextArea(tileHtmlTextarea, {
-        mode: "htmlmixed",
-        theme: "dracula",
-        lineNumbers: true,
-        styleActiveLine: true,
-        lineWrapping: true,
-        autoCloseTags: true,
-        matchBrackets: true
-      });
-      const modalEditor = CodeMirror.fromTextArea(modalHtmlTextarea, {
-        mode: "htmlmixed",
-        theme: "dracula",
-        lineNumbers: true,
-        styleActiveLine: true,
-        lineWrapping: true,
-        autoCloseTags: true,
-        matchBrackets: true
-      });
-      
+      let tileEditor, modalEditor; // Declare vars
+
+      if (tileHtmlTextarea) {
+         tileEditor = CodeMirror.fromTextArea(tileHtmlTextarea, {
+            mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true,
+            lineWrapping: true, autoCloseTags: true, matchBrackets: true
+          });
+      } else {
+          console.error("Tile HTML Editor textarea not found.");
+      }
+
+      if (modalHtmlTextarea) {
+         modalEditor = CodeMirror.fromTextArea(modalHtmlTextarea, {
+            mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true,
+            lineWrapping: true, autoCloseTags: true, matchBrackets: true
+          });
+      } else {
+           console.error("Modal HTML Editor textarea not found.");
+      }
+
       // Update live previews when editors change
       const tilePreview = document.getElementById("tilePreview");
       const modalPreview = document.getElementById("modalPreview");
-      tileEditor.on("change", () => { tilePreview.innerHTML = tileEditor.getValue(); });
-      modalEditor.on("change", () => { modalPreview.innerHTML = modalEditor.getValue(); });
-      
-      // Template URLs for Modal templates
+      if (tileEditor && tilePreview) {
+         tileEditor.on("change", () => { tilePreview.innerHTML = tileEditor.getValue(); });
+      }
+       if (modalEditor && modalPreview) {
+          modalEditor.on("change", () => { modalPreview.innerHTML = modalEditor.getValue(); });
+       }
+
+       // Template URLs (Separate from banner templates)
+       const standaloneTileTemplateURLs = { // Use distinct names if needed
+            "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
+            "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
+            "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html",
+            "4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html",
+            "5tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/5tileAuto.html",
+            "6tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/6tileAuto.html",
+            "7tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/7tileAuto.html",
+            "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html",
+            "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html",
+            "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html",
+            "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
+            "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
+        };
       const modalTemplateURLs = {
         "1modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/1modalAuto.html",
         "2modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/2modalAuto.html",
@@ -1085,122 +1164,117 @@
         "7modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/7modalAuto.html",
         "8modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/8modalAuto.html",
         "9modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/9modalAuto.html",
-        "10modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/10modalAuto.html"
+       "10modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/10modalAuto.html"
       };
-      
-      // Handle Tile template dropdown change (reuse templateURLs from earlier)
+      // Handle Tile template dropdown change (for standalone tile/modal section)
       const tileTemplateDropdown = document.getElementById("tileTemplateDropdown");
-      tileTemplateDropdown.addEventListener("change", async () => {
-        const selected = tileTemplateDropdown.value;
-        if (selected === "placeholder") {
-          tileEditor.setValue(`
-<div class="card border border-2 border-white text-dark bg-light">
-  <div class="card-body">Placeholder Tile</div>
-</div>
-          `.trim());
-        } else {
-          const url = templateURLs[selected];
-          if (!url) return;
-          try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Failed to load template: " + response.status);
-            const templateHTML = await response.text();
-            tileEditor.setValue(templateHTML.trim());
-          } catch (err) {
-            console.error("Error loading template:", err);
-            alert("Could not load template from " + url);
-          }
-        }
-      });
-      
+       if (tileTemplateDropdown && tileEditor) {
+          tileTemplateDropdown.addEventListener("change", async () => {
+            const selected = tileTemplateDropdown.value;
+            if (selected === "placeholder") {
+              tileEditor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim());
+            } else {
+              const url = standaloneTileTemplateURLs[selected]; // Use the correct URL map
+              if (!url) return;
+              try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Failed to load template: " + response.status);
+                const templateHTML = await response.text();
+                tileEditor.setValue(templateHTML.trim());
+              } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); }
+            }
+          });
+       }
+
       // Handle Modal template dropdown change
       const modalTemplateDropdown = document.getElementById("modalTemplateDropdown");
-      modalTemplateDropdown.addEventListener("change", async () => {
-        const selected = modalTemplateDropdown.value;
-        if (selected === "placeholder") {
-          modalEditor.setValue(`
-<div class="modal">
+       if (modalTemplateDropdown && modalEditor) {
+          modalTemplateDropdown.addEventListener("change", async () => {
+            const selected = modalTemplateDropdown.value;
+            if (selected === "placeholder") {
+              modalEditor.setValue(`
+<div class="modal" style="position: relative; display: block; opacity: 1;">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Placeholder Modal</h5>
-      </div>
-      <div class="modal-body">
-        <p>This is a placeholder modal.</p>
-      </div>
+      <div class="modal-header"> <h5 class="modal-title">Placeholder Modal</h5> </div>
+      <div class="modal-body"> <p>This is a placeholder modal.</p> </div>
     </div>
   </div>
 </div>
-          `.trim());
-        } else {
-          const url = modalTemplateURLs[selected];
-          if (!url) return;
-          try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Failed to load modal template: " + response.status);
-            const templateHTML = await response.text();
-            modalEditor.setValue(templateHTML.trim());
-          } catch (err) {
-            console.error("Error loading modal template:", err);
-            alert("Could not load modal template from " + url);
-          }
-        }
-      });
-      
+              `.trim());
+            } else {
+              const url = modalTemplateURLs[selected];
+              if (!url) return;
+              try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Failed to load modal template: " + response.status);
+                const templateHTML = await response.text();
+                modalEditor.setValue(templateHTML.trim());
+              } catch (err) { console.error("Error loading modal template:", err); alert("Could not load modal template from " + url); }
+            }
+          });
+       }
+
       // Copy code buttons for new editors
-      document.getElementById("copyTileCodeBtn").addEventListener("click", () => {
-        navigator.clipboard.writeText(tileEditor.getValue())
-          .then(() => alert("Tile code copied to clipboard!"))
-          .catch(() => alert("Failed to copy tile code."));
-      });
-      document.getElementById("copyModalCodeBtn").addEventListener("click", () => {
-        navigator.clipboard.writeText(modalEditor.getValue())
-          .then(() => alert("Modal code copied to clipboard!"))
-          .catch(() => alert("Failed to copy modal code."));
-      });
-      
+      const copyTileCodeBtn = document.getElementById("copyTileCodeBtn");
+      const copyModalCodeBtn = document.getElementById("copyModalCodeBtn");
+
+      if (copyTileCodeBtn && tileEditor) {
+          copyTileCodeBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(tileEditor.getValue())
+              .then(() => alert("Tile code copied to clipboard!"))
+              .catch(() => alert("Failed to copy tile code."));
+          });
+       }
+       if (copyModalCodeBtn && modalEditor) {
+          copyModalCodeBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(modalEditor.getValue())
+              .then(() => alert("Modal code copied to clipboard!"))
+              .catch(() => alert("Failed to copy modal code."));
+          });
+       }
+
       // Preview download and copy functionality for the combined preview container
       const previewContainer = document.getElementById("previewContainer");
-      document.getElementById("downloadTileModalBtn").addEventListener("click", () => {
-        html2canvas(previewContainer, {
-          scale: 4,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false
-        }).then(canvas => {
-          const link = document.createElement("a");
-          link.download = "tile-modal-preview.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }).catch(() => alert("Failed to download preview image."));
-      });
-      document.getElementById("copyTileModalPreviewBtn").addEventListener("click", () => {
-        if (!navigator.clipboard || !window.ClipboardItem) {
-          alert("Copying images is not supported in your browser.");
-          return;
+      const downloadTileModalBtn = document.getElementById("downloadTileModalBtn");
+      const copyTileModalPreviewBtn = document.getElementById("copyTileModalPreviewBtn");
+
+       if (downloadTileModalBtn && previewContainer) {
+          downloadTileModalBtn.addEventListener("click", () => {
+            html2canvas(previewContainer, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false })
+            .then(canvas => {
+              const link = document.createElement("a");
+              link.download = "tile-modal-preview.png";
+              link.href = canvas.toDataURL("image/png");
+              link.click();
+            }).catch(() => alert("Failed to download preview image."));
+          });
+       }
+       if (copyTileModalPreviewBtn && previewContainer) {
+          copyTileModalPreviewBtn.addEventListener("click", () => {
+            if (!navigator.clipboard || !window.ClipboardItem) { alert("Copying images is not supported in your browser."); return; }
+            html2canvas(previewContainer, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false })
+            .then(canvas => {
+              canvas.toBlob(blob => {
+                if (!blob) { alert("Failed to generate image blob."); return; }
+                const item = new ClipboardItem({ "image/png": blob });
+                navigator.clipboard.write([item])
+                  .then(() => alert("Preview copied to clipboard!"))
+                  .catch(() => alert("Failed to copy preview image."));
+              }, "image/png");
+            }).catch(() => alert("Failed to copy preview image."));
+          });
+       }
+        // Set initial placeholder content on load
+        if (tileEditor && tileEditor.getValue() === '') {
+           tileTemplateDropdown.dispatchEvent(new Event('change'));
         }
-        html2canvas(previewContainer, {
-          scale: 4,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false
-        }).then(canvas => {
-          canvas.toBlob(blob => {
-            if (!blob) {
-              alert("Failed to generate image blob.");
-              return;
-            }
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item])
-              .then(() => alert("Preview copied to clipboard!"))
-              .catch(() => alert("Failed to copy preview image."));
-          }, "image/png");
-        }).catch(() => alert("Failed to copy preview image."));
-      });
+        if (modalEditor && modalEditor.getValue() === '') {
+           modalTemplateDropdown.dispatchEvent(new Event('change'));
+        }
     });
   </script>
 
-  <!-- LODGING FARE LOGIC -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const fareIconA = document.getElementById("fareIconA");
@@ -1211,7 +1285,7 @@
       const defaultFareValues = {
         hotelName: "The James Nomad",
         address: "22 East 29th Street, New York, NY 10016",
-        distance: "2.46 mi",
+         distance: "2.46 mi",
         price: "$301",
         image: "https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg",
         badgeText: "2 blocks from our HQ office"
@@ -1293,7 +1367,8 @@
           iconElement.style.display = "none";
         } else {
           iconElement.style.display = "";
-          iconElement.src = selectedValue ? `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png` : defaultIconUrl;
+          iconElement.src = selectedValue ?
+          `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png` : defaultIconUrl;
         }
       }
       function reorderIcons() {
@@ -1315,20 +1390,16 @@
         const finalWidth = Math.min(boundingRect.width, maxWidth);
         const finalHeight = boundingRect.height;
         html2canvas(farePreview, {
-          scale: 4,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false,
-          windowWidth: 1400,
-          windowHeight: finalHeight
+          scale: 4, backgroundColor: null, useCORS: true, allowTaint: false,
+          windowWidth: 1400, windowHeight: finalHeight
         }).then((canvas) => {
           canvas.toBlob((blob) => {
-            if (!blob) { alert("Failed to generate image blob."); return; }
+             if (!blob) { alert("Failed to generate image blob."); return; }
             const item = new ClipboardItem({ "image/png": blob });
             navigator.clipboard.write([item]).then(() => { alert("Fare copied to clipboard!"); })
               .catch((err) => { alert("Failed to copy fare. Your browser might not support this feature."); });
           }, "image/png");
-        }).catch((error) => { alert("Failed to capture fare. Check console for details."); });
+         }).catch((error) => { alert("Failed to capture fare. Check console for details."); });
       }
       function downloadFareAsPNG() {
         const boundingRect = farePreview.getBoundingClientRect();
@@ -1336,24 +1407,19 @@
         const finalWidth = Math.min(boundingRect.width, maxWidth);
         const finalHeight = boundingRect.height;
         html2canvas(farePreview, {
-          scale: 4,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false,
-          windowWidth: 1400,
-          windowHeight: finalHeight
+          scale: 4, backgroundColor: null, useCORS: true, allowTaint: false,
+          windowWidth: 1400, windowHeight: finalHeight
         }).then((canvas) => {
           const link = document.createElement("a");
-          link.download = "fare.png";
+           link.download = "fare.png";
           link.href = canvas.toDataURL("image/png");
           link.click();
         }).catch((error) => { alert("Failed to capture fare. Check console for details."); });
       }
-      renderFare();
+      renderFare(); // Initial render
     });
   </script>
 
-  <!-- AIRFARE LOGIC -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const airfareIconA = document.getElementById("airfareIconA");
@@ -1362,12 +1428,8 @@
       const airfareIconD = document.getElementById("airfareIconD");
       const airfareIconE = document.getElementById("airfareIconE");
       const defaultAirfareValues = {
-        name: "NYC to LAX",
-        address: "JFK Airport",
-        distance: "2,469 miles",
-        price: "$550",
-        image: "https://www.example.com/plane.jpg",
-        badgeText: "2 blocks from our HQ office"
+        name: "NYC to LAX", address: "JFK Airport", distance: "2,469 miles",
+        price: "$550", image: "https://www.example.com/plane.jpg", badgeText: "2 blocks from our HQ office"
       };
       const airfareSelectA = document.getElementById("airfareSelectA");
       const airfareSelectB = document.getElementById("airfareSelectB");
@@ -1446,7 +1508,8 @@
           iconElement.style.display = "none";
         } else {
           iconElement.style.display = "";
-          iconElement.src = selectedValue ? `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png` : defaultIconUrl;
+          iconElement.src = selectedValue ?
+          `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png` : defaultIconUrl;
         }
       }
       function reorderAirfareIcons() {
@@ -1459,24 +1522,13 @@
         if (airfareBadgeToggle.checked) airfareIconsContainer.appendChild(airfareBadge);
       }
       function copyAirfareToClipboard() {
-        if (!navigator.clipboard || !window.ClipboardItem) {
-          alert("Copying images to the clipboard is not supported in your browser.");
-          return;
-        }
+        if (!navigator.clipboard || !window.ClipboardItem) { alert("Copying images is not supported."); return; }
         const boundingRect = airfarePreview.getBoundingClientRect();
-        const maxWidth = 900;
-        const finalWidth = Math.min(boundingRect.width, maxWidth);
-        const finalHeight = boundingRect.height;
-        html2canvas(airfarePreview, {
-          scale: 4,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false,
-          windowWidth: 1200,
-          windowHeight: finalHeight
-        }).then((canvas) => {
+        const maxWidth = 900; const finalWidth = Math.min(boundingRect.width, maxWidth); const finalHeight = boundingRect.height;
+        html2canvas(airfarePreview, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false, windowWidth: 1200, windowHeight: finalHeight })
+        .then((canvas) => {
           canvas.toBlob((blob) => {
-            if (!blob) { alert("Failed to generate image blob."); return; }
+             if (!blob) { alert("Failed to generate image blob."); return; }
             const item = new ClipboardItem({ "image/png": blob });
             navigator.clipboard.write([item]).then(() => { alert("Airfare copied to clipboard!"); })
               .catch((err) => { alert("Failed to copy airfare."); });
@@ -1485,89 +1537,18 @@
       }
       function downloadAirfareAsPNG() {
         const boundingRect = airfarePreview.getBoundingClientRect();
-        const maxWidth = 1400;
-        const finalWidth = Math.min(boundingRect.width, maxWidth);
-        const finalHeight = boundingRect.height;
-        html2canvas(airfarePreview, {
-          scale: 4,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false,
-          windowWidth: 1400,
-          windowHeight: finalHeight
-        }).then((canvas) => {
+        const maxWidth = 1400; const finalWidth = Math.min(boundingRect.width, maxWidth); const finalHeight = boundingRect.height;
+        html2canvas(airfarePreview, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false, windowWidth: 1400, windowHeight: finalHeight })
+        .then((canvas) => {
           const link = document.createElement("a");
-          link.download = "airfare.png";
+           link.download = "airfare.png";
           link.href = canvas.toDataURL("image/png");
           link.click();
         }).catch((error) => { alert("Failed to capture airfare."); });
       }
-      renderAirfare();
+      renderAirfare(); // Initial Render
     });
   </script>
 
-  <!-- COPY BANNER & DOWNLOAD BANNER Scripts -->
-  <script>
-    const container = document.querySelector(".container");
-    const buttonWrapper = document.createElement("div");
-    buttonWrapper.classList.add("d-flex", "gap-2", "mt-4");
-    const copyButton = document.createElement("button");
-    copyButton.textContent = "Copy Banner";
-    copyButton.classList.add("btn", "btn-outline-warning");
-    copyButton.onclick = copyBannerToClipboard;
-    const downloadButton = document.createElement("button");
-    downloadButton.textContent = "Download Banner PNG";
-    downloadButton.classList.add("btn", "btn-warning");
-    downloadButton.onclick = downloadBannerAsPNG;
-    buttonWrapper.appendChild(copyButton);
-    buttonWrapper.appendChild(downloadButton);
-    container.appendChild(buttonWrapper);
-    if (!navigator.clipboard || !window.ClipboardItem) {
-      copyButton.disabled = true;
-      copyButton.title = "Copying images to the clipboard is not supported in your browser.";
-    }
-    function downloadBannerAsPNG() {
-      const banner = document.getElementById("pageBanner");
-      const scaleFactor = 3;
-      html2canvas(banner, {
-        scale: scaleFactor,
-        backgroundColor: null,
-        useCORS: true,
-        allowTaint: false
-      }).then((canvas) => {
-        const link = document.createElement("a");
-        link.download = "banner.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      }).catch((error) => {
-        console.error("Error capturing banner:", error);
-        alert("Failed to capture banner. Check console for details.");
-      });
-    }
-    function copyBannerToClipboard() {
-      if (!navigator.clipboard || !window.ClipboardItem) {
-        alert("Copying images to the clipboard is not supported in your browser.");
-        return;
-      }
-      const banner = document.getElementById("pageBanner");
-      const scaleFactor = 3;
-      html2canvas(banner, {
-        scale: scaleFactor,
-        backgroundColor: null,
-        useCORS: true,
-        allowTaint: false
-      }).then((canvas) => {
-        canvas.toBlob((blob) => {
-          if (!blob) { alert("Failed to generate image blob."); return; }
-          const item = new ClipboardItem({ "image/png": blob });
-          navigator.clipboard.write([item]).then(() => { alert("Banner copied to clipboard!"); })
-            .catch((err) => { alert("Failed to copy banner. Your browser might not support this feature."); });
-        }, "image/png");
-      }).catch((error) => {
-        console.error("Error capturing banner:", error);
-        alert("Failed to capture banner. Check console for details.");
-      });
-    }
-  </script>
 </body>
 </html>
