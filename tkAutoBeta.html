@@ -1,6 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+can you replace the banner preview at the top (above the tile & Modal Preview and below the tkaubeta top header banner) and embed this https://supercolorpalette.com/?scp=G0-hsl-FFDA1F-FBAC23-F68128-F25A2C-ED3731 i don't need the left bar, just the ability to manipulate 5 colors. make it full width and tell enough to be functional. update my full html code please. ensuring that the tile & modal preview 1/2/3 remain fully functional and not damaged.<!DOCTYPE html>
+<html lang="en"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>tkAuto</title>
@@ -48,54 +47,42 @@
       max-height: 600px;
       overflow: auto;
     }
-    .tile-editor-preview {
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .live-preview {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      background-color: #ffffff;
-      overflow: auto;
-      min-height: 200px;
-      max-width: 30%;
-      flex-shrink: 0;
-    }
-    .code-editor {
-      position: relative;
-      flex-grow: 1;
+    .code-editor-area { /* New class for styling input areas */
+        position: relative;
+        margin-bottom: 15px; /* Space below code areas */
     }
     .copy-code-btn {
       margin-top: 10px;
     }
-    .CodeMirror {
+    .CodeMirror { /* Keep if using CodeMirror later */
       height: auto;
       min-height: 100px;
-      max-height: 90vh;
+      max-height: 40vh; /* Adjusted max-height */
       overflow: auto;
     }
-    /* Note: We leave the original media queries as they were,
-       but the page is always viewed on desktop as per your instructions.
-    */
     @media (max-width: 1200px) {
-      .tile-editor-preview {
-        flex-direction: column;
-      }
-      .live-preview,
-      .code-editor {
-        width: 100%;
-      }
+      /* Styles for medium/large screens are handled by col-lg-4 */
     }
+    @media (max-width: 992px) {
+        /* Adjust column behavior for smaller screens if needed */
+        /* .row > .col-lg-4 might stack vertically */
+    }
+
     .fare-section {
       margin-top: 40px;
       border: 1px solid #ddd;
       padding: 20px;
       border-radius: 8px;
       background-color: #fdfdfd;
+      /* Ensure sections take full height of the column */
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
+     .fare-section .fare-section-content { /* New class to handle content flex grow if needed */
+        flex-grow: 1;
+     }
+
     .fare-section h4 {
       margin-bottom: 20px;
     }
@@ -115,13 +102,48 @@
     .fare-inputs .form-check {
       margin-left: 10px;
     }
-    /* --- ADDED for always-square hotel image --- */
     #farePreviewImage {
       width: 100%;
       aspect-ratio: 1/1;
       object-fit: cover;
       object-position: center;
     }
+    .label-collapse-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem; /* Add space below label/button line */
+    }
+    /* Ensure previews take available width */
+    [id^="tilePreview"], [id^="modalPreview"] {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background-color: #fff; /* Default white background for previews */
+    }
+    [id^="tilePreview"] {
+        min-height: 100px; /* Example min-height */
+        overflow: auto; /* Added overflow */
+    }
+    /* === Updated Modal Preview Styles === */
+    [id^="modalPreview"] {
+        min-height: 600px; /* Set minimum height */
+        overflow: visible; /* Prevent scrollbars on the container, allow content overflow */
+        /* background-color property removed */
+        /* Other styles from previous version */
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background-color: #fff; /* Keeping white background, remove if transparency needed */
+    }
+    /* === End Updated Styles === */
+
+    .fare-section textarea {
+        min-height: 150px; /* Give textareas a decent default height */
+    }
+
   </style>
 </head>
 <body>
@@ -175,12 +197,12 @@
     </div>
 
     <div id="tileInputs">
-         <div class="form-group fs-6 fw-lighter col-sm-3 pb-2">
-          <label for="numTiles">Number of Tiles:</label>
-          <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles" />
-        </div>
-        <button id="generateInputs" class="btn btn-primary btn-sm">Generate Tile Inputs</button>
-        </div>
+      <div class="form-group fs-6 fw-lighter col-sm-3 pb-2">
+        <label for="numTiles">Number of Tiles:</label>
+        <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles" />
+      </div>
+      <button id="generateInputs" class="btn btn-primary btn-sm">Generate Tile Inputs</button>
+    </div>
 
     <button id="renderTiles" class="btn btn-success btn-sm mt-3" disabled>Render Tiles</button>
     <button id="button2" class="btn btn-success btn-sm mt-3">Render Top Full-Width</button>
@@ -190,1363 +212,945 @@
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h5 class="mb-0">Rendered HTML</h5>
       </div>
-       <pre id="codeView" hidden></pre>
+
+     <pre id="codeView" hidden></pre>
     </div>
 
-    <div class="container fare-section" id="tileModalSection" style="margin-top: 40px;">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h4>Tile & Modal Preview</h4>
-        <button id="toggleTileModalBtn" class="btn btn-primary btn-sm">Open Tile & Modal</button>
-      </div>
-      <div id="tileModalContent" style="display: none;">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group mb-3">
-              <label for="tileHtmlEditor" class="fw-lighter">Tile HTML</label>
-              <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                <select id="tileTemplateDropdown" class="form-select w-auto">
-                   <option value="placeholder" selected>placeholder</option>
-                  <option value="1tileAuto">1tileAuto</option>
-                  <option value="2tileAuto">2tileAuto</option>
-                  <option value="3tileAuto">3tileAuto</option>
-                  <option value="4tileAuto">4tileAuto</option>
-                   <option value="5tileAuto">5tileAuto</option>
-                  <option value="6tileAuto">6tileAuto</option>
-                  <option value="7tileAuto">7tileAuto</option>
-                  <option value="bookNow">bookNow</option>
-                  <option value="flexDates">flexDates</option>
-                  <option value="carbonFoot">carbonFoot</option>
-                  <option value="rateTarget">rateTarget</option>
-                  <option value="gate4">gate4</option>
-                </select>
-                <button id="copyTileCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
+    <div class="row g-3">
+
+   <div id="pageBanner" class="tk_css" style="margin-bottom: 20px;">
+    <iframe src="https://supercolorpalette.com/?scp=G0-hsl-FFDA1F-FBAC23-F68128-F25A2C-ED3731" 
+            style="width: 100%; height: 250px; border: none;" 
+            title="Color Palette Manipulator">
+    </iframe>
+  </div>      <div class="col-lg-4">
+          <div class="container fare-section" id="tileModalSection-1">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h4>Tile & Modal Preview 1</h4>
+                  <button id="toggleTileModalBtn-1" class="btn btn-primary btn-sm">Open Section</button> </div>
+              <div id="tileModalContent-1" class="fare-section-content" style="display: none;"> <label class="fw-lighter small">Tile Preview</label>
+                  <div id="tilePreview-1"></div>
+
+                  <label class="fw-lighter small">Modal Preview</label>
+                  <div id="modalPreview-1"></div>
+
+                  <div class="mt-3 mb-3 d-flex gap-2">
+                    <button id="downloadTileModalBtn-1" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
+                    <button id="copyTileModalPreviewBtn-1" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+                  </div>
+
+                  <div class="code-editor-area mb-3">
+                    <div class="label-collapse-wrapper">
+                        <label for="tileHtmlEditor-1" class="fw-lighter">Tile HTML</label>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-1" aria-expanded="true" aria-controls="tileEditorWrapper-1">
+                            Collapse
+                        </button>
+                    </div>
+                    <div class="collapse show" id="tileEditorWrapper-1">
+                        <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                            <select id="tileTemplateDropdown-1" class="form-select form-select-sm w-auto">
+                                <option value="placeholder" selected>placeholder</option>
+                                <option value="1tileAuto">1tileAuto</option>
+                                <option value="2tileAuto">2tileAuto</option>
+                                <option value="3tileAuto">3tileAuto</option>
+                                <option value="4tileAuto">4tileAuto</option>
+                                <option value="5tileAuto">5tileAuto</option>
+                                <option value="6tileAuto">6tileAuto</option>
+                                <option value="7tileAuto">7tileAuto</option>
+                                <option value="bookNow">bookNow</option>
+                                <option value="flexDates">flexDates</option>
+                                <option value="carbonFoot">carbonFoot</option>
+                                <option value="rateTarget">rateTarget</option>
+                                <option value="gate4">gate4</option>
+                            </select>
+                            <button id="copyTileCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                        </div>
+                        <textarea id="tileHtmlEditor-1" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="code-editor-area mb-3">
+                      <div class="label-collapse-wrapper">
+                          <label for="modalHtmlEditor-1" class="fw-lighter">Modal HTML</label>
+                          <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-1" aria-expanded="true" aria-controls="modalEditorWrapper-1">
+                              Collapse
+                          </button>
+                      </div>
+                      <div class="collapse show" id="modalEditorWrapper-1">
+                          <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                              <select id="modalTemplateDropdown-1" class="form-select form-select-sm w-auto">
+                                 <option value="placeholder" selected>placeholder</option>
+                                 <option value="1modalAuto">1modalAuto</option>
+                                 <option value="2modalAuto">2modalAuto</option>
+                                 <option value="3modalAuto">3modalAuto</option>
+                                 <option value="4modalAuto">4modalAuto</option>
+                                 <option value="5modalAuto">5modalAuto</option>
+                                 <option value="6modalAuto">6modalAuto</option>
+                                 <option value="7modalAuto">7modalAuto</option>
+                                 <option value="8modalAuto">8modalAuto</option>
+                                 <option value="9modalAuto">9modalAuto</option>
+                                 <option value="10modalAuto">10modalAuto</option>
+                              </select>
+                              <button id="copyModalCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                          </div>
+                          <textarea id="modalHtmlEditor-1" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                      </div>
+                  </div>
               </div>
-               <textarea id="tileHtmlEditor" class="form-control" placeholder="Enter HTML for Tile"></textarea>
-            </div>
-            <div class="form-group mb-3">
-              <label for="modalHtmlEditor" class="fw-lighter">Modal HTML</label>
-              <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                 <select id="modalTemplateDropdown" class="form-select w-auto">
-                  <option value="placeholder" selected>placeholder</option>
-                  <option value="1modalAuto">1modalAuto</option>
-                  <option value="2modalAuto">2modalAuto</option>
-                  <option value="3modalAuto">3modalAuto</option>
-                   <option value="4modalAuto">4modalAuto</option>
-                  <option value="5modalAuto">5modalAuto</option>
-                  <option value="6modalAuto">6modalAuto</option>
-                  <option value="7modalAuto">7modalAuto</option>
-                  <option value="8modalAuto">8modalAuto</option>
-                  <option value="9modalAuto">9modalAuto</option>
-                   <option value="10modalAuto">10modalAuto</option>
-                </select>
-                <button id="copyModalCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
+          </div>
+      </div> <div class="col-lg-4">
+          <div class="container fare-section" id="tileModalSection-2">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h4>Tile & Modal Preview 2</h4>
+                   <button id="toggleTileModalBtn-2" class="btn btn-primary btn-sm">Open Section</button>
               </div>
-              <textarea id="modalHtmlEditor" class="form-control" placeholder="Enter HTML for Modal"></textarea>
-             </div>
+              <div id="tileModalContent-2" class="fare-section-content" style="display: none;"> <label class="fw-lighter small">Tile Preview</label>
+                  <div id="tilePreview-2"></div>
+
+                  <label class="fw-lighter small">Modal Preview</label>
+                  <div id="modalPreview-2"></div>
+
+                  <div class="mt-3 mb-3 d-flex gap-2">
+                    <button id="downloadTileModalBtn-2" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
+                    <button id="copyTileModalPreviewBtn-2" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+                  </div>
+
+                  <div class="code-editor-area mb-3">
+                    <div class="label-collapse-wrapper">
+                        <label for="tileHtmlEditor-2" class="fw-lighter">Tile HTML</label>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-2" aria-expanded="true" aria-controls="tileEditorWrapper-2">
+                            Collapse
+                        </button>
+                    </div>
+                    <div class="collapse show" id="tileEditorWrapper-2">
+                        <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                            <select id="tileTemplateDropdown-2" class="form-select form-select-sm w-auto">
+                                <option value="placeholder" selected>placeholder</option>
+                                <option value="1tileAuto">1tileAuto</option>
+                                <option value="2tileAuto">2tileAuto</option>
+                                <option value="3tileAuto">3tileAuto</option>
+                                <option value="4tileAuto">4tileAuto</option>
+                                <option value="5tileAuto">5tileAuto</option>
+                                <option value="6tileAuto">6tileAuto</option>
+                                <option value="7tileAuto">7tileAuto</option>
+                                <option value="bookNow">bookNow</option>
+                                <option value="flexDates">flexDates</option>
+                                <option value="carbonFoot">carbonFoot</option>
+                                <option value="rateTarget">rateTarget</option>
+                                <option value="gate4">gate4</option>
+                            </select>
+                            <button id="copyTileCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                        </div>
+                        <textarea id="tileHtmlEditor-2" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="code-editor-area mb-3">
+                      <div class="label-collapse-wrapper">
+                          <label for="modalHtmlEditor-2" class="fw-lighter">Modal HTML</label>
+                          <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-2" aria-expanded="true" aria-controls="modalEditorWrapper-2">
+                              Collapse
+                          </button>
+                      </div>
+                      <div class="collapse show" id="modalEditorWrapper-2">
+                          <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                              <select id="modalTemplateDropdown-2" class="form-select form-select-sm w-auto">
+                                 <option value="placeholder" selected>placeholder</option>
+                                 <option value="1modalAuto">1modalAuto</option>
+                                 <option value="2modalAuto">2modalAuto</option>
+                                 <option value="3modalAuto">3modalAuto</option>
+                                 <option value="4modalAuto">4modalAuto</option>
+                                 <option value="5modalAuto">5modalAuto</option>
+                                 <option value="6modalAuto">6modalAuto</option>
+                                 <option value="7modalAuto">7modalAuto</option>
+                                 <option value="8modalAuto">8modalAuto</option>
+                                 <option value="9modalAuto">9modalAuto</option>
+                                 <option value="10modalAuto">10modalAuto</option>
+                              </select>
+                              <button id="copyModalCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                          </div>
+                          <textarea id="modalHtmlEditor-2" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                      </div>
+                  </div>
+              </div>
           </div>
-          <div class="col-md-6">
-            <div id="previewContainer">
-              <div id="tilePreview" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; width: 100%;"></div>
-              <div id="modalPreview" style="width: 100%; aspect-ratio: 464 / 600;"></div>
+      </div> <div class="col-lg-4">
+          <div class="container fare-section" id="tileModalSection-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h4>Tile & Modal Preview 3</h4>
+                   <button id="toggleTileModalBtn-3" class="btn btn-primary btn-sm">Open Section</button>
+              </div>
+              <div id="tileModalContent-3" class="fare-section-content" style="display: none;"> <label class="fw-lighter small">Tile Preview</label>
+                  <div id="tilePreview-3"></div>
+
+                  <label class="fw-lighter small">Modal Preview</label>
+                  <div id="modalPreview-3"></div>
+
+                   <div class="mt-3 mb-3 d-flex gap-2">
+                    <button id="downloadTileModalBtn-3" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
+                    <button id="copyTileModalPreviewBtn-3" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+                  </div>
+
+                  <div class="code-editor-area mb-3">
+                    <div class="label-collapse-wrapper">
+                        <label for="tileHtmlEditor-3" class="fw-lighter">Tile HTML</label>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-3" aria-expanded="true" aria-controls="tileEditorWrapper-3">
+                            Collapse
+                        </button>
+                    </div>
+                    <div class="collapse show" id="tileEditorWrapper-3">
+                        <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                            <select id="tileTemplateDropdown-3" class="form-select form-select-sm w-auto">
+                                <option value="placeholder" selected>placeholder</option>
+                                <option value="1tileAuto">1tileAuto</option>
+                                <option value="2tileAuto">2tileAuto</option>
+                                <option value="3tileAuto">3tileAuto</option>
+                                <option value="4tileAuto">4tileAuto</option>
+                                <option value="5tileAuto">5tileAuto</option>
+                                <option value="6tileAuto">6tileAuto</option>
+                                <option value="7tileAuto">7tileAuto</option>
+                                <option value="bookNow">bookNow</option>
+                                <option value="flexDates">flexDates</option>
+                                <option value="carbonFoot">carbonFoot</option>
+                                <option value="rateTarget">rateTarget</option>
+                                <option value="gate4">gate4</option>
+                            </select>
+                            <button id="copyTileCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                        </div>
+                        <textarea id="tileHtmlEditor-3" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="code-editor-area mb-3">
+                      <div class="label-collapse-wrapper">
+                          <label for="modalHtmlEditor-3" class="fw-lighter">Modal HTML</label>
+                          <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-3" aria-expanded="true" aria-controls="modalEditorWrapper-3">
+                              Collapse
+                          </button>
+                      </div>
+                      <div class="collapse show" id="modalEditorWrapper-3">
+                          <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                              <select id="modalTemplateDropdown-3" class="form-select form-select-sm w-auto">
+                                 <option value="placeholder" selected>placeholder</option>
+                                 <option value="1modalAuto">1modalAuto</option>
+                                 <option value="2modalAuto">2modalAuto</option>
+                                 <option value="3modalAuto">3modalAuto</option>
+                                 <option value="4modalAuto">4modalAuto</option>
+                                 <option value="5modalAuto">5modalAuto</option>
+                                 <option value="6modalAuto">6modalAuto</option>
+                                 <option value="7modalAuto">7modalAuto</option>
+                                 <option value="8modalAuto">8modalAuto</option>
+                                 <option value="9modalAuto">9modalAuto</option>
+                                 <option value="10modalAuto">10modalAuto</option>
+                              </select>
+                              <button id="copyModalCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                          </div>
+                          <textarea id="modalHtmlEditor-3" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div> </div> <div class="container fare-section mt-4" id="lodgingFareSection">
+      <h4>Lodging Auto Fare</h4>
+      <div class="row">
+        <div class="col-md-6 fare-inputs">
+          <p class="text-muted mb-2">Choose icons and toggles for A–E:</p>
+          <div class="icon-input-row">
+            <select id="fareSelectA" class="form-select w-auto">
+                <option value="">Default (A.png)</option>
+                <option value="greenLeaf">greenLeaf</option>
+                </select>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="fareToggleA" checked />
+              <label class="form-check-label" for="fareToggleA">Show A</label>
             </div>
-            <div class="mt-2 d-flex gap-2">
-              <button id="downloadTileModalBtn" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
-              <button id="copyTileModalPreviewBtn" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+          </div>
+          <div class="icon-input-row">
+            <select id="fareSelectB" class="form-select w-auto"> <option value="">Default (B.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="fareToggleB" checked /><label class="form-check-label" for="fareToggleB">Show B</label></div>
+          </div>
+          <div class="icon-input-row">
+            <select id="fareSelectC" class="form-select w-auto"> <option value="">Default (C.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="fareToggleC" checked /><label class="form-check-label" for="fareToggleC">Show C</label></div>
+          </div>
+          <div class="icon-input-row">
+            <select id="fareSelectD" class="form-select w-auto"> <option value="">Default (D.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="fareToggleD" checked /><label class="form-check-label" for="fareToggleD">Show D</label></div>
+          </div>
+          <div class="icon-input-row">
+            <select id="fareSelectE" class="form-select w-auto"> <option value="">Default (E.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="fareToggleE" checked /><label class="form-check-label" for="fareToggleE">Show E</label></div>
+          </div>
+
+
+          <p class="text-muted mt-3 mb-1">Badge Settings:</p>
+          <div class="icon-input-row">
+            <input type="text" id="fareBadgeText" class="form-control w-auto" value="2 blocks from our HQ office" />
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="fareBadgeToggle" checked />
+              <label class="form-check-label" for="fareBadgeToggle">Show Badge</label>
             </div>
-          </div>
-         </div>
-      </div> </div> </div> <div class="container fare-section" id="lodgingFareSection">
-    <h4>Lodging Auto Fare</h4>
-    <div class="row">
-      <div class="col-md-6 fare-inputs">
-        <p class="text-muted mb-2">Choose icons and toggles for A–E:</p>
-        <div class="icon-input-row">
-          <select id="fareSelectA" class="form-select w-auto">
-             <option value="">Default (A.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-             <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-             <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="fareToggleA" checked />
-            <label class="form-check-label" for="fareToggleA">Show A</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-          <select id="fareSelectB" class="form-select w-auto">
-            <option value="">Default (B.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-             <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-             <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="fareToggleB" checked />
-            <label class="form-check-label" for="fareToggleB">Show B</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-           <select id="fareSelectC" class="form-select w-auto">
-            <option value="">Default (C.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-             <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-             <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="fareToggleC" checked />
-             <label class="form-check-label" for="fareToggleC">Show C</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-          <select id="fareSelectD" class="form-select w-auto">
-            <option value="">Default (D.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-             <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-             <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-             <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="fareToggleD" checked />
-            <label class="form-check-label" for="fareToggleD">Show D</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-           <select id="fareSelectE" class="form-select w-auto">
-            <option value="">Default (E.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-             <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-             <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="fareToggleE" checked />
-             <label class="form-check-label" for="fareToggleE">Show E</label>
           </div>
         </div>
 
-        <p class="text-muted mt-3 mb-1">Badge Settings:</p>
-        <div class="icon-input-row">
-          <input type="text" id="fareBadgeText" class="form-control w-auto" value="2 blocks from our HQ office" />
-          <div class="form-check form-switch">
-             <input class="form-check-input" type="checkbox" id="fareBadgeToggle" checked />
-            <label class="form-check-label" for="fareBadgeToggle">Show Badge</label>
+        <div class="col-md-6 fare-inputs">
+          <p class="text-muted mb-2">Hotel Info:</p>
+          <div class="mb-2">
+              <label for="fareHotelName" class="form-label">Hotel Name</label>
+            <input type="text" id="fareHotelName" class="form-control" value="The James Nomad" />
+          </div>
+          <div class="mb-2">
+            <label for="fareAddress" class="form-label">Address</label>
+            <input type="text" id="fareAddress" class="form-control" value="22 East 29th Street, New York, NY 10016" />
+          </div>
+          <div class="mb-2">
+            <label for="fareDistance" class="form-label">Distance</label>
+            <input type="text" id="fareDistance" class="form-control" value="2.46 mi" />
+          </div>
+          <div class="mb-2">
+            <label for="farePrice" class="form-label">Price</label>
+            <input type="text" id="farePrice" class="form-control" value="$301" />
+          </div>
+          <div class="mb-2">
+            <label for="fareImage" class="form-label">Hotel Image URL</label>
+              <input type="text" id="fareImage" class="form-control" value="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" />
+          </div>
+          <div class="mb-2">
+            <label for="lodgingWidth" class="form-label">Lodging Container Width (px)</label>
+            <input type="number" id="lodgingWidth" class="form-control w-auto" value="850" />
           </div>
         </div>
       </div>
-
-      <div class="col-md-6 fare-inputs">
-        <p class="text-muted mb-2">Hotel Info:</p>
-        <div class="mb-2">
-           <label for="fareHotelName" class="form-label">Hotel Name</label>
-          <input type="text" id="fareHotelName" class="form-control" value="The James Nomad" />
-        </div>
-        <div class="mb-2">
-          <label for="fareAddress" class="form-label">Address</label>
-          <input type="text" id="fareAddress" class="form-control" value="22 East 29th Street, New York, NY 10016" />
-        </div>
-        <div class="mb-2">
-          <label for="fareDistance" class="form-label">Distance</label>
-          <input type="text" id="fareDistance" class="form-control" value="2.46 mi" />
-        </div>
-        <div class="mb-2">
-          <label for="farePrice" class="form-label">Price</label>
-          <input type="text" id="farePrice" class="form-control" value="$301" />
-        </div>
-        <div class="mb-2">
-          <label for="fareImage" class="form-label">Hotel Image URL</label>
-           <input type="text" id="fareImage" class="form-control" value="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" />
-        </div>
-        <div class="mb-2">
-          <label for="lodgingWidth" class="form-label">Lodging Container Width (px)</label>
-          <input type="number" id="lodgingWidth" class="form-control w-auto" value="850" />
-        </div>
+      <div class="mt-3">
+        <button id="fareResetBtn" class="btn btn-secondary btn-sm">Reset Fare</button>
+          <button id="fareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
+        <button id="copyFareBtn" class="btn btn-outline-warning btn-sm">Copy Fare</button>
+        <button id="downloadFareBtn" class="btn btn-warning btn-sm">Download Fare PNG</button>
       </div>
-    </div>
-    <div class="mt-3">
-      <button id="fareResetBtn" class="btn btn-secondary btn-sm">Reset Fare</button>
-       <button id="fareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
-      <button id="copyFareBtn" class="btn btn-outline-warning btn-sm">Copy Fare</button>
-      <button id="downloadFareBtn" class="btn btn-warning btn-sm">Download Fare PNG</button>
-    </div>
 
-    <div class="mt-4" id="farePreview">
-      <div class="card border-1 p-3 pb-5 fare-preview-card" style="min-height: 200px;">
-        <div class="row g-3">
-          <div class="col-3">
-            <img id="farePreviewImage" src="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" alt="The James Nomad" class="img-fluid rounded" />
-          </div>
-          <div class="col-md-7">
-            <div class="d-flex align-items-center fare-preview-icons" id="fareIconsContainer">
-              <img id="fareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
-              <img id="fareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" />
-              <img id="fareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" />
-               <img id="fareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
-              <img id="fareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
-              <span class="badge d-flex align-items-center px-3" id="fareBadge"
-                    style="background-color: #e7f0ff; color: #1d2d3e; font-size: 0.9rem; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
-                2 blocks from our HQ office
-              </span>
+      <div class="mt-4" id="farePreview">
+        <div class="card border-1 p-3 pb-5 fare-preview-card" style="min-height: 200px;">
+          <div class="row g-3">
+            <div class="col-3">
+              <img id="farePreviewImage" src="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" alt="The James Nomad" class="img-fluid rounded" />
             </div>
-            <h5 class="fw-bold mt-4" id="farePreviewHotelName">The James Nomad</h5>
-            <p class="text-muted mb-1">
-              <span id="farePreviewAddress">22 East 29th Street, New York, NY 10016</span>
-              <i class="fa-solid fa-location-dot"></i>
-              <span id="farePreviewDistance">2.46 mi</span>
-            </p>
-          </div>
-          <div class="col-md-2 text-end d-flex flex-column justify-content-end">
-            <p class="mb-1 text-muted small mt-3">From:</p>
-            <h4 class="fw-bold text-dark" id="farePreviewPrice">$301</h4>
-            <a href="#" class="btn btn-outline-secondary btn-sm"
-               style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
-              View Rooms
-            </a>
+            <div class="col-md-7">
+              <div class="d-flex align-items-center fare-preview-icons" id="fareIconsContainer">
+                <img id="fareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
+                <img id="fareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" />
+                <img id="fareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" />
+                  <img id="fareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
+                <img id="fareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
+                <span class="badge d-flex align-items-center px-3 ms-2" id="fareBadge"
+                      style="background-color: #e7f0ff; color: #1d2d3e; font-size: 0.9rem; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
+                  2 blocks from our HQ office
+                </span>
+              </div>
+              <h5 class="fw-bold mt-4" id="farePreviewHotelName">The James Nomad</h5>
+              <p class="text-muted mb-1">
+                <span id="farePreviewAddress">22 East 29th Street, New York, NY 10016</span>
+                <i class="fa-solid fa-location-dot"></i> <span id="farePreviewDistance">2.46 mi</span>
+              </p>
+            </div>
+            <div class="col-md-2 text-end d-flex flex-column justify-content-end">
+              <p class="mb-1 text-muted small mt-3">From:</p>
+              <h4 class="fw-bold text-dark" id="farePreviewPrice">$301</h4>
+              <a href="#" class="btn btn-outline-secondary btn-sm"
+                  style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
+                View Rooms
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div> <div class="container fare-section" id="airfareSection">
-    <h4>Airfare Auto Fare</h4>
-    <div class="row">
-      <div class="col-md-6 fare-inputs">
-        <p class="text-muted mb-2">Choose icons and toggles for A–E:</p>
-        <div class="icon-input-row">
-          <select id="airfareSelectA" class="form-select w-auto">
-            <option value="">Default (A.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-             <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-             <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="airfareToggleA" checked />
-            <label class="form-check-label" for="airfareToggleA">Show A</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-          <select id="airfareSelectB" class="form-select w-auto">
-            <option value="">Default (B.png)</option>
-             <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-             <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-             <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="airfareToggleB" checked />
-            <label class="form-check-label" for="airfareToggleB">Show B</label>
-          </div>
-        </div>
+    </div> <div class="container fare-section mt-4" id="airfareSection">
+     <h4>Airfare Auto Fare</h4>
+     <div class="row">
+       <div class="col-md-6 fare-inputs">
+         <p class="text-muted mb-2">Choose icons and toggles for A–E:</p>
          <div class="icon-input-row">
-          <select id="airfareSelectC" class="form-select w-auto">
-            <option value="">Default (C.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-             <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-             <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-             <input class="form-check-input" type="checkbox" id="airfareToggleC" checked />
-            <label class="form-check-label" for="airfareToggleC">Show C</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-          <select id="airfareSelectD" class="form-select w-auto">
-            <option value="">Default (D.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-             <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-            <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-            <option value="layover">layover</option>
-             <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-            <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-             <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="airfareToggleD" checked />
-            <label class="form-check-label" for="airfareToggleD">Show D</label>
-          </div>
-        </div>
-        <div class="icon-input-row">
-           <select id="airfareSelectE" class="form-select w-auto">
-            <option value="">Default (E.png)</option>
-            <option value="greenLeaf">greenLeaf</option>
-            <option value="leaf">leaf</option>
-            <option value="business">business</option>
-            <option value="breakfast">breakfast</option>
-            <option value="dinova">dinova</option>
-            <option value="fitness">fitness</option>
-             <option value="credits">credits</option>
-            <option value="DEI">DEI</option>
-             <option value="layover">layover</option>
-            <option value="EVCharge">EVCharge</option>
-            <option value="minorityOwned">minorityOwned</option>
-            <option value="ontime">ontime</option>
-            <option value="parking">parking</option>
-             <option value="peloton">peloton</option>
-            <option value="womenFloor">womenFloor</option>
-            <option value="security">security</option>
-            <option value="preferred">preferred</option>
-            <option value="option18">option18</option>
-          </select>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="airfareToggleE" checked />
-             <label class="form-check-label" for="airfareToggleE">Show E</label>
-          </div>
-        </div>
-
-        <p class="text-muted mt-3 mb-1">Badge Settings:</p>
-        <div class="icon-input-row">
-          <input type="text" id="airfareBadgeText" class="form-control w-auto" value="2 blocks from our HQ office" />
-          <div class="form-check form-switch">
-             <input class="form-check-input" type="checkbox" id="airfareBadgeToggle" checked />
-            <label class="form-check-label" for="airfareBadgeToggle">Show Badge</label>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 fare-inputs">
-        <p class="text-muted mb-2">Airfare Info:</p>
-        <div class="mb-2">
-          <label for="airfareName" class="form-label">Airfare Name</label>
-          <input type="text" id="airfareName" class="form-control" value="NYC to LAX" />
-        </div>
-        <div class="mb-2">
-          <label for="airfareAddress" class="form-label">Origin</label>
-          <input type="text" id="airfareAddress" class="form-control" value="JFK Airport" />
-        </div>
-        <div class="mb-2">
-          <label for="airfareDistance" class="form-label">Distance</label>
-          <input type="text" id="airfareDistance" class="form-control" value="2,469 miles" />
+           <select id="airfareSelectA" class="form-select w-auto">
+                <option value="">Default (A.png)</option>
+                <option value="greenLeaf">greenLeaf</option>
+                </select>
+            <div class="form-check form-switch">
+             <input class="form-check-input" type="checkbox" id="airfareToggleA" checked />
+             <label class="form-check-label" for="airfareToggleA">Show A</label>
            </div>
-        <div class="mb-2">
-          <label for="airfarePrice" class="form-label">Price</label>
-          <input type="text" id="airfarePrice" class="form-control" value="$550" />
-        </div>
-        <div class="mb-2">
-          <label for="airfareImage" class="form-label">Airfare Image URL</label>
-          <input type="text" id="airfareImage" class="form-control" value="https://www.example.com/plane.jpg" />
-        </div>
+         </div>
+         <div class="icon-input-row">
+           <select id="airfareSelectB" class="form-select w-auto"> <option value="">Default (B.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+           <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="airfareToggleB" checked /><label class="form-check-label" for="airfareToggleB">Show B</label></div>
+         </div>
+          <div class="icon-input-row">
+           <select id="airfareSelectC" class="form-select w-auto"> <option value="">Default (C.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+           <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="airfareToggleC" checked /><label class="form-check-label" for="airfareToggleC">Show C</label></div>
+         </div>
+          <div class="icon-input-row">
+           <select id="airfareSelectD" class="form-select w-auto"> <option value="">Default (D.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+           <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="airfareToggleD" checked /><label class="form-check-label" for="airfareToggleD">Show D</label></div>
+         </div>
+          <div class="icon-input-row">
+           <select id="airfareSelectE" class="form-select w-auto"> <option value="">Default (E.png)</option> <option value="greenLeaf">greenLeaf</option></select>
+           <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="airfareToggleE" checked /><label class="form-check-label" for="airfareToggleE">Show E</label></div>
+         </div>
+
+         <p class="text-muted mt-3 mb-1">Badge Settings:</p>
+         <div class="icon-input-row">
+           <input type="text" id="airfareBadgeText" class="form-control w-auto" value="Preferred Airline" />
+           <div class="form-check form-switch">
+               <input class="form-check-input" type="checkbox" id="airfareBadgeToggle" checked />
+             <label class="form-check-label" for="airfareBadgeToggle">Show Badge</label>
+           </div>
+         </div>
+       </div>
+       <div class="col-md-6 fare-inputs">
+         <p class="text-muted mb-2">Airfare Info:</p>
          <div class="mb-2">
-          <label for="airfareWidth" class="form-label">Airfare Container Width (px)</label>
-          <input type="number" id="airfareWidth" class="form-control w-auto" value="1000" />
-        </div>
+           <label for="airfareName" class="form-label">Airfare Name/Route</label>
+           <input type="text" id="airfareName" class="form-control" value="United 456" />
+         </div>
+         <div class="mb-2">
+           <label for="airfareOrigin" class="form-label">Origin</label>
+           <input type="text" id="airfareOrigin" class="form-control" value="JFK 10:00 AM" />
+         </div>
+          <div class="mb-2">
+           <label for="airfareDestination" class="form-label">Destination</label>
+           <input type="text" id="airfareDestination" class="form-control" value="LAX 1:00 PM" />
+         </div>
+         <div class="mb-2">
+           <label for="airfareDuration" class="form-label">Duration/Stops</label>
+           <input type="text" id="airfareDuration" class="form-control" value="6h 0m / Nonstop" />
+         </div>
+         <div class="mb-2">
+           <label for="airfarePrice" class="form-label">Price</label>
+           <input type="text" id="airfarePrice" class="form-control" value="$550" />
+         </div>
+         <div class="mb-2">
+             <label for="airfareAirlineLogo" class="form-label">Airline Logo URL</label>
+             <input type="text" id="airfareAirlineLogo" class="form-control" value="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/airline_logo_placeholder.png" />
+         </div>
+          <div class="mb-2">
+            <label for="airfareWidth" class="form-label">Airfare Container Width (px)</label>
+            <input type="number" id="airfareWidth" class="form-control w-auto" value="850" />
+          </div>
+       </div>
+     </div>
+      <div class="mt-3">
+        <button id="airfareResetBtn" class="btn btn-secondary btn-sm">Reset Fare</button>
+          <button id="airfareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
+        <button id="copyAirfareBtn" class="btn btn-outline-warning btn-sm">Copy Fare</button>
+        <button id="downloadAirfareBtn" class="btn btn-warning btn-sm">Download Fare PNG</button>
       </div>
-    </div>
-    <div class="mt-3">
-      <button id="airfareResetBtn" class="btn btn-secondary btn-sm">Reset Airfare</button>
-      <button id="airfareRenderBtn" class="btn btn-primary btn-sm">Render Airfare</button>
-      <button id="copyAirfareBtn" class="btn btn-outline-warning btn-sm">Copy Airfare</button>
-      <button id="downloadAirfareBtn" class="btn btn-warning btn-sm">Download Airfare PNG</button>
-    </div>
-    <div class="mt-4" id="airfarePreview">
-      <div class="card border-1 shadow p-3 fare-preview-card">
-        <div class="row g-3">
-          <div class="col-3">
-            <img id="airfarePreviewImage" src="https://www.example.com/plane.jpg" alt="Sample Airfare" class="img-fluid rounded" />
+
+      <div class="mt-4" id="airfarePreviewContainer">
+          <div class="card border-1 p-3 fare-preview-card" style="min-height: 150px; background-color: #f8f9fa;">
+             <p class="text-muted text-center">Airfare preview appears here after clicking "Render Fare".</p>
           </div>
-          <div class="col-md-7">
-            <div class="d-flex align-items-center fare-preview-icons" id="airfareIconsContainer">
-               <img id="airfareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" />
-              <img id="airfareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" />
-              <img id="airfareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" />
-              <img id="airfareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
-              <img id="airfareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
-               <span class="badge d-flex align-items-center px-3" id="airfareBadge" style="background-color: #e7f0ff; color: #1d2d3e; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
-                2 blocks from our HQ office
-              </span>
-            </div>
-            <h5 class="fw-bold mt-2" id="airfarePreviewName">NYC to LAX</h5>
-            <p class="text-muted mb-1">
-              <span id="airfarePreviewAddress">JFK Airport</span>
-               <i class="fa-solid fa-location-dot"></i>
-              <span id="airfarePreviewDistance">2,469 miles</span>
-            </p>
-          </div>
-          <div class="col-md-2 text-end d-flex flex-column justify-content-end">
-            <p class="mb-1 text-muted small mt-3">From:</p>
-            <h4 class="fw-bold text-dark" id="airfarePreviewPrice">$550</h4>
-             <a href="#" class="btn btn-outline-secondary btn-sm" style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
-              Book Flight
-            </a>
-          </div>
-        </div>
       </div>
-    </div>
-  </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+   </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const bannerTypeSelector = document.getElementById("bannerType");
-      const cityInputs = document.getElementById("cityInputs");
-      const bannerContent = document.getElementById("bannerContent");
-      const cityNameInput = document.getElementById("cityName");
-      const cityImageUrlInput = document.getElementById("cityImageUrl");
-      const tileInputsContainer = document.getElementById("tileInputs");
-      const numTilesInput = document.getElementById("numTiles");
-      const generateInputsButton = document.getElementById("generateInputs");
-      const renderTilesButton = document.getElementById("renderTiles");
-      const button2 = document.getElementById("button2");
-      const codeView = document.getElementById("codeView");
-      const copyBannerBtn = document.getElementById("copyBannerBtn"); // Get existing button
-      const downloadBannerBtn = document.getElementById("downloadBannerBtn"); // Get existing button
-      let tileEditors = [];
-      const tileContainer = document.createElement("div");
-      tileContainer.id = "tileContainer";
-      tileContainer.className = "col-12";
-      tileContainer.style.borderRadius = "10px 0 0 10px";
-      const nestedRow = document.createElement("div");
-      nestedRow.className = "row g-0";
-      tileContainer.appendChild(nestedRow);
+    document.addEventListener("DOMContentLoaded", function () {
+        // --- Banner Logic (Unaffected) ---
+        const bannerTypeSelect = document.getElementById("bannerType");
+        const cityInputsDiv = document.getElementById("cityInputs");
+        const cityNameInput = document.getElementById("cityName");
+        const cityImageUrlInput = document.getElementById("cityImageUrl");
+        const bannerContentDiv = document.getElementById("bannerContent");
+        const pageBannerDiv = document.getElementById('pageBanner');
+        const copyBannerBtn = document.getElementById('copyBannerBtn');
+        const downloadBannerBtn = document.getElementById('downloadBannerBtn');
 
-      // Define banner copy/download functions (ensure defined only once)
-      function downloadBannerAsPNG() {
-        const banner = document.getElementById("pageBanner");
-        if (!banner) {
-          console.error("Banner element not found for download.");
-          alert("Failed to find banner element.");
-          return;
-        }
-        const scaleFactor = 3;
-        html2canvas(banner, {
-          scale: scaleFactor,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false
-        }).then((canvas) => {
-          const link = document.createElement("a");
-          link.download = "banner.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }).catch((error) => {
-          console.error("Error capturing banner:", error);
-          alert("Failed to capture banner. Check console for details.");
-        });
-      }
+        function updateBanner() {
+            const type = bannerTypeSelect.value;
+            const city = cityNameInput.value;
+            const imageUrl = cityImageUrlInput.value;
+            let bannerHTML = "";
 
-      function copyBannerToClipboard() {
-        if (!navigator.clipboard || !window.ClipboardItem) {
-          alert("Copying images to the clipboard is not supported in your browser.");
-          copyBannerBtn.disabled = true; // Disable button if not supported
-          copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
-          return;
-        }
-        const banner = document.getElementById("pageBanner");
-         if (!banner) {
-          console.error("Banner element not found for copy.");
-          alert("Failed to find banner element.");
-          return;
-        }
-        const scaleFactor = 3;
-        html2canvas(banner, {
-          scale: scaleFactor,
-          backgroundColor: null,
-          useCORS: true,
-          allowTaint: false
-        }).then((canvas) => {
-          canvas.toBlob((blob) => {
-            if (!blob) { alert("Failed to generate image blob."); return; }
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => { alert("Banner copied to clipboard!"); })
-              .catch((err) => {
-                  console.error("Failed to copy image:", err);
-                  alert("Failed to copy banner. Your browser might not support this feature.");
-               });
-          }, "image/png");
-        }).catch((error) => {
-          console.error("Error capturing banner:", error);
-          alert("Failed to capture banner. Check console for details.");
-        });
-      }
-
-      // Attach listeners to existing buttons
-      if (copyBannerBtn) {
-          copyBannerBtn.addEventListener('click', copyBannerToClipboard);
-          // Initial check for clipboard support
-          if (!navigator.clipboard || !window.ClipboardItem) {
-             copyBannerBtn.disabled = true;
-             copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
-          }
-      } else {
-          console.error("Copy Banner Button not found");
-      }
-      if (downloadBannerBtn) {
-          downloadBannerBtn.addEventListener('click', downloadBannerAsPNG);
-      } else {
-          console.error("Download Banner Button not found");
-      }
-
-
-      function updateBannerType() {
-        bannerContent.innerHTML = ""; // Clear previous content
-        const bannerType = bannerTypeSelector.value;
-        const cityName = cityNameInput.value.trim();
-        const cityImageUrl = cityImageUrlInput.value.trim();
-        if (bannerType === "search") {
-          cityInputs.classList.remove("d-none");
-          const cityCol = document.createElement("div");
-          cityCol.className = "col-2";
-          cityCol.style.cssText = "display: flex; flex-direction: column;";
-          cityCol.innerHTML = `
-            <div class="card card-full"
-                style="height: 100%; min-height: 120px; border-radius: 8px 0 0 8px;
-                        background-image: url('${cityImageUrl}');
-                        background-repeat: no-repeat; background-position: center center;
-                        background-size: cover;">
-              <div class="card-img-overlay bg-gradient opacity-30 p-0">
-                <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">${cityName}</h4>
-              </div>
-            </div>
-          `;
-          const tileCol = document.createElement("div");
-          tileCol.className = "col-10 d-flex flex-wrap align-items-stretch";
-          tileCol.appendChild(tileContainer); // Append the container for tiles
-          const rowContainer = document.createElement("div");
-          rowContainer.className = "row g-0";
-          rowContainer.appendChild(cityCol);
-          rowContainer.appendChild(tileCol);
-          bannerContent.appendChild(rowContainer);
-        } else { // "anytime"
-          cityInputs.classList.add("d-none");
-          const tileCol = document.createElement("div");
-          tileCol.className = "col-12 d-flex flex-wrap align-items-stretch";
-          tileCol.appendChild(tileContainer); // Append the container for tiles
-          const rowContainer = document.createElement("div");
-          rowContainer.className = "row g-0";
-          rowContainer.appendChild(tileCol);
-          bannerContent.appendChild(rowContainer);
-        }
-        // Re-render tiles if they exist
-        if (tileEditors.length > 0) {
-           // Decide which render mode was last used or default to one
-           // For simplicity, let's assume default 'renderTilesMode' if needed after type change
-           renderTilesMode();
-        }
-      }
-
-      function renderTilesMode() {
-        nestedRow.innerHTML = ""; // Clear previous tiles in the nested row
-        let renderedHTML = "";
-        const totalTiles = tileEditors.length;
-        let i = 0;
-        while (i < totalTiles) {
-          const rowSize = Math.min(3, totalTiles - i);
-          const rowDiv = document.createElement("div");
-          rowDiv.classList.add("row", "g-0");
-          let colClass = (rowSize === 2) ? "col-6" : ((rowSize === 1) ? "col-12" : "col-4");
-          let groupHTML = "";
-          for (let r = 0; r < rowSize; r++) {
-            const index = i + r;
-            const tileHTML = tileEditors[index].getValue().trim() ||
-              `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-            const tileWrapper = document.createElement("div");
-            tileWrapper.classList.add("tile", colClass);
-            tileWrapper.innerHTML = tileHTML;
-            rowDiv.appendChild(tileWrapper); // Append tile to the visual row
-            groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`; // For code view
-          }
-          nestedRow.appendChild(rowDiv); // Append the visual row to the nested container
-          renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
-          i += rowSize;
-        }
-        codeView.textContent = `
-<div class="col-12" id="tileContainer" style="border-radius: 10px 0 0 10px;">
-  <div class="row g-0">
-    ${renderedHTML}
-  </div>
-</div>`;
-        codeView.hidden = false;
-      }
-
-      function renderTopFullWidthMode() {
-        nestedRow.innerHTML = ""; // Clear previous tiles
-        let renderedHTML = "";
-        const totalTiles = tileEditors.length;
-        if (totalTiles > 0) {
-          const rowDiv = document.createElement("div");
-          rowDiv.classList.add("row", "g-0");
-          const tileHTML = tileEditors[0].getValue().trim() ||
-            `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-          const tileWrapper = document.createElement("div");
-          tileWrapper.classList.add("tile", "col-12");
-          tileWrapper.innerHTML = tileHTML;
-          rowDiv.appendChild(tileWrapper);
-          nestedRow.appendChild(rowDiv);
-          renderedHTML += `
-<div class="row g-0">
-  <div class="tile col-12">${tileHTML}</div>
-</div>\n`;
-          let leftover = totalTiles - 1;
-          let currentIndex = 1;
-          if (leftover === 3) {
-            const rowDiv2 = document.createElement("div");
-            rowDiv2.classList.add("row", "g-0");
-            let leftoverHTML = "";
-            for (let r = 0; r < 3; r++) {
-              const index = currentIndex + r;
-              const leftoverTileHTML = tileEditors[index].getValue().trim() ||
-                `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-              const tileWrapper2 = document.createElement("div");
-              tileWrapper2.classList.add("tile", "col-4");
-              tileWrapper2.innerHTML = leftoverTileHTML;
-              rowDiv2.appendChild(tileWrapper2);
-              leftoverHTML += `<div class="tile col-4">${leftoverTileHTML}</div>\n`;
-            }
-            nestedRow.appendChild(rowDiv2);
-            leftover = 0;
-            renderedHTML += `<div class="row g-0">\n${leftoverHTML}</div>\n`;
-          } else {
-            while (leftover > 0) {
-              const rowSize = Math.min(2, leftover);
-              const rowDiv2 = document.createElement("div");
-              rowDiv2.classList.add("row", "g-0");
-              let leftoverHTML = "";
-              const colClass = (rowSize === 2) ? "col-6" : "col-12";
-              for (let r = 0; r < rowSize; r++) {
-                const index = currentIndex + r;
-                const leftoverTileHTML = tileEditors[index].getValue().trim() ||
-                  `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-                const tileWrapper2 = document.createElement("div");
-                tileWrapper2.classList.add("tile", colClass);
-                tileWrapper2.innerHTML = leftoverTileHTML;
-                rowDiv2.appendChild(tileWrapper2);
-                leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
-              }
-              nestedRow.appendChild(rowDiv2);
-              renderedHTML += `<div class="row g-0">\n${leftoverHTML}</div>\n`;
-              leftover -= rowSize;
-              currentIndex += rowSize;
-            }
-          }
-        }
-        codeView.textContent = `
-<div class="col-12" id="tileContainer" style="border-radius: 10px 0 0 10px;">
-  <div class="row g-0">
-    ${renderedHTML}
-  </div>
-</div>`;
-        codeView.hidden = false;
-      }
-
-      bannerTypeSelector.addEventListener("change", updateBannerType);
-      // Template URLs for BANNER tiles
-      const templateURLs = {
-        "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
-        "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
-        "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html",
-        "4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html",
-        "5tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/5tileAuto.html",
-        "6tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/6tileAuto.html",
-        "7tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/7tileAuto.html",
-        "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html",
-        "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html",
-        "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html",
-         "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
-        "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
-      };
-      // --- Logic for Generating BANNER Tile Inputs ---
-       if (generateInputsButton) {
-          generateInputsButton.addEventListener("click", () => {
-            const numTiles = parseInt(numTilesInput.value, 10);
-            if (!numTiles || numTiles < 1) {
-              alert("Please enter a valid number of tiles for the banner.");
-              return;
-            }
-            const inputsTargetDiv = document.getElementById('tileInputs'); // Get the container
-            // Clear only the dynamically generated inputs, not the initial numTiles/button
-            inputsTargetDiv.querySelectorAll('.form-group.mb-3').forEach(el => el.remove());
-            tileEditors = []; // Reset editors array for banner tiles
-
-
-            for (let i = 0; i < numTiles; i++) {
-              const inputGroup = document.createElement("div");
-              inputGroup.classList.add("form-group", "mb-3"); // Class for easy clearing
-              const editorId = `codeMirrorEditor${i + 1}`;
-              const previewId = `livePreview${i + 1}`;
-              // Use innerHTML to create the structure for each banner tile input
-              inputGroup.innerHTML = `
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <label for="${editorId}" class="me-2">Banner Tile ${i + 1}</label>
-                </div>
-                <div class="tile-editor-preview">
-                  <div class="live-preview" id="${previewId}"></div>
-                  <div class="code-editor d-flex flex-column">
-                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                      <select class="banner-tile-template-dropdown form-select w-auto">
-                        <option value="placeholder" selected>placeholder</option>
-                        <option value="1tileAuto">1tileAuto</option>
-                        <option value="2tileAuto">2tileAuto</option>
-                        <option value="3tileAuto">3tileAuto</option>
-                         <option value="4tileAuto">4tileAuto</option>
-                        <option value="5tileAuto">5tileAuto</option>
-                        <option value="6tileAuto">6tileAuto</option>
-                        <option value="7tileAuto">7tileAuto</option>
-                        <option value="bookNow">bookNow</option>
-                         <option value="flexDates">flexDates</option>
-                        <option value="carbonFoot">carbonFoot</option>
-                        <option value="rateTarget">rateTarget</option>
-                        <option value="gate4">gate4</option>
-                      </select>
-                       <button type="button" class="btn btn-sm btn-outline-primary copy-banner-tile-code-btn">Copy Code</button>
+            if (type === "search") {
+                cityInputsDiv.classList.remove("d-none");
+                bannerHTML = `
+                    <div class="col-md-9 ps-4 pt-3 pb-3">
+                        <h4 class="fw-bold" style="color: #101828;">Plan smarter for your trip to ${city || 'your destination'}</h4>
+                        <p style="color: #475467;">Tripkicks helps you find the best travel options while keeping costs and carbon emissions in check.</p>
+                        <a href="#" target="_blank" style="color: #005eb8; text-decoration: none; font-weight: 600;">Explore Tips for ${city || 'your trip'} <span style="margin-left: 5px;">→</span></a>
                     </div>
-                    <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Banner Tile ${i + 1}"></textarea>
-                  </div>
-                </div>
-              `;
-              inputsTargetDiv.appendChild(inputGroup); // Append to the container
-
-              const textarea = inputGroup.querySelector(`#${editorId}`);
-              const editor = CodeMirror.fromTextArea(textarea, {
-                mode: "htmlmixed", theme: "dracula", lineNumbers: true,
-                styleActiveLine: true, lineWrapping: true, autoCloseTags: true, matchBrackets: true
-              });
-              tileEditors.push(editor); // Add editor to the array for banner tiles
-
-              editor.on("change", () => {
-                const content = editor.getValue();
-                const previewDiv = document.getElementById(previewId);
-                if (previewDiv) previewDiv.innerHTML = content;
-                 // Consider if live rendering the main banner is desired here.
-                 // renderTilesMode(); // Uncomment if banner should update live as tile code changes
-              });
-
-              const copyButton = inputGroup.querySelector(".copy-banner-tile-code-btn");
-              copyButton.addEventListener("click", () => {
-                const content = editor.getValue();
-                navigator.clipboard.writeText(content)
-                  .then(() => alert("Banner tile code copied to clipboard!"))
-                  .catch((err) => { console.error("Failed to copy: ", err); alert("Failed to copy code."); });
-              });
-
-              const templateDropdown = inputGroup.querySelector(".banner-tile-template-dropdown");
-              templateDropdown.addEventListener("change", async () => {
-                const selected = templateDropdown.value;
-                if (selected === "placeholder") {
-                  editor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim());
-                } else {
-                  const url = templateURLs[selected]; // Use the banner template URLs
-                  if (!url) return;
-                  try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error("Failed to load template: " + response.status);
-                    const templateHTML = await response.text();
-                    editor.setValue(templateHTML.trim());
-                  } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); }
-                }
-              });
-               // Trigger change for initial placeholder load
-               templateDropdown.dispatchEvent(new Event('change'));
-            } // end for loop
-
-            renderTilesButton.disabled = false; // Enable banner render buttons
-            if (button2) button2.disabled = false;
-             // renderTilesMode(); // Optionally render immediately after generating inputs
-          });
-      } else {
-          console.error("Generate Inputs Button not found");
-      }
-      // --- End Banner Tile Input Logic ---
-
-
-      renderTilesButton.addEventListener("click", renderTilesMode);
-      if (!button2.hasAttribute("listener")) {
-        button2.addEventListener("click", renderTopFullWidthMode);
-        button2.setAttribute("listener", "true");
-      }
-      updateBannerType(); // Initial setup
-    });
-  </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Toggle the Tile & Modal section visibility
-      const toggleBtn = document.getElementById("toggleTileModalBtn");
-      const tileModalContent = document.getElementById("tileModalContent");
-       if (toggleBtn && tileModalContent) {
-          toggleBtn.addEventListener("click", function () {
-            if (tileModalContent.style.display === "none" || tileModalContent.style.display === "") {
-              tileModalContent.style.display = "block";
-               toggleBtn.textContent = "Close Tile & Modal";
-            } else {
-              tileModalContent.style.display = "none";
-              toggleBtn.textContent = "Open Tile & Modal";
+                    <div class="col-md-3 d-none d-md-flex align-items-center justify-content-end p-0">
+                       <div style="width: 100%; height: 130px; border-top-right-radius: 10px; background: url('${imageUrl || 'https://via.placeholder.com/300x130/cccccc/969696?text=Image'}') center center / cover; background-repeat: no-repeat;"></div>
+                    </div>`;
+            } else { // Anytime banner
+                cityInputsDiv.classList.add("d-none");
+                 bannerHTML = `
+                    <div class="col-12 ps-4 pt-3 pb-3">
+                        <h4 class="fw-bold" style="color: #101828;">Make every trip count</h4>
+                        <p style="color: #475467;">Tripkicks provides insights to help you book smarter, save money, and reduce your environmental impact.</p>
+                        <a href="#" target="_blank" style="color: #005eb8; text-decoration: none; font-weight: 600;">Learn how Tripkicks works <span style="margin-left: 5px;">→</span></a>
+                    </div>`;
             }
-          });
-       } else {
-           console.error("Toggle button or content for Tile/Modal section not found.");
-       }
+            bannerContentDiv.innerHTML = bannerHTML;
+        }
 
+        bannerTypeSelect.addEventListener("change", updateBanner);
+        cityNameInput.addEventListener("input", updateBanner);
+        cityImageUrlInput.addEventListener("input", updateBanner);
 
-      // Initialize CodeMirror editors for the new section
-      const tileHtmlTextarea = document.getElementById("tileHtmlEditor");
-      const modalHtmlTextarea = document.getElementById("modalHtmlEditor");
-      let tileEditor, modalEditor; // Declare vars
+        copyBannerBtn.addEventListener('click', () => {
+            const bannerHTML = pageBannerDiv.outerHTML;
+             navigator.clipboard.writeText(bannerHTML)
+               .then(() => alert('Banner HTML copied to clipboard!'))
+               .catch(err => console.error('Failed to copy banner HTML: ', err));
+        });
 
-      if (tileHtmlTextarea) {
-         tileEditor = CodeMirror.fromTextArea(tileHtmlTextarea, {
-            mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true,
-            lineWrapping: true, autoCloseTags: true, matchBrackets: true
-          });
-      } else {
-          console.error("Tile HTML Editor textarea not found.");
-      }
+        downloadBannerBtn.addEventListener('click', () => {
+           html2canvas(pageBannerDiv, { scale: 2, backgroundColor: null })
+             .then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'tripkicks-banner.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+             })
+             .catch(err => console.error('Error generating banner image:', err));
+         });
 
-      if (modalHtmlTextarea) {
-         modalEditor = CodeMirror.fromTextArea(modalHtmlTextarea, {
-            mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true,
-            lineWrapping: true, autoCloseTags: true, matchBrackets: true
-          });
-      } else {
-           console.error("Modal HTML Editor textarea not found.");
-      }
+        // --- Tile & Modal Preview Logic ---
 
-      // Update live previews when editors change
-      const tilePreview = document.getElementById("tilePreview");
-      const modalPreview = document.getElementById("modalPreview");
-      if (tileEditor && tilePreview) {
-         tileEditor.on("change", () => { tilePreview.innerHTML = tileEditor.getValue(); });
-      }
-       if (modalEditor && modalPreview) {
-          modalEditor.on("change", () => { modalPreview.innerHTML = modalEditor.getValue(); });
-       }
-
-       // Template URLs (Separate from banner templates)
-       const standaloneTileTemplateURLs = { // Use distinct names if needed
-            "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
-            "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
-            "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html",
-            "4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html",
-            "5tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/5tileAuto.html",
-            "6tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/6tileAuto.html",
-            "7tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/7tileAuto.html",
-            "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html",
-            "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html",
-            "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html",
-            "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
-            "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
+        // Placeholder templates (SHARED between sections)
+         const tileTemplates = {
+            placeholder: '\n<div style="padding: 10px; background-color: #f8f9fa; border: 1px dashed #ccc; text-align: center; color: #666;">Tile Preview Area</div>',
+            '1tileAuto': `<div style="border: 1px solid rgb(222, 226, 230); border-radius: 4px; padding: 16px; background-color: rgb(255, 255, 255); display: flex; align-items: center; gap: 12px;"> <img alt="AstraZeneca Logo" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/astrazeneca.png" style="max-height: 25px; height: auto;"> <div style="flex-grow: 1;"> <div style="font-size: 14px; font-weight: 600; color: rgb(52, 64, 84); margin-bottom: 4px;"> Transportation from Airport </div> <div style="font-size: 12px; color: rgb(102, 112, 133);"> View options here. </div> </div> <img alt="Info Icon" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/info-circle.png" style="height: 20px; width: 20px;"> </div>`,
+            '2tileAuto': '<div class="card bg-info text-white p-2">Sample Tile 2</div>',
+            '3tileAuto': '<div class="alert alert-warning">Sample Tile 3</div>',
+            // Add more tile templates...
         };
-      const modalTemplateURLs = {
-        "1modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/1modalAuto.html",
-        "2modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/2modalAuto.html",
-        "3modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/3modalAuto.html",
-        "4modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/4modalAuto.html",
-        "5modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/5modalAuto.html",
-        "6modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/6modalAuto.html",
-        "7modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/7modalAuto.html",
-        "8modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/8modalAuto.html",
-        "9modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/9modalAuto.html",
-       "10modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/10modalAuto.html"
-      };
-      // Handle Tile template dropdown change (for standalone tile/modal section)
-      const tileTemplateDropdown = document.getElementById("tileTemplateDropdown");
-       if (tileTemplateDropdown && tileEditor) {
-          tileTemplateDropdown.addEventListener("change", async () => {
-            const selected = tileTemplateDropdown.value;
-            if (selected === "placeholder") {
-              tileEditor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim());
-            } else {
-              const url = standaloneTileTemplateURLs[selected]; // Use the correct URL map
-              if (!url) return;
-              try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Failed to load template: " + response.status);
-                const templateHTML = await response.text();
-                tileEditor.setValue(templateHTML.trim());
-              } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); }
+        const modalTemplates = {
+            placeholder: '\n<div style="padding: 20px; background-color: #f8f9fa; border: 1px dashed #aaa; text-align: center; color: #555; height: 100%; display: flex; align-items: center; justify-content: center;">Modal Preview Area</div>',
+            '1modalAuto': `<div class="modal-dialog" style="max-width: 494px; margin: 0;"> <div class="modal-content" style="border-radius: 8px; border: 1px solid rgb(234, 236, 240); box-shadow: rgba(16, 24, 40, 0.1) 0px 20px 24px -4px, rgba(16, 24, 40, 0.04) 0px 8px 8px -4px; background-color: rgb(255, 255, 255);"> <div class="modal-header" style="padding: 16px 24px; border-bottom: 1px solid rgb(242, 244, 247);"> <div style="display: flex; align-items: center; gap: 8px;"> <img alt="AstraZeneca Logo" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/astrazeneca.png" style="max-height: 25px; height: auto;"> <h5 class="modal-title" style="font-size: 18px; font-weight: 600; color: rgb(16, 24, 40);">modal_template_A_AstraZeneca</h5> </div> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 1.2rem;">×</button> </div> <div class="modal-body" style="padding: 24px;"> <p style="font-size: 14px; color: rgb(102, 112, 133); margin-bottom: 16px;"> This first line of text is the same as the tile's text. </p> <p style="font-size: 14px; color: rgb(102, 112, 133); margin-bottom: 16px;"> More details go here that support the bulleted list below. If there are no bullets then the text continues here, and the modal has a minimum height of 600px. </p> <ul style="list-style-position: outside; padding-left: 20px; font-size: 14px; color: rgb(102, 112, 133); margin-bottom: 0px;"> <li style="margin-bottom: 8px;">Bullet1Text</li> <li style="margin-bottom: 8px;">Bullet2Text</li> <li style="margin-bottom: 0px;">Bullet3Text <a href="https://astrazeneca.com" target="_blank" style="color: rgb(0, 94, 184); text-decoration: underline;">lastImportlink</a> </li> </ul> </div> </div> </div>`,
+            '2modalAuto': '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Modal 2 (Large)</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><p>Some different content for modal 2.</p><button class="btn btn-primary">A Button</button></div></div></div>',
+            // Add more modal templates...
+        };
+
+
+        // --- Helper Functions (SHARED) ---
+        function updatePreview(editor, preview) {
+            preview.innerHTML = editor.value;
+        }
+
+        function loadTemplate(dropdown, editor, templates, preview) {
+            const selectedValue = dropdown.value;
+            if (templates[selectedValue]) {
+                editor.value = templates[selectedValue];
+                updatePreview(editor, preview);
             }
-          });
-       }
+        }
 
-      // Handle Modal template dropdown change
-      const modalTemplateDropdown = document.getElementById("modalTemplateDropdown");
-       if (modalTemplateDropdown && modalEditor) {
-          modalTemplateDropdown.addEventListener("change", async () => {
-            const selected = modalTemplateDropdown.value;
-            if (selected === "placeholder") {
-              modalEditor.setValue(`
-<div class="modal" style="position: relative; display: block; opacity: 1;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"> <h5 class="modal-title">Placeholder Modal</h5> </div>
-      <div class="modal-body"> <p>This is a placeholder modal.</p> </div>
-    </div>
-  </div>
-</div>
-              `.trim());
-            } else {
-              const url = modalTemplateURLs[selected];
-              if (!url) return;
-              try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Failed to load modal template: " + response.status);
-                const templateHTML = await response.text();
-                modalEditor.setValue(templateHTML.trim());
-              } catch (err) { console.error("Error loading modal template:", err); alert("Could not load modal template from " + url); }
+        function copyCode(editor, type) {
+            navigator.clipboard.writeText(editor.value)
+                .then(() => alert(`${type} HTML copied!`))
+                .catch(err => console.error(`Failed to copy ${type} HTML:`, err));
+        }
+
+        function downloadPreview(tilePreview, modalPreview, sectionNumber) {
+             const previewContainer = document.createElement('div');
+             previewContainer.style.padding = '10px';
+             previewContainer.style.backgroundColor = '#ffffff';
+             previewContainer.style.display = 'inline-block'; // Fit content width for capture
+
+             const tileClone = tilePreview.cloneNode(true);
+             previewContainer.appendChild(tileClone);
+
+             const spacer = document.createElement('div');
+             spacer.style.height = '10px';
+             previewContainer.appendChild(spacer);
+
+             // Clone modal but ensure its content dictates size for capture
+             const modalCloneContainer = document.createElement('div');
+             modalCloneContainer.innerHTML = modalPreview.innerHTML; // Get the content
+             previewContainer.appendChild(modalCloneContainer);
+
+
+             document.body.appendChild(previewContainer); // Temporarily add to body
+
+              // Wait for images inside the container to load if necessary
+              const images = previewContainer.querySelectorAll('img');
+              const promises = [];
+              images.forEach(img => {
+                  if (!img.complete) {
+                      promises.push(new Promise(resolve => {
+                          img.onload = img.onerror = resolve;
+                      }));
+                  }
+              });
+
+             Promise.all(promises).then(() => {
+                  html2canvas(previewContainer, {
+                      scale: 2,
+                      backgroundColor: null, // Use transparent background
+                      width: previewContainer.offsetWidth, // Use actual width
+                      height: previewContainer.offsetHeight // Use actual height
+                   })
+                     .then(canvas => {
+                         const link = document.createElement('a');
+                         link.download = `tile-modal-preview-${sectionNumber}.png`;
+                         link.href = canvas.toDataURL('image/png');
+                         link.click();
+                         document.body.removeChild(previewContainer); // Clean up
+                     })
+                     .catch(err => {
+                        console.error('Error generating preview image:', err);
+                        document.body.removeChild(previewContainer); // Clean up on error
+                     });
+                });
+        }
+
+        async function copyPreviewImage(tilePreview, modalPreview) {
+            const previewContainer = document.createElement('div');
+            previewContainer.style.padding = '10px';
+            previewContainer.style.backgroundColor = '#ffffff'; // Need background for blob
+            previewContainer.style.display = 'inline-block'; // Fit content width
+
+            previewContainer.appendChild(tilePreview.cloneNode(true));
+            const spacer = document.createElement('div');
+            spacer.style.height = '10px';
+            previewContainer.appendChild(spacer);
+
+            const modalCloneContainer = document.createElement('div');
+            modalCloneContainer.innerHTML = modalPreview.innerHTML;
+            previewContainer.appendChild(modalCloneContainer);
+
+            document.body.appendChild(previewContainer);
+
+            // Wait for images
+             const images = previewContainer.querySelectorAll('img');
+             const promises = [];
+             images.forEach(img => {
+                 if (!img.complete) {
+                     promises.push(new Promise(resolve => {
+                         img.onload = img.onerror = resolve;
+                     }));
+                 }
+             });
+
+            await Promise.all(promises);
+
+            try {
+                const canvas = await html2canvas(previewContainer, {
+                    scale: 2,
+                    backgroundColor: '#ffffff', // Ensure background for blob copy
+                    width: previewContainer.offsetWidth,
+                    height: previewContainer.offsetHeight
+                 });
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        console.error('Canvas to Blob conversion failed.');
+                        alert('Failed to copy image (Blob creation failed).');
+                        document.body.removeChild(previewContainer);
+                        return;
+                    }
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        alert('Preview image copied to clipboard!');
+                    } catch (copyError) {
+                        console.error('Failed to copy image to clipboard:', copyError);
+                        alert('Failed to copy image. Browser might not support it or requires user activation.');
+                    } finally {
+                         document.body.removeChild(previewContainer); // Clean up
+                    }
+                }, 'image/png');
+            } catch (renderError) {
+                console.error('Error rendering preview for copying:', renderError);
+                document.body.removeChild(previewContainer); // Clean up on error
+                 alert('Error rendering preview for copying.');
             }
-          });
-       }
-
-      // Copy code buttons for new editors
-      const copyTileCodeBtn = document.getElementById("copyTileCodeBtn");
-      const copyModalCodeBtn = document.getElementById("copyModalCodeBtn");
-
-      if (copyTileCodeBtn && tileEditor) {
-          copyTileCodeBtn.addEventListener("click", () => {
-            navigator.clipboard.writeText(tileEditor.getValue())
-              .then(() => alert("Tile code copied to clipboard!"))
-              .catch(() => alert("Failed to copy tile code."));
-          });
-       }
-       if (copyModalCodeBtn && modalEditor) {
-          copyModalCodeBtn.addEventListener("click", () => {
-            navigator.clipboard.writeText(modalEditor.getValue())
-              .then(() => alert("Modal code copied to clipboard!"))
-              .catch(() => alert("Failed to copy modal code."));
-          });
-       }
-
-      // Preview download and copy functionality for the combined preview container
-      const previewContainer = document.getElementById("previewContainer");
-      const downloadTileModalBtn = document.getElementById("downloadTileModalBtn");
-      const copyTileModalPreviewBtn = document.getElementById("copyTileModalPreviewBtn");
-
-       if (downloadTileModalBtn && previewContainer) {
-          downloadTileModalBtn.addEventListener("click", () => {
-            html2canvas(previewContainer, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false })
-            .then(canvas => {
-              const link = document.createElement("a");
-              link.download = "tile-modal-preview.png";
-              link.href = canvas.toDataURL("image/png");
-              link.click();
-            }).catch(() => alert("Failed to download preview image."));
-          });
-       }
-       if (copyTileModalPreviewBtn && previewContainer) {
-          copyTileModalPreviewBtn.addEventListener("click", () => {
-            if (!navigator.clipboard || !window.ClipboardItem) { alert("Copying images is not supported in your browser."); return; }
-            html2canvas(previewContainer, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false })
-            .then(canvas => {
-              canvas.toBlob(blob => {
-                if (!blob) { alert("Failed to generate image blob."); return; }
-                const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item])
-                  .then(() => alert("Preview copied to clipboard!"))
-                  .catch(() => alert("Failed to copy preview image."));
-              }, "image/png");
-            }).catch(() => alert("Failed to copy preview image."));
-          });
-       }
-        // Set initial placeholder content on load
-        if (tileEditor && tileEditor.getValue() === '') {
-           tileTemplateDropdown.dispatchEvent(new Event('change'));
         }
-        if (modalEditor && modalEditor.getValue() === '') {
-           modalTemplateDropdown.dispatchEvent(new Event('change'));
-        }
-    });
-  </script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const fareIconA = document.getElementById("fareIconA");
-      const fareIconB = document.getElementById("fareIconB");
-      const fareIconC = document.getElementById("fareIconC");
-      const fareIconD = document.getElementById("fareIconD");
-      const fareIconE = document.getElementById("fareIconE");
-      const defaultFareValues = {
-        hotelName: "The James Nomad",
-        address: "22 East 29th Street, New York, NY 10016",
-         distance: "2.46 mi",
-        price: "$301",
-        image: "https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg",
-        badgeText: "2 blocks from our HQ office"
-      };
-      const fareSelectA = document.getElementById("fareSelectA");
-      const fareSelectB = document.getElementById("fareSelectB");
-      const fareSelectC = document.getElementById("fareSelectC");
-      const fareSelectD = document.getElementById("fareSelectD");
-      const fareSelectE = document.getElementById("fareSelectE");
-      const fareToggleA = document.getElementById("fareToggleA");
-      const fareToggleB = document.getElementById("fareToggleB");
-      const fareToggleC = document.getElementById("fareToggleC");
-      const fareToggleD = document.getElementById("fareToggleD");
-      const fareToggleE = document.getElementById("fareToggleE");
-      const fareHotelName = document.getElementById("fareHotelName");
-      const fareAddress = document.getElementById("fareAddress");
-      const fareDistance = document.getElementById("fareDistance");
-      const farePrice = document.getElementById("farePrice");
-      const fareImage = document.getElementById("fareImage");
-      const fareBadgeText = document.getElementById("fareBadgeText");
-      const fareBadgeToggle = document.getElementById("fareBadgeToggle");
-      const fareBadge = document.getElementById("fareBadge");
-      const fareResetBtn = document.getElementById("fareResetBtn");
-      const fareRenderBtn = document.getElementById("fareRenderBtn");
-      const copyFareBtn = document.getElementById("copyFareBtn");
-      const downloadFareBtn = document.getElementById("downloadFareBtn");
-      const farePreview = document.getElementById("farePreview");
-      const fareIconsContainer = document.getElementById("fareIconsContainer");
-      const farePreviewImage = document.getElementById("farePreviewImage");
-      const farePreviewHotelName = document.getElementById("farePreviewHotelName");
-      const farePreviewAddress = document.getElementById("farePreviewAddress");
-      const farePreviewDistance = document.getElementById("farePreviewDistance");
-      const farePreviewPrice = document.getElementById("farePreviewPrice");
-      fareResetBtn.addEventListener("click", resetFare);
-      fareRenderBtn.addEventListener("click", renderFare);
-      copyFareBtn.addEventListener("click", copyFareToClipboard);
-      downloadFareBtn.addEventListener("click", downloadFareAsPNG);
-      function renderFare() {
-        updateIcon("A", fareToggleA.checked, fareSelectA.value, fareIconA);
-        updateIcon("B", fareToggleB.checked, fareSelectB.value, fareIconB);
-        updateIcon("C", fareToggleC.checked, fareSelectC.value, fareIconC);
-        updateIcon("D", fareToggleD.checked, fareSelectD.value, fareIconD);
-        updateIcon("E", fareToggleE.checked, fareSelectE.value, fareIconE);
-        reorderIcons();
-        farePreviewHotelName.textContent = fareHotelName.value.trim() || defaultFareValues.hotelName;
-        farePreviewAddress.textContent = fareAddress.value.trim() || defaultFareValues.address;
-        farePreviewDistance.textContent = fareDistance.value.trim() || defaultFareValues.distance;
-        farePreviewPrice.textContent = farePrice.value.trim() || defaultFareValues.price;
-        farePreviewImage.crossOrigin = "anonymous";
-        const newImageUrl = fareImage.value.trim() || defaultFareValues.image;
-        farePreviewImage.src = newImageUrl;
-        if (fareBadgeToggle.checked) {
-          fareBadge.style.display = "";
-          fareBadge.textContent = fareBadgeText.value.trim() || defaultFareValues.badgeText;
-        } else {
-          fareBadge.style.display = "none";
+         function toggleSection(contentDiv, button) {
+             if (contentDiv.style.display === 'none' || contentDiv.style.display === '') {
+                 contentDiv.style.display = 'block';
+                 button.textContent = 'Close Section';
+             } else {
+                 contentDiv.style.display = 'none';
+                 button.textContent = 'Open Section';
+             }
+         }
+
+        // --- Setup Function for Each Section ---
+        function setupTileModalSection(sectionNumber) {
+            const tileHtmlEditor = document.getElementById(`tileHtmlEditor-${sectionNumber}`);
+            const modalHtmlEditor = document.getElementById(`modalHtmlEditor-${sectionNumber}`);
+            const tilePreview = document.getElementById(`tilePreview-${sectionNumber}`);
+            const modalPreview = document.getElementById(`modalPreview-${sectionNumber}`);
+            const tileTemplateDropdown = document.getElementById(`tileTemplateDropdown-${sectionNumber}`);
+            const modalTemplateDropdown = document.getElementById(`modalTemplateDropdown-${sectionNumber}`);
+            const copyTileCodeBtn = document.getElementById(`copyTileCodeBtn-${sectionNumber}`);
+            const copyModalCodeBtn = document.getElementById(`copyModalCodeBtn-${sectionNumber}`);
+            const downloadTileModalBtn = document.getElementById(`downloadTileModalBtn-${sectionNumber}`);
+            const copyTileModalPreviewBtn = document.getElementById(`copyTileModalPreviewBtn-${sectionNumber}`);
+            const toggleTileModalBtn = document.getElementById(`toggleTileModalBtn-${sectionNumber}`);
+            const tileModalContent = document.getElementById(`tileModalContent-${sectionNumber}`);
+
+            // Add Event Listeners
+            tileHtmlEditor.addEventListener('input', () => updatePreview(tileHtmlEditor, tilePreview));
+            modalHtmlEditor.addEventListener('input', () => updatePreview(modalHtmlEditor, modalPreview));
+
+            tileTemplateDropdown.addEventListener('change', () => loadTemplate(tileTemplateDropdown, tileHtmlEditor, tileTemplates, tilePreview));
+            modalTemplateDropdown.addEventListener('change', () => loadTemplate(modalTemplateDropdown, modalHtmlEditor, modalTemplates, modalPreview));
+
+            copyTileCodeBtn.addEventListener('click', () => copyCode(tileHtmlEditor, 'Tile'));
+            copyModalCodeBtn.addEventListener('click', () => copyCode(modalHtmlEditor, 'Modal'));
+
+            toggleTileModalBtn.addEventListener('click', () => toggleSection(tileModalContent, toggleTileModalBtn));
+
+            downloadTileModalBtn.addEventListener('click', () => downloadPreview(tilePreview, modalPreview, sectionNumber));
+            copyTileModalPreviewBtn.addEventListener('click', () => copyPreviewImage(tilePreview, modalPreview));
+
+            // Initial setup
+            loadTemplate(tileTemplateDropdown, tileHtmlEditor, tileTemplates, tilePreview);
+            loadTemplate(modalTemplateDropdown, modalHtmlEditor, modalTemplates, modalPreview);
         }
-        const lodgingWidthInput = document.getElementById("lodgingWidth");
-        if (lodgingWidthInput) {
-          const newWidth = parseInt(lodgingWidthInput.value, 10);
-          farePreview.style.width = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : "auto";
+
+        // --- Initialize All Sections ---
+        setupTileModalSection(1);
+        setupTileModalSection(2);
+        setupTileModalSection(3);
+
+
+        // --- Lodging Fare Logic (Unaffected) ---
+        const lodgingElements = {
+            selects: ['A', 'B', 'C', 'D', 'E'].map(id => document.getElementById(`fareSelect${id}`)),
+            toggles: ['A', 'B', 'C', 'D', 'E'].map(id => document.getElementById(`fareToggle${id}`)),
+            badgeText: document.getElementById('fareBadgeText'),
+            badgeToggle: document.getElementById('fareBadgeToggle'),
+            hotelName: document.getElementById('fareHotelName'),
+            address: document.getElementById('fareAddress'),
+            distance: document.getElementById('fareDistance'),
+            price: document.getElementById('farePrice'),
+            image: document.getElementById('fareImage'),
+            width: document.getElementById('lodgingWidth'),
+            resetBtn: document.getElementById('fareResetBtn'),
+            renderBtn: document.getElementById('fareRenderBtn'),
+            copyBtn: document.getElementById('copyFareBtn'),
+            downloadBtn: document.getElementById('downloadFareBtn'),
+            preview: document.getElementById('farePreview'),
+            previewImage: document.getElementById('farePreviewImage'),
+            previewIcons: document.getElementById('fareIconsContainer'),
+            previewHotelName: document.getElementById('farePreviewHotelName'),
+            previewAddress: document.getElementById('farePreviewAddress'),
+            previewDistance: document.getElementById('farePreviewDistance'),
+            previewPrice: document.getElementById('farePreviewPrice'),
+            previewBadge: document.getElementById('fareBadge'),
+            previewCard: document.querySelector('#farePreview .fare-preview-card'),
+            iconImages: ['A', 'B', 'C', 'D', 'E'].map(id => document.getElementById(`fareIcon${id}`))
+        };
+        const iconBaseUrl = "https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/";
+        const defaultIconNames = { A: 'A', B: 'B', C: 'C', D: 'D', E: 'E' };
+        function getIconUrl(selectElement) {
+             const selectedValue = selectElement.value;
+             const defaultId = selectElement.id.slice(-1);
+             const iconName = selectedValue || defaultIconNames[defaultId];
+             return `${iconBaseUrl}${iconName}.png`;
         }
-      }
-      function resetFare() {
-        fareToggleA.checked = fareToggleB.checked = fareToggleC.checked = fareToggleD.checked = fareToggleE.checked = true;
-        fareSelectA.value = fareSelectB.value = fareSelectC.value = fareSelectD.value = fareSelectE.value = "";
-        fareBadgeToggle.checked = true;
-        fareBadgeText.value = defaultFareValues.badgeText;
-        fareHotelName.value = defaultFareValues.hotelName;
-        fareAddress.value = defaultFareValues.address;
-        fareDistance.value = defaultFareValues.distance;
-        farePrice.value = defaultFareValues.price;
-        fareImage.value = defaultFareValues.image;
-        renderFare();
-      }
-      function updateIcon(letter, isOn, selectedValue, iconElement) {
-        const defaultIconUrl = `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${letter}.png`;
-        if (!isOn) {
-          iconElement.style.display = "none";
-        } else {
-          iconElement.style.display = "";
-          iconElement.src = selectedValue ?
-          `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png` : defaultIconUrl;
+        function renderLodgingFare() {
+            lodgingElements.previewImage.src = lodgingElements.image.value || 'https://via.placeholder.com/150/cccccc/969696?text=Image';
+            lodgingElements.previewImage.alt = lodgingElements.hotelName.value;
+            lodgingElements.previewHotelName.textContent = lodgingElements.hotelName.value;
+            lodgingElements.previewAddress.textContent = lodgingElements.address.value;
+            lodgingElements.previewDistance.textContent = lodgingElements.distance.value;
+            lodgingElements.previewPrice.textContent = lodgingElements.price.value;
+            lodgingElements.selects.forEach((select, index) => {
+                const toggle = lodgingElements.toggles[index];
+                const img = lodgingElements.iconImages[index];
+                if (toggle.checked) {
+                    img.src = getIconUrl(select);
+                    img.style.display = 'inline';
+                 } else {
+                    img.style.display = 'none';
+                 }
+            });
+            if (lodgingElements.badgeToggle.checked && lodgingElements.badgeText.value.trim() !== '') {
+                lodgingElements.previewBadge.textContent = lodgingElements.badgeText.value;
+                lodgingElements.previewBadge.style.display = 'inline-flex';
+            } else {
+                lodgingElements.previewBadge.style.display = 'none';
+            }
+             lodgingElements.previewCard.style.maxWidth = `${lodgingElements.width.value}px`;
+             lodgingElements.previewCard.style.width = '100%';
+            lodgingElements.preview.style.display = 'block';
         }
-      }
-      function reorderIcons() {
-        const visibleIcons = [];
-        [fareIconA, fareIconB, fareIconC, fareIconD, fareIconE].forEach((icon) => {
-          if (icon.style.display !== "none") visibleIcons.push(icon);
+        function resetLodgingFare() {
+             document.getElementById('lodgingFareSection').querySelectorAll('input[type="text"], input[type="number"], select, textarea').forEach(el => {
+                 if(el.tagName === 'SELECT') el.selectedIndex = 0;
+                 else el.value = el.defaultValue || '';
+             });
+             document.getElementById('lodgingFareSection').querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => {
+                 el.checked = el.defaultChecked;
+             });
+             renderLodgingFare();
+         }
+        lodgingElements.renderBtn.addEventListener('click', renderLodgingFare);
+        lodgingElements.resetBtn.addEventListener('click', resetLodgingFare);
+        document.getElementById('lodgingFareSection').querySelectorAll('input, select').forEach(el => {
+             el.addEventListener('input', renderLodgingFare);
+             if (el.type === 'checkbox' || el.tagName === 'SELECT') {
+                 el.addEventListener('change', renderLodgingFare);
+             }
         });
-        fareIconsContainer.innerHTML = "";
-        visibleIcons.forEach((icon) => fareIconsContainer.appendChild(icon));
-        if (fareBadgeToggle.checked) fareIconsContainer.appendChild(fareBadge);
-      }
-      function copyFareToClipboard() {
-        if (!navigator.clipboard || !window.ClipboardItem) {
-          alert("Copying images to the clipboard is not supported in your browser.");
-          return;
-        }
-        const boundingRect = farePreview.getBoundingClientRect();
-        const maxWidth = 1400;
-        const finalWidth = Math.min(boundingRect.width, maxWidth);
-        const finalHeight = boundingRect.height;
-        html2canvas(farePreview, {
-          scale: 4, backgroundColor: null, useCORS: true, allowTaint: false,
-          windowWidth: 1400, windowHeight: finalHeight
-        }).then((canvas) => {
-          canvas.toBlob((blob) => {
-             if (!blob) { alert("Failed to generate image blob."); return; }
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => { alert("Fare copied to clipboard!"); })
-              .catch((err) => { alert("Failed to copy fare. Your browser might not support this feature."); });
-          }, "image/png");
-         }).catch((error) => { alert("Failed to capture fare. Check console for details."); });
-      }
-      function downloadFareAsPNG() {
-        const boundingRect = farePreview.getBoundingClientRect();
-        const maxWidth = 1400;
-        const finalWidth = Math.min(boundingRect.width, maxWidth);
-        const finalHeight = boundingRect.height;
-        html2canvas(farePreview, {
-          scale: 4, backgroundColor: null, useCORS: true, allowTaint: false,
-          windowWidth: 1400, windowHeight: finalHeight
-        }).then((canvas) => {
-          const link = document.createElement("a");
-           link.download = "fare.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }).catch((error) => { alert("Failed to capture fare. Check console for details."); });
-      }
-      renderFare(); // Initial render
-    });
-  </script>
+         lodgingElements.copyBtn.addEventListener('click', () => {
+            const fareHTML = lodgingElements.preview.innerHTML;
+             navigator.clipboard.writeText(fareHTML)
+               .then(() => alert('Lodging Fare HTML copied!'))
+               .catch(err => console.error('Failed to copy Lodging Fare HTML: ', err));
+         });
+         lodgingElements.downloadBtn.addEventListener('click', () => {
+            html2canvas(lodgingElements.previewCard, { scale: 2, backgroundColor: '#ffffff' }) // Ensure white background for capture
+             .then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'lodging-fare.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+             })
+             .catch(err => console.error('Error generating lodging fare image:', err));
+         });
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const airfareIconA = document.getElementById("airfareIconA");
-      const airfareIconB = document.getElementById("airfareIconB");
-      const airfareIconC = document.getElementById("airfareIconC");
-      const airfareIconD = document.getElementById("airfareIconD");
-      const airfareIconE = document.getElementById("airfareIconE");
-      const defaultAirfareValues = {
-        name: "NYC to LAX", address: "JFK Airport", distance: "2,469 miles",
-        price: "$550", image: "https://www.example.com/plane.jpg", badgeText: "2 blocks from our HQ office"
-      };
-      const airfareSelectA = document.getElementById("airfareSelectA");
-      const airfareSelectB = document.getElementById("airfareSelectB");
-      const airfareSelectC = document.getElementById("airfareSelectC");
-      const airfareSelectD = document.getElementById("airfareSelectD");
-      const airfareSelectE = document.getElementById("airfareSelectE");
-      const airfareToggleA = document.getElementById("airfareToggleA");
-      const airfareToggleB = document.getElementById("airfareToggleB");
-      const airfareToggleC = document.getElementById("airfareToggleC");
-      const airfareToggleD = document.getElementById("airfareToggleD");
-      const airfareToggleE = document.getElementById("airfareToggleE");
-      const airfareName = document.getElementById("airfareName");
-      const airfareAddress = document.getElementById("airfareAddress");
-      const airfareDistance = document.getElementById("airfareDistance");
-      const airfarePrice = document.getElementById("airfarePrice");
-      const airfareImage = document.getElementById("airfareImage");
-      const airfareBadgeText = document.getElementById("airfareBadgeText");
-      const airfareBadgeToggle = document.getElementById("airfareBadgeToggle");
-      const airfareBadge = document.getElementById("airfareBadge");
-      const airfareResetBtn = document.getElementById("airfareResetBtn");
-      const airfareRenderBtn = document.getElementById("airfareRenderBtn");
-      const copyAirfareBtn = document.getElementById("copyAirfareBtn");
-      const downloadAirfareBtn = document.getElementById("downloadAirfareBtn");
-      const airfarePreview = document.getElementById("airfarePreview");
-      const airfareIconsContainer = document.getElementById("airfareIconsContainer");
-      const airfarePreviewImage = document.getElementById("airfarePreviewImage");
-      const airfarePreviewName = document.getElementById("airfarePreviewName");
-      const airfarePreviewAddress = document.getElementById("airfarePreviewAddress");
-      const airfarePreviewDistance = document.getElementById("airfarePreviewDistance");
-      const airfarePreviewPrice = document.getElementById("airfarePreviewPrice");
-      airfareResetBtn.addEventListener("click", resetAirfare);
-      airfareRenderBtn.addEventListener("click", renderAirfare);
-      copyAirfareBtn.addEventListener("click", copyAirfareToClipboard);
-      downloadAirfareBtn.addEventListener("click", downloadAirfareAsPNG);
-      function renderAirfare() {
-        updateAirfareIcon("A", airfareToggleA.checked, airfareSelectA.value, airfareIconA);
-        updateAirfareIcon("B", airfareToggleB.checked, airfareSelectB.value, airfareIconB);
-        updateAirfareIcon("C", airfareToggleC.checked, airfareSelectC.value, airfareIconC);
-        updateAirfareIcon("D", airfareToggleD.checked, airfareSelectD.value, airfareIconD);
-        updateAirfareIcon("E", airfareToggleE.checked, airfareSelectE.value, airfareIconE);
-        reorderAirfareIcons();
-        airfarePreviewName.textContent = airfareName.value.trim() || defaultAirfareValues.name;
-        airfarePreviewAddress.textContent = airfareAddress.value.trim() || defaultAirfareValues.address;
-        airfarePreviewDistance.textContent = airfareDistance.value.trim() || defaultAirfareValues.distance;
-        airfarePreviewPrice.textContent = airfarePrice.value.trim() || defaultAirfareValues.price;
-        airfarePreviewImage.crossOrigin = "anonymous";
-        const newImageUrl = airfareImage.value.trim() || defaultAirfareValues.image;
-        airfarePreviewImage.src = newImageUrl;
-        if (airfareBadgeToggle.checked) {
-          airfareBadge.style.display = "";
-          airfareBadge.textContent = airfareBadgeText.value.trim() || defaultAirfareValues.badgeText;
-        } else {
-          airfareBadge.style.display = "none";
+
+        // --- Airfare Logic (Unaffected) ---
+        const airfareElements = {
+            selects: ['A', 'B', 'C', 'D', 'E'].map(id => document.getElementById(`airfareSelect${id}`)),
+            toggles: ['A', 'B', 'C', 'D', 'E'].map(id => document.getElementById(`airfareToggle${id}`)),
+            badgeText: document.getElementById('airfareBadgeText'),
+            badgeToggle: document.getElementById('airfareBadgeToggle'),
+            name: document.getElementById('airfareName'),
+            origin: document.getElementById('airfareOrigin'),
+            destination: document.getElementById('airfareDestination'),
+            duration: document.getElementById('airfareDuration'),
+            price: document.getElementById('airfarePrice'),
+            logo: document.getElementById('airfareAirlineLogo'),
+            width: document.getElementById('airfareWidth'),
+            resetBtn: document.getElementById('airfareResetBtn'),
+            renderBtn: document.getElementById('airfareRenderBtn'),
+            copyBtn: document.getElementById('copyAirfareBtn'),
+            downloadBtn: document.getElementById('downloadAirfareBtn'),
+            previewContainer: document.getElementById('airfarePreviewContainer')
+        };
+        function getAirfareIconUrl(selectElement) {
+             const selectedValue = selectElement.value;
+             const defaultId = selectElement.id.slice(-1);
+             const iconName = selectedValue || defaultIconNames[defaultId];
+             return `${iconBaseUrl}${iconName}.png`;
         }
-        const airfareWidthInput = document.getElementById("airfareWidth");
-        if (airfareWidthInput) {
-          const newWidth = parseInt(airfareWidthInput.value, 10);
-          airfarePreview.style.width = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : "auto";
+        function renderAirfareFare() {
+            const iconsHtml = airfareElements.selects.map((select, index) => {
+                const toggle = airfareElements.toggles[index];
+                 if (toggle.checked) {
+                     return `<img src="${getAirfareIconUrl(select)}" alt="${select.value || defaultIconNames[select.id.slice(-1)]}" style="height: 35px; margin-right: 3px;" />`;
+                 }
+                 return '';
+             }).join('');
+             const badgeHtml = (airfareElements.badgeToggle.checked && airfareElements.badgeText.value.trim() !== '')
+                 ? `<span class="badge d-flex align-items-center px-3 ms-2" style="background-color: #e7f0ff; color: #1d2d3e; font-size: 0.9rem; border: 1px solid #427bff; border-radius: 50px; height: 35px;">${airfareElements.badgeText.value}</span>`
+                 : '';
+             const originText = airfareElements.origin.value || '';
+             const destinationText = airfareElements.destination.value || '';
+             const durationText = airfareElements.duration.value || '';
+             const priceText = airfareElements.price.value || '';
+             const nameText = airfareElements.name.value || '';
+             const logoSrc = airfareElements.logo.value || 'https://via.placeholder.com/80x50/cccccc/969696?text=Logo';
+
+             const airfareHtml = `
+                <div class="card border-1 p-3 fare-preview-card" style="max-width: ${airfareElements.width.value}px; width: 100%; min-height: 150px;">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-2 text-center">
+                             <img src="${logoSrc}" alt="${nameText} Logo" class="img-fluid" style="max-height: 50px;"/>
+                             <p class="small text-muted mt-1 mb-0">${nameText}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fw-bold">${originText.split(' ')[0]}</span>
+                                    <p class="small text-muted mb-0">${originText.substring(originText.indexOf(' ') + 1)}</p>
+                                </div>
+                                <div class="text-center px-2">
+                                     <span class="text-muted small d-block">${durationText.split('/')[0].trim()}</span>
+                                     <div style="border-bottom: 1px solid #ccc; margin: 2px 0;"></div>
+                                     <span class="text-muted small d-block">${durationText.split('/')[1]?.trim() || ''}</span>
+                                </div>
+                                <div>
+                                     <span class="fw-bold">${destinationText.split(' ')[0]}</span>
+                                     <p class="small text-muted mb-0">${destinationText.substring(destinationText.indexOf(' ') + 1)}</p>
+                                </div>
+                             </div>
+                             <div class="d-flex align-items-center mt-3 fare-preview-icons">
+                                 ${iconsHtml}
+                                 ${badgeHtml}
+                             </div>
+                         </div>
+                         <div class="col-md-4 text-end">
+                              <p class="mb-1 text-muted small">Total Price:</p>
+                              <h4 class="fw-bold text-dark">${priceText}</h4>
+                             <a href="#" class="btn btn-outline-secondary btn-sm mt-2" style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;">
+                                 Select Fare
+                             </a>
+                         </div>
+                    </div>
+                 </div>`;
+             airfareElements.previewContainer.innerHTML = airfareHtml;
         }
-      }
-      function resetAirfare() {
-        airfareToggleA.checked = airfareToggleB.checked = airfareToggleC.checked = airfareToggleD.checked = airfareToggleE.checked = true;
-        airfareSelectA.value = airfareSelectB.value = airfareSelectC.value = airfareSelectD.value = airfareSelectE.value = "";
-        airfareBadgeToggle.checked = true;
-        airfareBadgeText.value = defaultAirfareValues.badgeText;
-        airfareName.value = defaultAirfareValues.name;
-        airfareAddress.value = defaultAirfareValues.address;
-        airfareDistance.value = defaultAirfareValues.distance;
-        airfarePrice.value = defaultAirfareValues.price;
-        airfareImage.value = defaultAirfareValues.image;
-        renderAirfare();
-      }
-      function updateAirfareIcon(letter, isOn, selectedValue, iconElement) {
-        const defaultIconUrl = `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${letter}.png`;
-        if (!isOn) {
-          iconElement.style.display = "none";
-        } else {
-          iconElement.style.display = "";
-          iconElement.src = selectedValue ?
-          `https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/${selectedValue}.png` : defaultIconUrl;
+        function resetAirfareFare() {
+             document.getElementById('airfareSection').querySelectorAll('input[type="text"], input[type="number"], select, textarea').forEach(el => {
+                 if(el.tagName === 'SELECT') el.selectedIndex = 0;
+                 else el.value = el.defaultValue || '';
+             });
+             document.getElementById('airfareSection').querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => {
+                 el.checked = el.defaultChecked;
+             });
+            renderAirfareFare();
         }
-      }
-      function reorderAirfareIcons() {
-        const visibleIcons = [];
-        [airfareIconA, airfareIconB, airfareIconC, airfareIconD, airfareIconE].forEach((icon) => {
-          if (icon.style.display !== "none") visibleIcons.push(icon);
+        airfareElements.renderBtn.addEventListener('click', renderAirfareFare);
+        airfareElements.resetBtn.addEventListener('click', resetAirfareFare);
+        document.getElementById('airfareSection').querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('input', renderAirfareFare);
+             if (el.type === 'checkbox' || el.tagName === 'SELECT') {
+                 el.addEventListener('change', renderAirfareFare);
+             }
+         });
+         airfareElements.copyBtn.addEventListener('click', () => {
+            const fareHTML = airfareElements.previewContainer.innerHTML;
+            navigator.clipboard.writeText(fareHTML)
+                .then(() => alert('Airfare HTML copied!'))
+                .catch(err => console.error('Failed to copy Airfare HTML: ', err));
         });
-        airfareIconsContainer.innerHTML = "";
-        visibleIcons.forEach((icon) => airfareIconsContainer.appendChild(icon));
-        if (airfareBadgeToggle.checked) airfareIconsContainer.appendChild(airfareBadge);
-      }
-      function copyAirfareToClipboard() {
-        if (!navigator.clipboard || !window.ClipboardItem) { alert("Copying images is not supported."); return; }
-        const boundingRect = airfarePreview.getBoundingClientRect();
-        const maxWidth = 900; const finalWidth = Math.min(boundingRect.width, maxWidth); const finalHeight = boundingRect.height;
-        html2canvas(airfarePreview, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false, windowWidth: 1200, windowHeight: finalHeight })
-        .then((canvas) => {
-          canvas.toBlob((blob) => {
-             if (!blob) { alert("Failed to generate image blob."); return; }
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => { alert("Airfare copied to clipboard!"); })
-              .catch((err) => { alert("Failed to copy airfare."); });
-          }, "image/png");
-        }).catch((error) => { alert("Failed to capture airfare."); });
-      }
-      function downloadAirfareAsPNG() {
-        const boundingRect = airfarePreview.getBoundingClientRect();
-        const maxWidth = 1400; const finalWidth = Math.min(boundingRect.width, maxWidth); const finalHeight = boundingRect.height;
-        html2canvas(airfarePreview, { scale: 4, backgroundColor: null, useCORS: true, allowTaint: false, windowWidth: 1400, windowHeight: finalHeight })
-        .then((canvas) => {
-          const link = document.createElement("a");
-           link.download = "airfare.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }).catch((error) => { alert("Failed to capture airfare."); });
-      }
-      renderAirfare(); // Initial Render
+         airfareElements.downloadBtn.addEventListener('click', () => {
+            const previewCard = airfareElements.previewContainer.querySelector('.fare-preview-card');
+            if (!previewCard) {
+                 console.error("Preview card not found for download.");
+                 return;
+            }
+            html2canvas(previewCard, { scale: 2, backgroundColor: '#ffffff' }) // Ensure white background
+                .then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'airfare-fare.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                 })
+                 .catch(err => console.error('Error generating airfare image:', err));
+         });
+
+
+        // Initial calls for page load
+        updateBanner();
+        renderLodgingFare();
+        renderAirfareFare();
+        // Initial setup for Tile/Modal sections is handled by the setup function calls above
+
     });
   </script>
 
