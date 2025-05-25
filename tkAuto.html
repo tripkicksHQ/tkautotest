@@ -72,11 +72,26 @@
       margin-top: 10px;
     }
     .CodeMirror {
-      height: auto;
-      min-height: 100px;
-      max-height: 90vh;
-      overflow: auto;
-    }
+  min-height: 100px;
+  max-height: 280px;      /* or another value you like */
+  overflow: auto !important;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.98rem;
+}
+
+/* Always show vertical scrollbar */
+.CodeMirror-scroll {
+  overflow-y: scroll !important;
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Optional: Make the editors a bit more visually clear on focus */
+.CodeMirror-focused {
+  border-color: #427bff;
+  box-shadow: 0 0 2px #427bff55;
+}
     /* Note: We leave the original media queries as they were,
        but the page is always viewed on desktop as per your instructions.
     */
@@ -123,15 +138,18 @@
       object-position: center;
     }
   </style>
+	
 </head>
 <body>
-  <header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #e5efff;">
+<header style="display: flex; align-items: center; padding: 20px; margin-bottom: 20px; background-color: #e5efff;">
   <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAuto</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
+  <span class="badge rounded-pill text-primary border border-primary ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
+    05.25.25
+  </span>
 </header>
-
   <div class="container">
     <div class="d-flex align-items-center mb-3">
       <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
