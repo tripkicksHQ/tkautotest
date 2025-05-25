@@ -853,102 +853,85 @@
         }
       }
 
-      function renderTilesMode() {
-        nestedRow.innerHTML = ""; // Clear previous tiles in the nested row
-        let renderedHTML = "";
-        const totalTiles = tileEditors.length;
-        let i = 0;
-        while (i < totalTiles) {
-          const rowSize = Math.min(3, totalTiles - i);
-          const rowDiv = document.createElement("div");
-          rowDiv.classList.add("row", "g-0");
-          let colClass = (rowSize === 2) ? "col-6" : ((rowSize === 1) ? "col-12" : "col-4");
-          let groupHTML = "";
-          for (let r = 0; r < rowSize; r++) {
-            const index = i + r;
-            const tileHTML = tileEditors[index].getValue().trim() ||
-              `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-            const tileWrapper = document.createElement("div");
-            tileWrapper.classList.add("tile", colClass);
-            tileWrapper.innerHTML = tileHTML;
-            rowDiv.appendChild(tileWrapper); // Append tile to the visual row
-            groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`; // For code view
-          }
-          nestedRow.appendChild(rowDiv); // Append the visual row to the nested container
-          renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
-          i += rowSize;
-        }
-        codeView.textContent = `
+        function renderTilesMode() {
+    nestedRow.innerHTML = ""; // Clear previous tiles in the nested row
+    let renderedHTML = "";
+    const totalTiles = tileEditors.length;
+    let i = 0;
+    while (i < totalTiles) {
+      const rowSize = Math.min(3, totalTiles - i); // always 3 except last row
+      const rowDiv = document.createElement("div");
+      rowDiv.classList.add("row", "g-0");
+      let colClass = (rowSize === 2) ? "col-6" : (rowSize === 1 ? "col-12" : "col-4");
+      let groupHTML = "";
+      for (let r = 0; r < rowSize; r++) {
+        const index = i + r;
+        const tileHTML = tileEditors[index].getValue().trim() ||
+          `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+        const tileWrapper = document.createElement("div");
+        tileWrapper.classList.add("tile", colClass);
+        tileWrapper.innerHTML = tileHTML;
+        rowDiv.appendChild(tileWrapper);
+        groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`;
+      }
+      nestedRow.appendChild(rowDiv);
+      renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
+      i += rowSize;
+    }
+    codeView.textContent = `
 <div class="col-12" id="tileContainer" style="border-radius: 10px 0 0 10px;">
   <div class="row g-0">
     ${renderedHTML}
   </div>
 </div>`;
-        codeView.hidden = false;
-      }
+    codeView.hidden = false;
+  }
 
-      function renderTopFullWidthMode() {
-        nestedRow.innerHTML = ""; // Clear previous tiles
-        let renderedHTML = "";
-        const totalTiles = tileEditors.length;
-        if (totalTiles > 0) {
-          const rowDiv = document.createElement("div");
-          rowDiv.classList.add("row", "g-0");
-          const tileHTML = tileEditors[0].getValue().trim() ||
-            `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-          const tileWrapper = document.createElement("div");
-          tileWrapper.classList.add("tile", "col-12");
-          tileWrapper.innerHTML = tileHTML;
-          rowDiv.appendChild(tileWrapper);
-          nestedRow.appendChild(rowDiv);
-          renderedHTML += `
+  function renderTopFullWidthMode() {
+    nestedRow.innerHTML = ""; // Clear previous tiles
+    let renderedHTML = "";
+    const totalTiles = tileEditors.length;
+    if (totalTiles > 0) {
+      // Top row: always one tile, full width
+      const rowDiv = document.createElement("div");
+      rowDiv.classList.add("row", "g-0");
+      const tileHTML = tileEditors[0].getValue().trim() ||
+        `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+      const tileWrapper = document.createElement("div");
+      tileWrapper.classList.add("tile", "col-12");
+      tileWrapper.innerHTML = tileHTML;
+      rowDiv.appendChild(tileWrapper);
+      nestedRow.appendChild(rowDiv);
+      renderedHTML += `
 <div class="row g-0">
   <div class="tile col-12">${tileHTML}</div>
 </div>\n`;
-          let leftover = totalTiles - 1;
-          let currentIndex = 1;
-          if (leftover === 3) {
-            const rowDiv2 = document.createElement("div");
-            rowDiv2.classList.add("row", "g-0");
-            let leftoverHTML = "";
-            for (let r = 0; r < 3; r++) {
-              const index = currentIndex + r;
-              const leftoverTileHTML = tileEditors[index].getValue().trim() ||
-                `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-              const tileWrapper2 = document.createElement("div");
-              tileWrapper2.classList.add("tile", "col-4");
-              tileWrapper2.innerHTML = leftoverTileHTML;
-              rowDiv2.appendChild(tileWrapper2);
-              leftoverHTML += `<div class="tile col-4">${leftoverTileHTML}</div>\n`;
-            }
-            nestedRow.appendChild(rowDiv2);
-            leftover = 0;
-            renderedHTML += `<div class="row g-0">\n${leftoverHTML}</div>\n`;
-          } else {
-            while (leftover > 0) {
-              const rowSize = Math.min(2, leftover);
-              const rowDiv2 = document.createElement("div");
-              rowDiv2.classList.add("row", "g-0");
-              let leftoverHTML = "";
-              const colClass = (rowSize === 2) ? "col-6" : "col-12";
-              for (let r = 0; r < rowSize; r++) {
-                const index = currentIndex + r;
-                const leftoverTileHTML = tileEditors[index].getValue().trim() ||
-                  `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
-                const tileWrapper2 = document.createElement("div");
-                tileWrapper2.classList.add("tile", colClass);
-                tileWrapper2.innerHTML = leftoverTileHTML;
-                rowDiv2.appendChild(tileWrapper2);
-                leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
-              }
-              nestedRow.appendChild(rowDiv2);
-              renderedHTML += `<div class="row g-0">\n${leftoverHTML}</div>\n`;
-              leftover -= rowSize;
-              currentIndex += rowSize;
-            }
-          }
+      // Remaining tiles, in rows of 3
+      let leftover = totalTiles - 1;
+      let currentIndex = 1;
+      while (leftover > 0) {
+        const rowSize = Math.min(3, leftover);
+        const rowDiv2 = document.createElement("div");
+        rowDiv2.classList.add("row", "g-0");
+        const colClass = (rowSize === 2) ? "col-6" : (rowSize === 1 ? "col-12" : "col-4");
+        let leftoverHTML = "";
+        for (let r = 0; r < rowSize; r++) {
+          const index = currentIndex + r;
+          const leftoverTileHTML = tileEditors[index].getValue().trim() ||
+            `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+          const tileWrapper2 = document.createElement("div");
+          tileWrapper2.classList.add("tile", colClass);
+          tileWrapper2.innerHTML = leftoverTileHTML;
+          rowDiv2.appendChild(tileWrapper2);
+          leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
         }
-        codeView.textContent = `
+        nestedRow.appendChild(rowDiv2);
+        renderedHTML += `<div class="row g-0">\n${leftoverHTML}</div>\n`;
+        leftover -= rowSize;
+        currentIndex += rowSize;
+      }
+    }
+    codeView.textContent = `
 <div class="col-12" id="tileContainer" style="border-radius: 10px 0 0 10px;">
   <div class="row g-0">
     ${renderedHTML}
