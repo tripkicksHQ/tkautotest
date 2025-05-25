@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>tkAutoBeta2</title>
+  <title>tkAuto</title>
   <link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon" />
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
       margin-top: 20px;
       padding-bottom: 20px;
     }
-    #banner {
+    #banner { /* This ID is not on an element meant for styling, pageBanner is the target for capture */
       margin-top: 20px;
       border: 1px solid #ddd;
       padding: 10px;
@@ -92,9 +92,6 @@
       border-color: #427bff;
       box-shadow: 0 0 2px #427bff55;
     }
-    /* Note: We leave the original media queries as they were,
-        but the page is always viewed on desktop as per your instructions.
-    */
     @media (max-width: 1200px) {
       .tile-editor-preview {
         flex-direction: column;
@@ -120,8 +117,11 @@
       gap: 10px;
       margin-bottom: 10px;
     }
-    .fare-preview-card {
-      max-width: 1500px;
+    .fare-preview-card { /* Used by #farePreview and #airfarePreview children */
+      max-width: 1500px; /* Default, overridden by input values */
+    }
+    #farePreviewWrapper, #airfarePreviewWrapper { /* Apply max-width control here */
+        max-width: 1500px; /* Default, overridden by input values */
     }
     .fare-preview-icons img {
       height: 35px;
@@ -130,23 +130,28 @@
     .fare-inputs .form-check {
       margin-left: 10px;
     }
-    /* --- ADDED for always-square hotel image --- */
-    #farePreviewImage {
+    #farePreviewImage, #airfarePreviewImage { /* Apply to both hotel and airfare image */
       width: 100%;
-      aspect-ratio: 1/1;
+      /* aspect-ratio: 1/1; /* hotel image is square, airfare might not be intended to be */
       object-fit: cover;
       object-position: center;
     }
+    #farePreviewImage {
+        aspect-ratio: 1/1; /* Keep hotel image square */
+    }
+    #airfarePreviewImage {
+        aspect-ratio: auto; /* Or specific, e.g., 16/9 */
+        max-height: 150px; /* Example constraint if needed */
+    }
   </style>
-	
 </head>
 <body>
 <header style="display: flex; align-items: center; padding: 20px; margin-bottom: 20px; background-color: #f9a5e7;">
-  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBETA2</a>
-  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a>
-  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
-  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
-  <span class="badge rounded-pill text-danger border border-danger ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
+  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta2</a>
+  <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAuto</a>
+  <a href="https://tripkickshq.github.io/tkautotest/tkAutoBeta.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta</a>
+  <a href="https://tripkickshq.github.io/tkautotest/tkAutoBeta2.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta2</a>
+  <span class="badge rounded-pill text-primary border border-primary ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
     05.25.25
   </span>
 </header>
@@ -273,7 +278,10 @@
             </div>
           </div>
          </div>
-      </div> </div> </div> <div class="container fare-section" id="lodgingFareSection">
+      </div>
+    </div>
+
+    <div class="container fare-section" id="lodgingFareSection">
     <h4>Lodging Auto Fare</h4>
     <div class="row">
       <div class="col-md-6 fare-inputs">
@@ -459,8 +467,7 @@
       <button id="downloadFareBtn" class="btn btn-warning btn-sm">Download Fare PNG</button>
     </div>
 
-    <div class="mt-4" id="farePreview">
-      <div class="card border-1 p-3 pb-5 fare-preview-card" style="min-height: 200px;">
+    <div class="mt-4" id="farePreviewWrapper"> <div class="card border-1 p-3 pb-5 fare-preview-card" id="farePreview">
         <div class="row g-3">
           <div class="col-3">
             <img id="farePreviewImage" src="https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg" alt="The James Nomad" class="img-fluid rounded" crossOrigin="anonymous" />
@@ -495,7 +502,9 @@
         </div>
       </div>
     </div>
-  </div> <div class="container fare-section" id="airfareSection">
+  </div>
+
+  <div class="container fare-section" id="airfareSection">
     <h4>Airfare Auto Fare</h4>
     <div class="row">
       <div class="col-md-6 fare-inputs">
@@ -638,7 +647,7 @@
 
         <p class="text-muted mt-3 mb-1">Badge Settings:</p>
         <div class="icon-input-row">
-          <input type="text" id="airfareBadgeText" class="form-control w-auto" value="2 blocks from our HQ office" />
+          <input type="text" id="airfareBadgeText" class="form-control w-auto" value="On-time arrival 85%" />
           <div class="form-check form-switch">
              <input class="form-check-input" type="checkbox" id="airfareBadgeToggle" checked />
             <label class="form-check-label" for="airfareBadgeToggle">Show Badge</label>
@@ -665,7 +674,7 @@
         </div>
         <div class="mb-2">
           <label for="airfareImage" class="form-label">Airfare Image URL</label>
-          <input type="text" id="airfareImage" class="form-control" value="https://www.example.com/plane.jpg" />
+          <input type="text" id="airfareImage" class="form-control" value="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/airport-1.png" />
         </div>
          <div class="mb-2">
           <label for="airfareWidth" class="form-label">Airfare Container Width (px)</label>
@@ -679,11 +688,10 @@
       <button id="copyAirfareBtn" class="btn btn-outline-warning btn-sm">Copy Airfare</button>
       <button id="downloadAirfareBtn" class="btn btn-warning btn-sm">Download Airfare PNG</button>
     </div>
-    <div class="mt-4" id="airfarePreview">
-      <div class="card border-1 shadow p-3 fare-preview-card">
+    <div class="mt-4" id="airfarePreviewWrapper"> <div class="card border-1 shadow p-3 fare-preview-card" id="airfarePreview">
         <div class="row g-3">
           <div class="col-3">
-            <img id="airfarePreviewImage" src="https://www.example.com/plane.jpg" alt="Sample Airfare" class="img-fluid rounded" crossOrigin="anonymous"/>
+            <img id="airfarePreviewImage" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/airport-1.png" alt="Sample Airfare" class="img-fluid rounded" crossOrigin="anonymous"/>
           </div>
           <div class="col-md-7">
             <div class="d-flex align-items-center fare-preview-icons" id="airfareIconsContainer">
@@ -693,7 +701,7 @@
               <img id="airfareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" />
               <img id="airfareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" />
                <span class="badge d-flex align-items-center px-3" id="airfareBadge" style="background-color: #e7f0ff; color: #1d2d3e; border: 1px solid #427bff; border-radius: 50px; height: 35px;">
-                2 blocks from our HQ office
+                On-time arrival 85%
               </span>
             </div>
             <h5 class="fw-bold mt-2" id="airfarePreviewName">NYC to LAX</h5>
@@ -713,23 +721,89 @@
         </div>
       </div>
     </div>
-  </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.3.0/dom-to-image-more.min.js" integrity="sha512-zvs1PQS+wT+qLUSBY//6gFb037QTgWTCBqPSxZO+QIL9zZ2ZPkLqJtJ2XJ2X6C+g0nL2XWJ+8o0B4c0LhR+Fw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.3.0/dom-to-image-more.min.js"></script>
 
   <script>
+  // This function needs to be defined in a scope accessible by all other DOMContentLoaded listeners that use it.
+  // Defining it on the window object makes it globally accessible.
+  window.handleCapture = async function(element, scaleFactor, type = 'png_download', filename = 'capture.png') {
+      if (typeof domtoimage === 'undefined') {
+          console.error("dom-to-image-more library is not loaded correctly.");
+          alert("Image capture library is not available. Please check the browser console for errors related to script loading.");
+          return;
+      }
+
+      if (!element || typeof element.offsetWidth === 'undefined') {
+          console.error("Invalid element for capture:", element);
+          alert("Cannot capture: The target element is invalid. Check console.");
+          return;
+      }
+
+      // Allow browser a moment to render, especially if element was just displayed
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (element.offsetWidth === 0 || element.offsetHeight === 0) {
+          const elemId = element.id || 'Unnamed element';
+          console.error(`Element "${elemId}" has no dimensions (width: ${element.offsetWidth}, height: ${element.offsetHeight}). Cannot capture.`);
+          alert(`Cannot capture: Element "${elemId}" is not visible or has zero dimensions. Please ensure it is displayed correctly.`);
+          return;
+      }
+
+      const options = {
+          width: Math.round(element.offsetWidth * scaleFactor),
+          height: Math.round(element.offsetHeight * scaleFactor),
+          style: {
+              transform: 'scale(' + scaleFactor + ')',
+              transformOrigin: 'top left'
+          },
+          cacheBust: true,
+          quality: 1 // For JPEG, but doesn't hurt for PNG logic in dom-to-image
+      };
+
+      try {
+          if (type === 'png_download') {
+              const dataUrl = await domtoimage.toPng(element, options);
+              const link = document.createElement("a");
+              link.download = filename;
+              link.href = dataUrl;
+              link.click();
+          } else if (type === 'png_blob_copy') {
+              if (!navigator.clipboard || !window.ClipboardItem) {
+                  alert("Copying images to clipboard is not supported by your browser or requires a secure context (HTTPS).");
+                  // Example of disabling a specific button can be done in the caller if needed
+                  return;
+              }
+              const blob = await domtoimage.toBlob(element, options);
+              if (!blob) {
+                  alert("Failed to generate image blob for copying.");
+                  return;
+              }
+              const item = new ClipboardItem({ "image/png": blob });
+              await navigator.clipboard.write([item]);
+              alert(filename.replace(/\.(png|jpg|jpeg)$/i, '') + " copied to clipboard!");
+          }
+      } catch (error) {
+          console.error(`Error during ${type} capture of "${element.id || 'element'}":`, error);
+          alert(`Failed to capture ${filename.replace(/\.(png|jpg|jpeg)$/i, '')}. Check console for details.`);
+      }
+  }
+
+
   document.addEventListener("DOMContentLoaded", () => {
     const bannerTypeSelector = document.getElementById("bannerType");
     const cityInputs = document.getElementById("cityInputs");
     const bannerContent = document.getElementById("bannerContent");
     const cityNameInput = document.getElementById("cityName");
     const cityImageUrlInput = document.getElementById("cityImageUrl");
-    const tileInputsContainer = document.getElementById("tileInputs");
     const numTilesInput = document.getElementById("numTiles");
     const generateInputsButton = document.getElementById("generateInputs");
     const renderTilesButton = document.getElementById("renderTiles");
@@ -746,90 +820,26 @@
     nestedRow.className = "row g-0";
     tileContainer.appendChild(nestedRow);
 
-    function downloadBannerAsPNG() {
-      const banner = document.getElementById("pageBanner");
-      if (!banner) {
-        console.error("Banner element not found for download.");
-        alert("Failed to find banner element.");
-        return;
-      }
-      const scaleFactor = 3;
-      const options = {
-          width: banner.offsetWidth * scaleFactor,
-          height: banner.offsetHeight * scaleFactor,
-          style: {
-              transform: 'scale(' + scaleFactor + ')',
-              transformOrigin: 'top left'
-          },
-          cacheBust: true
-      };
-      domtoimage.toPng(banner, options)
-        .then((dataUrl) => {
-          const link = document.createElement("a");
-          link.download = "banner.png";
-          link.href = dataUrl;
-          link.click();
-        }).catch((error) => {
-          console.error("Error capturing banner with dom-to-image:", error);
-          alert("Failed to capture banner. Check console for details.");
-        });
-    }
 
-    function copyBannerToClipboard() {
-      if (!navigator.clipboard || !window.ClipboardItem) {
-        alert("Copying images to the clipboard is not supported in your browser.");
-        if (copyBannerBtn) {
-            copyBannerBtn.disabled = true;
-            copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
-        }
-        return;
-      }
-      const banner = document.getElementById("pageBanner");
-      if (!banner) {
-        console.error("Banner element not found for copy.");
-        alert("Failed to find banner element.");
-        return;
-      }
-      const scaleFactor = 3;
-      const options = {
-          width: banner.offsetWidth * scaleFactor,
-          height: banner.offsetHeight * scaleFactor,
-          style: {
-              transform: 'scale(' + scaleFactor + ')',
-              transformOrigin: 'top left'
-          },
-          cacheBust: true
-      };
-      domtoimage.toBlob(banner, options)
-        .then((blob) => {
-          if (!blob) { alert("Failed to generate image blob."); return; }
-          const item = new ClipboardItem({ "image/png": blob });
-          navigator.clipboard.write([item]).then(() => { alert("Banner copied to clipboard!"); })
-            .catch((err) => {
-              console.error("Failed to copy image:", err);
-              alert("Failed to copy banner. Your browser might not support this feature.");
-            });
-        }).catch((error) => {
-          console.error("Error capturing banner with dom-to-image:", error);
-          alert("Failed to capture banner. Check console for details.");
+    if (downloadBannerBtn) {
+        downloadBannerBtn.addEventListener('click', () => {
+            const banner = document.getElementById("pageBanner");
+            window.handleCapture(banner, 3, 'png_download', 'banner.png');
         });
-    }
+    } else { console.error("Download Banner Button not found"); }
 
     if (copyBannerBtn) {
-        copyBannerBtn.addEventListener('click', copyBannerToClipboard);
-        if (!navigator.clipboard || !window.ClipboardItem) {
+        copyBannerBtn.addEventListener('click', () => {
+            const banner = document.getElementById("pageBanner");
+            window.handleCapture(banner, 3, 'png_blob_copy', 'Banner');
+        });
+         if (!navigator.clipboard || !window.ClipboardItem) {
             copyBannerBtn.disabled = true;
             copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
         }
-    } else {
-        console.error("Copy Banner Button not found");
-    }
-    if (downloadBannerBtn) {
-        downloadBannerBtn.addEventListener('click', downloadBannerAsPNG);
-    } else {
-        console.error("Download Banner Button not found");
-    }
+    } else { console.error("Copy Banner Button not found"); }
 
+    // ... (rest of your banner section JS, unchanged from previous correct version)
     function updateBannerType() {
       bannerContent.innerHTML = "";
       const bannerType = bannerTypeSelector.value;
@@ -1078,18 +1088,16 @@
   </script>
 
   <script>
+  // Tile & Modal Section Logic
   document.addEventListener("DOMContentLoaded", function () {
     const toggleBtn = document.getElementById("toggleTileModalBtn");
     const tileModalContent = document.getElementById("tileModalContent");
+
     if (toggleBtn && tileModalContent) {
       toggleBtn.addEventListener("click", function () {
-        if (tileModalContent.style.display === "none" || tileModalContent.style.display === "") {
-          tileModalContent.style.display = "block";
-           toggleBtn.textContent = "Close Tile & Modal";
-        } else {
-          tileModalContent.style.display = "none";
-          toggleBtn.textContent = "Open Tile & Modal";
-        }
+        const isHidden = tileModalContent.style.display === "none" || tileModalContent.style.display === "";
+        tileModalContent.style.display = isHidden ? "block" : "none";
+        toggleBtn.textContent = isHidden ? "Close Tile & Modal" : "Open Tile & Modal";
       });
     } else {
          console.error("Toggle button or content for Tile/Modal section not found.");
@@ -1104,18 +1112,14 @@
          mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true,
          lineWrapping: true, autoCloseTags: true, matchBrackets: true
        });
-    } else {
-       console.error("Tile HTML Editor textarea not found.");
-    }
+    } else { console.error("Tile HTML Editor textarea not found."); }
 
     if (modalHtmlTextarea) {
        modalEditor = CodeMirror.fromTextArea(modalHtmlTextarea, {
          mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true,
          lineWrapping: true, autoCloseTags: true, matchBrackets: true
        });
-    } else {
-        console.error("Modal HTML Editor textarea not found.");
-    }
+    } else { console.error("Modal HTML Editor textarea not found."); }
 
     const tilePreview = document.getElementById("tilePreview");
     const modalPreview = document.getElementById("modalPreview");
@@ -1126,7 +1130,7 @@
       modalEditor.on("change", () => { modalPreview.innerHTML = modalEditor.getValue(); });
     }
 
-    const standaloneTileTemplateURLs = {
+    const standaloneTileTemplateURLs = { /* ... (URLs as before) ... */
         "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html",
         "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html",
         "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html",
@@ -1140,7 +1144,7 @@
         "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html",
         "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
     };
-    const modalTemplateURLs = {
+    const modalTemplateURLs = { /* ... (URLs as before) ... */
       "1modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/1modalAuto.html",
       "2modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/2modalAuto.html",
       "3modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/3modalAuto.html",
@@ -1152,6 +1156,7 @@
       "9modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/9modalAuto.html",
       "10modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/10modalAuto.html"
     };
+
     const tileTemplateDropdown = document.getElementById("tileTemplateDropdown");
     if (tileTemplateDropdown && tileEditor) {
       tileTemplateDropdown.addEventListener("change", async () => {
@@ -1169,6 +1174,7 @@
           } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); }
         }
       });
+       if (tileEditor.getValue() === '') tileTemplateDropdown.dispatchEvent(new Event('change'));
     }
 
     const modalTemplateDropdown = document.getElementById("modalTemplateDropdown");
@@ -1176,16 +1182,7 @@
       modalTemplateDropdown.addEventListener("change", async () => {
         const selected = modalTemplateDropdown.value;
         if (selected === "placeholder") {
-          modalEditor.setValue(`
-<div class="modal" style="position: relative; display: block; opacity: 1;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"> <h5 class="modal-title">Placeholder Modal</h5> </div>
-      <div class="modal-body"> <p>This is a placeholder modal.</p> </div>
-    </div>
-  </div>
-</div>
-          `.trim());
+          modalEditor.setValue(`<div class="modal" style="position: relative; display: block; opacity: 1; height: 100%;"><div class="modal-dialog" style="margin:0; max-width:100%;"><div class="modal-content" style="height:100%;"><div class="modal-header"> <h5 class="modal-title">Placeholder Modal</h5> </div><div class="modal-body"> <p>This is a placeholder modal.</p> </div></div></div></div>`.trim());
         } else {
           const url = modalTemplateURLs[selected];
           if (!url) return;
@@ -1197,11 +1194,10 @@
           } catch (err) { console.error("Error loading modal template:", err); alert("Could not load modal template from " + url); }
         }
       });
+      if (modalEditor.getValue() === '') modalTemplateDropdown.dispatchEvent(new Event('change'));
     }
 
     const copyTileCodeBtn = document.getElementById("copyTileCodeBtn");
-    const copyModalCodeBtn = document.getElementById("copyModalCodeBtn");
-
     if (copyTileCodeBtn && tileEditor) {
       copyTileCodeBtn.addEventListener("click", () => {
         navigator.clipboard.writeText(tileEditor.getValue())
@@ -1209,6 +1205,7 @@
           .catch(() => alert("Failed to copy tile code."));
       });
     }
+    const copyModalCodeBtn = document.getElementById("copyModalCodeBtn");
     if (copyModalCodeBtn && modalEditor) {
       copyModalCodeBtn.addEventListener("click", () => {
         navigator.clipboard.writeText(modalEditor.getValue())
@@ -1223,67 +1220,23 @@
 
     if (downloadTileModalBtn && previewContainer) {
       downloadTileModalBtn.addEventListener("click", () => {
-        const scaleFactor = 4;
-        const options = {
-            width: previewContainer.offsetWidth * scaleFactor,
-            height: previewContainer.offsetHeight * scaleFactor,
-            style: {
-                transform: 'scale(' + scaleFactor + ')',
-                transformOrigin: 'top left'
-            },
-            cacheBust: true
-        };
-        domtoimage.toPng(previewContainer, options)
-        .then(dataUrl => {
-          const link = document.createElement("a");
-          link.download = "tile-modal-preview.png";
-          link.href = dataUrl;
-          link.click();
-        }).catch((error) => {
-            console.error("Error downloading preview image with dom-to-image:", error);
-            alert("Failed to download preview image.");
-        });
+        window.handleCapture(previewContainer, 4, 'png_download', 'tile-modal-preview.png');
       });
     }
     if (copyTileModalPreviewBtn && previewContainer) {
       copyTileModalPreviewBtn.addEventListener("click", () => {
-        if (!navigator.clipboard || !window.ClipboardItem) { alert("Copying images is not supported in your browser."); return; }
-        const scaleFactor = 4;
-        const options = {
-            width: previewContainer.offsetWidth * scaleFactor,
-            height: previewContainer.offsetHeight * scaleFactor,
-            style: {
-                transform: 'scale(' + scaleFactor + ')',
-                transformOrigin: 'top left'
-            },
-            cacheBust: true
-        };
-        domtoimage.toBlob(previewContainer, options)
-        .then(blob => {
-          if (!blob) { alert("Failed to generate image blob."); return; }
-          const item = new ClipboardItem({ "image/png": blob });
-          navigator.clipboard.write([item])
-            .then(() => alert("Preview copied to clipboard!"))
-            .catch((err) => {
-                console.error("Error copying preview image:", err);
-                alert("Failed to copy preview image.");
-            });
-        }).catch((error) => {
-            console.error("Error capturing preview for copy with dom-to-image:", error);
-            alert("Failed to copy preview image.");
-        });
+        window.handleCapture(previewContainer, 4, 'png_blob_copy', 'Tile-Modal Preview');
       });
-    }
-    if (tileEditor && tileEditor.getValue() === '') {
-       tileTemplateDropdown.dispatchEvent(new Event('change'));
-    }
-    if (modalEditor && modalEditor.getValue() === '') {
-       modalTemplateDropdown.dispatchEvent(new Event('change'));
+      if (!navigator.clipboard || !window.ClipboardItem) {
+        copyTileModalPreviewBtn.disabled = true;
+        copyTileModalPreviewBtn.title = "Clipboard API not supported.";
+      }
     }
   });
   </script>
 
   <script>
+  // Lodging Fare Section Logic
   document.addEventListener("DOMContentLoaded", function () {
     const fareIconA = document.getElementById("fareIconA");
     const fareIconB = document.getElementById("fareIconB");
@@ -1293,10 +1246,11 @@
     const defaultFareValues = {
       hotelName: "The James Nomad",
       address: "22 East 29th Street, New York, NY 10016",
-       distance: "2.46 mi",
+      distance: "2.46 mi",
       price: "$301",
       image: "https://static.concursolutions.com/travel-media/hotels/sabre/image/upload/f_auto,q_auto:best,t_vcmp_medium/hotel/i/313866/alaryry9fpnnumnw1knw.jpg",
-      badgeText: "2 blocks from our HQ office"
+      badgeText: "2 blocks from our HQ office",
+      width: "850"
     };
     const fareSelectA = document.getElementById("fareSelectA");
     const fareSelectB = document.getElementById("fareSelectB");
@@ -1320,17 +1274,16 @@
     const fareRenderBtn = document.getElementById("fareRenderBtn");
     const copyFareBtn = document.getElementById("copyFareBtn");
     const downloadFareBtn = document.getElementById("downloadFareBtn");
+    const farePreviewWrapper = document.getElementById("farePreviewWrapper");
     const farePreview = document.getElementById("farePreview");
-    const fareIconsContainer = document.getElementById("fareIconsContainer");
-    const farePreviewImage = document.getElementById("farePreviewImage");
+    const farePreviewImageEl = document.getElementById("farePreviewImage");
     const farePreviewHotelName = document.getElementById("farePreviewHotelName");
     const farePreviewAddress = document.getElementById("farePreviewAddress");
     const farePreviewDistance = document.getElementById("farePreviewDistance");
     const farePreviewPrice = document.getElementById("farePreviewPrice");
-    fareResetBtn.addEventListener("click", resetFare);
-    fareRenderBtn.addEventListener("click", renderFare);
-    copyFareBtn.addEventListener("click", copyFareToClipboard);
-    downloadFareBtn.addEventListener("click", downloadFareAsPNG);
+    const lodgingWidthInput = document.getElementById("lodgingWidth");
+
+
     function renderFare() {
       updateIcon("A", fareToggleA.checked, fareSelectA.value, fareIconA);
       updateIcon("B", fareToggleB.checked, fareSelectB.value, fareIconB);
@@ -1342,19 +1295,16 @@
       farePreviewAddress.textContent = fareAddress.value.trim() || defaultFareValues.address;
       farePreviewDistance.textContent = fareDistance.value.trim() || defaultFareValues.distance;
       farePreviewPrice.textContent = farePrice.value.trim() || defaultFareValues.price;
-      // farePreviewImage.crossOrigin = "anonymous"; // Already set in HTML
-      const newImageUrl = fareImage.value.trim() || defaultFareValues.image;
-      farePreviewImage.src = newImageUrl;
+      farePreviewImageEl.src = fareImage.value.trim() || defaultFareValues.image;
       if (fareBadgeToggle.checked) {
         fareBadge.style.display = "";
         fareBadge.textContent = fareBadgeText.value.trim() || defaultFareValues.badgeText;
       } else {
         fareBadge.style.display = "none";
       }
-      const lodgingWidthInput = document.getElementById("lodgingWidth");
-      if (lodgingWidthInput) {
+      if (lodgingWidthInput && farePreviewWrapper) {
         const newWidth = parseInt(lodgingWidthInput.value, 10);
-        farePreview.style.maxWidth = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : "auto";
+        farePreviewWrapper.style.maxWidth = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : defaultFareValues.width + "px";
       }
     }
     function resetFare() {
@@ -1367,6 +1317,7 @@
       fareDistance.value = defaultFareValues.distance;
       farePrice.value = defaultFareValues.price;
       fareImage.value = defaultFareValues.image;
+      lodgingWidthInput.value = defaultFareValues.width;
       renderFare();
     }
     function updateIcon(letter, isOn, selectedValue, iconElement) {
@@ -1380,6 +1331,7 @@
       }
     }
     function reorderIcons() {
+      const fareIconsContainer = document.getElementById("fareIconsContainer");
       const visibleIcons = [];
       [fareIconA, fareIconB, fareIconC, fareIconD, fareIconE].forEach((icon) => {
         if (icon.style.display !== "none") visibleIcons.push(icon);
@@ -1388,62 +1340,25 @@
       visibleIcons.forEach((icon) => fareIconsContainer.appendChild(icon));
       if (fareBadgeToggle.checked) fareIconsContainer.appendChild(fareBadge);
     }
-    function copyFareToClipboard() {
-      if (!navigator.clipboard || !window.ClipboardItem) {
-        alert("Copying images to the clipboard is not supported in your browser.");
-        return;
-      }
-      const scaleFactor = 4;
-      const options = {
-          width: farePreview.offsetWidth * scaleFactor,
-          height: farePreview.offsetHeight * scaleFactor,
-          style: {
-              transform: 'scale(' + scaleFactor + ')',
-              transformOrigin: 'top left'
-          },
-          cacheBust: true
-      };
-      domtoimage.toBlob(farePreview, options)
-      .then((blob) => {
-         if (!blob) { alert("Failed to generate image blob."); return; }
-        const item = new ClipboardItem({ "image/png": blob });
-        navigator.clipboard.write([item]).then(() => { alert("Fare copied to clipboard!"); })
-          .catch((err) => {
-            console.error("Failed to copy fare to clipboard:", err);
-            alert("Failed to copy fare. Your browser might not support this feature.");
-          });
-      }).catch((error) => {
-        console.error("Error capturing fare for copy with dom-to-image:", error);
-        alert("Failed to capture fare. Check console for details.");
-      });
+
+    if(fareResetBtn) fareResetBtn.addEventListener("click", resetFare);
+    if(fareRenderBtn) fareRenderBtn.addEventListener("click", renderFare);
+
+    if(copyFareBtn) {
+        copyFareBtn.addEventListener("click", () => window.handleCapture(farePreview, 4, 'png_blob_copy', 'Lodging Fare'));
+        if (!navigator.clipboard || !window.ClipboardItem) {
+            copyFareBtn.disabled = true;
+            copyFareBtn.title = "Clipboard API not supported.";
+        }
     }
-    function downloadFareAsPNG() {
-      const scaleFactor = 4;
-       const options = {
-          width: farePreview.offsetWidth * scaleFactor,
-          height: farePreview.offsetHeight * scaleFactor,
-          style: {
-              transform: 'scale(' + scaleFactor + ')',
-              transformOrigin: 'top left'
-          },
-          cacheBust: true
-      };
-      domtoimage.toPng(farePreview, options)
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-         link.download = "fare.png";
-        link.href = dataUrl;
-        link.click();
-      }).catch((error) => {
-        console.error("Error capturing fare for download with dom-to-image:", error);
-        alert("Failed to capture fare. Check console for details.");
-      });
-    }
+    if(downloadFareBtn) downloadFareBtn.addEventListener("click", () => window.handleCapture(farePreview, 4, 'png_download', 'lodging-fare.png'));
+
     renderFare();
   });
   </script>
 
   <script>
+  // Airfare Section Logic
   document.addEventListener("DOMContentLoaded", function () {
     const airfareIconA = document.getElementById("airfareIconA");
     const airfareIconB = document.getElementById("airfareIconB");
@@ -1452,7 +1367,8 @@
     const airfareIconE = document.getElementById("airfareIconE");
     const defaultAirfareValues = {
       name: "NYC to LAX", address: "JFK Airport", distance: "2,469 miles",
-      price: "$550", image: "https://www.example.com/plane.jpg", badgeText: "2 blocks from our HQ office"
+      price: "$550", image: "https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/airport-1.png", badgeText: "On-time arrival 85%",
+      width: "1000"
     };
     const airfareSelectA = document.getElementById("airfareSelectA");
     const airfareSelectB = document.getElementById("airfareSelectB");
@@ -1476,17 +1392,16 @@
     const airfareRenderBtn = document.getElementById("airfareRenderBtn");
     const copyAirfareBtn = document.getElementById("copyAirfareBtn");
     const downloadAirfareBtn = document.getElementById("downloadAirfareBtn");
+    const airfarePreviewWrapper = document.getElementById("airfarePreviewWrapper");
     const airfarePreview = document.getElementById("airfarePreview");
-    const airfareIconsContainer = document.getElementById("airfareIconsContainer");
-    const airfarePreviewImage = document.getElementById("airfarePreviewImage");
+    const airfarePreviewImageEl = document.getElementById("airfarePreviewImage");
     const airfarePreviewName = document.getElementById("airfarePreviewName");
     const airfarePreviewAddress = document.getElementById("airfarePreviewAddress");
     const airfarePreviewDistance = document.getElementById("airfarePreviewDistance");
     const airfarePreviewPrice = document.getElementById("airfarePreviewPrice");
-    airfareResetBtn.addEventListener("click", resetAirfare);
-    airfareRenderBtn.addEventListener("click", renderAirfare);
-    copyAirfareBtn.addEventListener("click", copyAirfareToClipboard);
-    downloadAirfareBtn.addEventListener("click", downloadAirfareAsPNG);
+    const airfareWidthInput = document.getElementById("airfareWidth");
+
+
     function renderAirfare() {
       updateAirfareIcon("A", airfareToggleA.checked, airfareSelectA.value, airfareIconA);
       updateAirfareIcon("B", airfareToggleB.checked, airfareSelectB.value, airfareIconB);
@@ -1498,19 +1413,16 @@
       airfarePreviewAddress.textContent = airfareAddress.value.trim() || defaultAirfareValues.address;
       airfarePreviewDistance.textContent = airfareDistance.value.trim() || defaultAirfareValues.distance;
       airfarePreviewPrice.textContent = airfarePrice.value.trim() || defaultAirfareValues.price;
-      // airfarePreviewImage.crossOrigin = "anonymous"; // Already set in HTML
-      const newImageUrl = airfareImage.value.trim() || defaultAirfareValues.image;
-      airfarePreviewImage.src = newImageUrl;
+      airfarePreviewImageEl.src = airfareImage.value.trim() || defaultAirfareValues.image;
       if (airfareBadgeToggle.checked) {
         airfareBadge.style.display = "";
         airfareBadge.textContent = airfareBadgeText.value.trim() || defaultAirfareValues.badgeText;
       } else {
         airfareBadge.style.display = "none";
       }
-      const airfareWidthInput = document.getElementById("airfareWidth");
-      if (airfareWidthInput) {
+      if (airfareWidthInput && airfarePreviewWrapper) {
         const newWidth = parseInt(airfareWidthInput.value, 10);
-        airfarePreview.style.maxWidth = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : "auto";
+        airfarePreviewWrapper.style.maxWidth = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : defaultAirfareValues.width + "px";
       }
     }
     function resetAirfare() {
@@ -1523,6 +1435,7 @@
       airfareDistance.value = defaultAirfareValues.distance;
       airfarePrice.value = defaultAirfareValues.price;
       airfareImage.value = defaultAirfareValues.image;
+      airfareWidthInput.value = defaultAirfareValues.width;
       renderAirfare();
     }
     function updateAirfareIcon(letter, isOn, selectedValue, iconElement) {
@@ -1536,6 +1449,7 @@
       }
     }
     function reorderAirfareIcons() {
+      const airfareIconsContainer = document.getElementById("airfareIconsContainer");
       const visibleIcons = [];
       [airfareIconA, airfareIconB, airfareIconC, airfareIconD, airfareIconE].forEach((icon) => {
         if (icon.style.display !== "none") visibleIcons.push(icon);
@@ -1544,54 +1458,23 @@
       visibleIcons.forEach((icon) => airfareIconsContainer.appendChild(icon));
       if (airfareBadgeToggle.checked) airfareIconsContainer.appendChild(airfareBadge);
     }
-    function copyAirfareToClipboard() {
-      if (!navigator.clipboard || !window.ClipboardItem) { alert("Copying images is not supported."); return; }
-      const scaleFactor = 4;
-      const options = {
-          width: airfarePreview.offsetWidth * scaleFactor,
-          height: airfarePreview.offsetHeight * scaleFactor,
-          style: {
-              transform: 'scale(' + scaleFactor + ')',
-              transformOrigin: 'top left'
-          },
-          cacheBust: true
-      };
-      domtoimage.toBlob(airfarePreview, options)
-      .then((blob) => {
-         if (!blob) { alert("Failed to generate image blob."); return; }
-        const item = new ClipboardItem({ "image/png": blob });
-        navigator.clipboard.write([item]).then(() => { alert("Airfare copied to clipboard!"); })
-          .catch((err) => {
-            console.error("Failed to copy airfare to clipboard:", err);
-            alert("Failed to copy airfare.");
-          });
-      }).catch((error) => {
-        console.error("Error capturing airfare for copy with dom-to-image:", error);
-        alert("Failed to capture airfare.");
-      });
+
+    if(airfareResetBtn) airfareResetBtn.addEventListener("click", resetAirfare);
+    if(airfareRenderBtn) airfareRenderBtn.addEventListener("click", renderAirfare);
+
+    if(copyAirfareBtn) {
+        copyAirfareBtn.addEventListener("click", () => window.handleCapture(airfarePreview, 4, 'png_blob_copy', 'Airfare'));
+        if (!navigator.clipboard || !window.ClipboardItem) {
+            copyAirfareBtn.disabled = true;
+            copyAirfareBtn.title = "Clipboard API not supported.";
+        }
     }
-    function downloadAirfareAsPNG() {
-      const scaleFactor = 4;
-      const options = {
-          width: airfarePreview.offsetWidth * scaleFactor,
-          height: airfarePreview.offsetHeight * scaleFactor,
-          style: {
-              transform: 'scale(' + scaleFactor + ')',
-              transformOrigin: 'top left'
-          },
-          cacheBust: true
-      };
-      domtoimage.toPng(airfarePreview, options)
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-         link.download = "airfare.png";
-        link.href = dataUrl;
-        link.click();
-      }).catch((error) => {
-        console.error("Error capturing airfare for download with dom-to-image:", error);
-        alert("Failed to capture airfare.");
-      });
-    }
+    if(downloadAirfareBtn) downloadAirfareBtn.addEventListener("click", () => window.handleCapture(airfarePreview, 4, 'png_download', 'airfare.png'));
+
+    // Set default values for inputs on load
+    airfareBadgeText.value = defaultAirfareValues.badgeText; // Use the new default
+    airfareImage.value = defaultAirfareValues.image;
+    airfareWidthInput.value = defaultAirfareValues.width;
     renderAirfare();
   });
   </script>
