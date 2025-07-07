@@ -9,8 +9,14 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
   <link href="https://info.tripkicks.com/hubfs/system/mockup/tk-css.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css" crossorigin="anonymous" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/theme/dracula.css"
+/>
 
   <style>
     :root {
@@ -60,16 +66,18 @@
       gap: 10px;
       margin-bottom: 20px;
     }
-    .live-preview {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      background-color: #ffffff;
-      overflow: auto;
-      min-height: 200px;
-      max-width: 30%;
-      flex-shrink: 0;
-    }
+.live-preview {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #ffffff;
+  overflow: auto;
+  min-height: 200px;
+min-width: 300px;
+  max-width: none;       /* allow it to expand past 30% now */
+  width: 30%;            /* but generally start at 30% */
+  flex-shrink: 0;
+}
     .code-editor {
       position: relative;
       flex-grow: 1;
@@ -79,7 +87,7 @@
     }
     .CodeMirror {
       min-height: 100px;
-      max-height: 280px; 
+      max-height: 280px;  
       overflow: auto !important;
       border-radius: 8px;
       border: 1px solid #ddd;
@@ -94,14 +102,14 @@
       border-color: #427bff;
       box-shadow: 0 0 2px #427bff55;
     }
-		/* —— Shrink the tile-code editors so you can fit more on screen —— */
+        /* —— Shrink the tile-code editors so you can fit more on screen —— */
 .tile-editor-preview .CodeMirror {
   font-size: 0.8rem !important;      /* smaller text */
   line-height: 1.2 !important;       /* tighter lines */
-  min-height: 80px    !important;    /* reduce overall box height */
-  max-height: 200px   !important;    /* so they don’t grow too tall when you type */
+  min-height: 80px     !important;   /* reduce overall box height */
+  max-height: 200px    !important;   /* so they don’t grow too tall when you type */
 }
-		/* —— 1) Force CodeMirror to full width in the flex container —— */
+        /* —— 1) Force CodeMirror to full width in the flex container —— */
 .tile-editor-preview .code-editor .CodeMirror {
   width: 100% !important;    /* so it fills the available space */
   min-width: 0;              /* allow flex items to shrink properly */
@@ -110,13 +118,13 @@
 /* —— 2) Explicitly apply the Dracula theme background & text colors —— */
 .CodeMirror.cm-s-dracula {
   background-color: #282a36 !important;
-  color:            #f8f8f2 !important;
+  color:             #f8f8f2 !important;
 }
 
 /* —— 3) Make the line-number gutter match the theme —— */
 .CodeMirror-gutters {
   background-color: #282a36 !important;
-  border-right:     1px solid #44475a !important;
+  border-right:      1px solid #44475a !important;
 }
     @media (max-width: 1200px) {
       .tile-editor-preview {
@@ -156,28 +164,25 @@
     .fare-inputs .form-check {
       margin-left: 10px;
     }
-    #farePreviewImage {
+    #farePreviewImage, #airfarePreviewImage { /* Combined styles for both image IDs */
       width: 100%;
       aspect-ratio: 1/1;
       object-fit: cover;
       object-position: center;
     }
-    #airfarePreviewImage {
-      width: 100%;
+    #airfarePreviewImage { /* Specific override for airfare if needed, adjusting aspect-ratio */
       aspect-ratio: auto;
-      object-fit: cover;
-      object-position: center;
       max-height: 150px;
     }
   </style>
 </head>
 <body>
 <header style="display: flex; align-items: center; padding: 20px; margin-bottom: 20px; background-color: #f9a5e7;">
-  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAuto</a>
+  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta2</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAuto</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAutoBeta.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAutoBeta2.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta2</a>
-  <span class="badge rounded-pill text-danger border border-danger ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
+  <span class="badge rounded-pill text-primary border border-primary ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
     07.07.25
   </span>
 </header>
@@ -245,7 +250,7 @@
     <div class="container fare-section" id="tileModalSection" style="margin-top: 40px;">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h4>Tile + Modal Preview</h4>
-        <button id="toggleTileModalBtn" class="btn btn-primary btn-sm">Open Tile & Modal</button>
+        <button id="toggleTileModalBtn" class="btn btn-primary btn-sm">Open Tile + Modal</button>
       </div>
       <div id="tileModalContent" style="display: none;">
         <div class="row">
@@ -291,7 +296,7 @@
                 <button id="copyModalCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
               </div>
               <textarea id="modalHtmlEditor" class="form-control" placeholder="Enter HTML for Modal"></textarea>
-             </div>
+              </div>
           </div>
           <div class="col-md-6">
             <div id="previewContainer">
@@ -303,7 +308,7 @@
               <button id="copyTileModalPreviewBtn" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
             </div>
           </div>
-         </div>
+          </div>
       </div>
     </div>
 
@@ -327,7 +332,7 @@
     </div>
     <div class="mt-3">
       <button id="fareResetBtn" class="btn btn-secondary btn-sm">Reset Fare</button>
-       <button id="fareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
+        <button id="fareRenderBtn" class="btn btn-primary btn-sm">Render Fare</button>
       <button id="copyFareBtn" class="btn btn-outline-warning btn-sm">Copy Fare</button>
       <button id="downloadFareBtn" class="btn btn-warning btn-sm">Download Fare PNG</button>
     </div>
@@ -359,18 +364,19 @@
     </div>
     <div class="mt-4" id="airfarePreviewWrapper">
       <div class="card border-1 shadow p-3 fare-preview-card" id="airfarePreview">
-         <div class="row g-3"> <div class="col-3"> <img id="airfarePreviewImage" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/airport-1.png" alt="Sample Airfare" class="img-fluid rounded" crossOrigin="anonymous"/> </div> <div class="col-md-7"> <div class="d-flex align-items-center fare-preview-icons" id="airfareIconsContainer"> <img id="airfareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" /> <img id="airfareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" /> <img id="airfareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" /> <img id="airfareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" /> <img id="airfareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" /> <span class="badge d-flex align-items-center px-3" id="airfareBadge" style="background-color: #e7f0ff; color: #1d2d3e; border: 1px solid #427bff; border-radius: 50px; height: 35px;"> On-time arrival 85% </span> </div> <h5 class="fw-bold mt-2" id="airfarePreviewName">NYC to LAX</h5> <p class="text-muted mb-1"> <span id="airfarePreviewAddress">JFK Airport</span> <i class="fa-solid fa-location-dot"></i> <span id="airfarePreviewDistance">2,469 miles</span> </p> </div> <div class="col-md-2 text-end d-flex flex-column justify-content-end"> <p class="mb-1 text-muted small mt-3">From:</p> <h4 class="fw-bold text-dark" id="airfarePreviewPrice">$550</h4> <a href="#" class="btn btn-outline-secondary btn-sm" style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;"> Book Flight </a> </div> </div>
+           <div class="row g-3"> <div class="col-3"> <img id="airfarePreviewImage" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/airport-1.png" alt="Sample Airfare" class="img-fluid rounded" crossOrigin="anonymous"/> </div> <div class="col-md-7"> <div class="d-flex align-items-center fare-preview-icons" id="airfareIconsContainer"> <img id="airfareIconA" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/A.png" alt="A" /> <img id="airfareIconB" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/B.png" alt="B" /> <img id="airfareIconC" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/C.png" alt="C" /> <img id="airfareIconD" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/D.png" alt="D" /> <img id="airfareIconE" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/E.png" alt="E" /> <span class="badge d-flex align-items-center px-3" id="airfareBadge" style="background-color: #e7f0ff; color: #1d2d3e; border: 1px solid #427bff; border-radius: 50px; height: 35px;"> On-time arrival 85% </span> </div> <h5 class="fw-bold mt-2" id="airfarePreviewName">NYC to LAX</h5> <p class="text-muted mb-1"> <span id="airfarePreviewAddress">JFK Airport</span> <i class="fa-solid fa-location-dot"></i> <span id="airfarePreviewDistance">2,469 miles</span> </p> </div> <div class="col-md-2 text-end d-flex flex-column justify-content-end"> <p class="mb-1 text-muted small mt-3">From:</p> <h4 class="fw-bold text-dark" id="airfarePreviewPrice">$550</h4> <a href="#" class="btn btn-outline-secondary btn-sm" style="background-color: white; border-color: #ddd; color: #005eb8; padding: 6px 6px; min-width: 80px;"> Book Flight </a> </div> </div>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/xml/xml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/css/css.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/htmlmixed/htmlmixed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/selection/active-line.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/display/placeholder.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.3.0/dist/dom-to-image-more.min.js"></script>
 
 <script>
@@ -482,14 +488,14 @@
             if (window.handleCapture) window.handleCapture(banner, 3, 'png_blob_copy', 'Banner');
             else console.error("handleCapture is not defined on window");
         });
-         if (!navigator.clipboard || !window.ClipboardItem) {
+          if (!navigator.clipboard || !window.ClipboardItem) {
             copyBannerBtn.disabled = true;
             copyBannerBtn.title = "Copying images to the clipboard is not supported in your browser.";
         }
     } else { console.error("Copy Banner Button not found"); }
 
     function updateBannerType() {
-      bannerContent.innerHTML = ""; 
+      bannerContent.innerHTML = "";  
       const bannerType = bannerTypeSelector.value;
       const cityName = cityNameInput.value.trim();
       const cityImageUrl = cityImageUrlInput.value.trim();
@@ -501,9 +507,9 @@
         cityCol.innerHTML = `
           <div class="card card-full"
                style="height: 100%; min-height: 120px; border-radius: 8px 0 0 8px;
-                      background-image: url('${cityImageUrl}');
-                      background-repeat: no-repeat; background-position: center center;
-                      background-size: cover;">
+                     background-image: url('${cityImageUrl}');
+                     background-repeat: no-repeat; background-position: center center;
+                     background-size: cover;">
             <div class="card-img-overlay bg-gradient opacity-30 p-0">
               <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">${cityName}</h4>
             </div>
@@ -511,17 +517,17 @@
         `;
         const tileCol = document.createElement("div");
         tileCol.className = "col-10 d-flex flex-wrap align-items-stretch";
-        tileCol.appendChild(tileContainer); 
+        tileCol.appendChild(tileContainer);  
         const rowContainer = document.createElement("div");
         rowContainer.className = "row g-0";
         rowContainer.appendChild(cityCol);
         rowContainer.appendChild(tileCol);
         bannerContent.appendChild(rowContainer);
-      } else { 
+      } else {  
         cityInputs.classList.add("d-none");
         const tileCol = document.createElement("div");
         tileCol.className = "col-12 d-flex flex-wrap align-items-stretch";
-        tileCol.appendChild(tileContainer); 
+        tileCol.appendChild(tileContainer);  
         const rowContainer = document.createElement("div");
         rowContainer.className = "row g-0";
         rowContainer.appendChild(tileCol);
@@ -533,12 +539,12 @@
     }
 
     function renderTilesMode() {
-      nestedRow.innerHTML = ""; 
+      nestedRow.innerHTML = "";  
       let renderedHTML = "";
       const totalTiles = tileEditors.length;
       let i = 0;
       while (i < totalTiles) {
-        const rowSize = Math.min(3, totalTiles - i); 
+        const rowSize = Math.min(3, totalTiles - i);  
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("row", "g-0");
         let colClass = (rowSize === 2) ? "col-6" : (rowSize === 1 ? "col-12" : "col-4");
@@ -567,7 +573,7 @@
     }
 
     function renderTopFullWidthMode() {
-      nestedRow.innerHTML = ""; 
+      nestedRow.innerHTML = "";  
       let renderedHTML = "";
       const totalTiles = tileEditors.length;
       if (totalTiles > 0) {
@@ -656,7 +662,7 @@
       });
     } else { console.error("Generate Inputs Button not found"); }
     renderTilesButton.addEventListener("click", renderTilesMode);
-    if (button2 && !button2.hasAttribute("listener")) { button2.addEventListener("click", renderTopFullWidthMode); button2.setAttribute("listener", "true"); }
+    if (button2) { button2.addEventListener("click", renderTopFullWidthMode); } // Removed redundant listener check
     updateBannerType();
   });
   </script>
@@ -669,7 +675,7 @@
     if (toggleBtn && tileModalContent) { toggleBtn.addEventListener("click", function () { if (tileModalContent.style.display === "none" || tileModalContent.style.display === "") { tileModalContent.style.display = "block"; toggleBtn.textContent = "Close Tile & Modal"; } else { tileModalContent.style.display = "none"; toggleBtn.textContent = "Open Tile & Modal"; } }); } else { console.error("Toggle button or content for Tile/Modal section not found.");}
     const tileHtmlTextarea = document.getElementById("tileHtmlEditor");
     const modalHtmlTextarea = document.getElementById("modalHtmlEditor");
-    let tileEditor, modalEditor; 
+    let tileEditor, modalEditor;  
     if (tileHtmlTextarea) { tileEditor = CodeMirror.fromTextArea(tileHtmlTextarea, { mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true, lineWrapping: true, autoCloseTags: true, matchBrackets: true }); } else { console.error("Tile HTML Editor textarea not found."); }
     if (modalHtmlTextarea) { modalEditor = CodeMirror.fromTextArea(modalHtmlTextarea, { mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true, lineWrapping: true, autoCloseTags: true, matchBrackets: true }); } else { console.error("Modal HTML Editor textarea not found."); }
     const tilePreview = document.getElementById("tilePreview");
@@ -716,9 +722,9 @@
     const fareHotelName = document.getElementById("fareHotelName"), fareAddress = document.getElementById("fareAddress"), fareDistance = document.getElementById("fareDistance"), farePrice = document.getElementById("farePrice"), fareImage = document.getElementById("fareImage"), fareBadgeText = document.getElementById("fareBadgeText"), fareBadgeToggle = document.getElementById("fareBadgeToggle"), fareBadge = document.getElementById("fareBadge");
     const fareIconA = document.getElementById("fareIconA"), fareIconB = document.getElementById("fareIconB"), fareIconC = document.getElementById("fareIconC"), fareIconD = document.getElementById("fareIconD"), fareIconE = document.getElementById("fareIconE");
     const fareResetBtn = document.getElementById("fareResetBtn"), fareRenderBtn = document.getElementById("fareRenderBtn"), copyFareBtn = document.getElementById("copyFareBtn"), downloadFareBtn = document.getElementById("downloadFareBtn");
-    const farePreviewWrapper = document.getElementById("farePreviewWrapper"); // Changed from farePreview
-    const farePreview = document.getElementById("farePreview"); // This is the actual card to capture
-    const farePreviewImageEl = document.getElementById("farePreviewImage"); // Renamed from farePreviewImage to avoid conflict
+    const farePreviewWrapper = document.getElementById("farePreviewWrapper");
+    const farePreview = document.getElementById("farePreview");
+    const farePreviewImage = document.getElementById("farePreviewImage"); // Corrected variable name
     const farePreviewHotelName = document.getElementById("farePreviewHotelName"), farePreviewAddress = document.getElementById("farePreviewAddress"), farePreviewDistance = document.getElementById("farePreviewDistance"), farePreviewPrice = document.getElementById("farePreviewPrice");
     const lodgingWidthInput = document.getElementById("lodgingWidth");
     const fareIconsContainer = document.getElementById("fareIconsContainer");
@@ -731,8 +737,8 @@
       farePreviewAddress.textContent = fareAddress.value.trim() || defaultFareValues.address;
       farePreviewDistance.textContent = fareDistance.value.trim() || defaultFareValues.distance;
       farePreviewPrice.textContent = farePrice.value.trim() || defaultFareValues.price;
-      farePreviewImageEl.src = fareImage.value.trim() || defaultFareValues.image; // Use farePreviewImageEl
-      farePreviewImageEl.crossOrigin = "anonymous"; // Ensure this for external images
+      farePreviewImage.src = fareImage.value.trim() || defaultFareValues.image; // Use farePreviewImage
+      farePreviewImage.crossOrigin = "anonymous"; // Ensure this for external images
       if (fareBadgeToggle.checked) { fareBadge.style.display = ""; fareBadge.textContent = fareBadgeText.value.trim() || defaultFareValues.badgeText; } else { fareBadge.style.display = "none"; }
       if (lodgingWidthInput && farePreviewWrapper) { const newWidth = parseInt(lodgingWidthInput.value, 10); farePreviewWrapper.style.maxWidth = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : defaultFareValues.width + "px"; }
     }
@@ -776,9 +782,9 @@
     const airfareName = document.getElementById("airfareName"), airfareAddress = document.getElementById("airfareAddress"), airfareDistance = document.getElementById("airfareDistance"), airfarePrice = document.getElementById("airfarePrice"), airfareImage = document.getElementById("airfareImage"), airfareBadgeText = document.getElementById("airfareBadgeText"), airfareBadgeToggle = document.getElementById("airfareBadgeToggle"), airfareBadge = document.getElementById("airfareBadge");
     const airfareIconA = document.getElementById("airfareIconA"), airfareIconB = document.getElementById("airfareIconB"), airfareIconC = document.getElementById("airfareIconC"), airfareIconD = document.getElementById("airfareIconD"), airfareIconE = document.getElementById("airfareIconE");
     const airfareResetBtn = document.getElementById("airfareResetBtn"), airfareRenderBtn = document.getElementById("airfareRenderBtn"), copyAirfareBtn = document.getElementById("copyAirfareBtn"), downloadAirfareBtn = document.getElementById("downloadAirfareBtn");
-    const airfarePreviewWrapper = document.getElementById("airfarePreviewWrapper"); // Changed from airfarePreview
-    const airfarePreview = document.getElementById("airfarePreview"); // This is the actual card to capture
-    const airfarePreviewImageEl = document.getElementById("airfarePreviewImage"); // Renamed from airfarePreviewImage
+    const airfarePreviewWrapper = document.getElementById("airfarePreviewWrapper");
+    const airfarePreview = document.getElementById("airfarePreview");
+    const airfarePreviewImage = document.getElementById("airfarePreviewImage"); // Corrected variable name
     const airfarePreviewName = document.getElementById("airfarePreviewName"), airfarePreviewAddress = document.getElementById("airfarePreviewAddress"), airfarePreviewDistance = document.getElementById("airfarePreviewDistance"), airfarePreviewPrice = document.getElementById("airfarePreviewPrice");
     const airfareWidthInput = document.getElementById("airfareWidth");
     const airfareIconsContainer = document.getElementById("airfareIconsContainer");
@@ -791,8 +797,8 @@
         airfarePreviewAddress.textContent = airfareAddress.value.trim() || defaultAirfareValues.address;
         airfarePreviewDistance.textContent = airfareDistance.value.trim() || defaultAirfareValues.distance;
         airfarePreviewPrice.textContent = airfarePrice.value.trim() || defaultAirfareValues.price;
-        airfarePreviewImageEl.src = airfareImage.value.trim() || defaultAirfareValues.image; // Use airfarePreviewImageEl
-        airfarePreviewImageEl.crossOrigin = "anonymous"; // Ensure this for external images
+        airfarePreviewImage.src = airfareImage.value.trim() || defaultAirfareValues.image; // Use airfarePreviewImage
+        airfarePreviewImage.crossOrigin = "anonymous"; // Ensure this for external images
         if (airfareBadgeToggle.checked) { airfareBadge.style.display = ""; airfareBadge.textContent = airfareBadgeText.value.trim() || defaultAirfareValues.badgeText; } else { airfareBadge.style.display = "none"; }
         if (airfareWidthInput && airfarePreviewWrapper) { const newWidth = parseInt(airfareWidthInput.value, 10); airfarePreviewWrapper.style.maxWidth = (!isNaN(newWidth) && newWidth > 0) ? newWidth + "px" : defaultAirfareValues.width + "px"; }
     }
