@@ -38,8 +38,16 @@
       width: 100%;
       margin: 0;
       border-radius: 0;
+      /* The default border for cards inside tiles is set here,
+         but we'll override it with conditional inline styles for generated tiles. */
       border: 2px solid rgba(var(--tk-white-rgb), 1);
     }
+
+    /* New style for tile with white border */
+    .tile.with-white-border {
+      border: 2px solid white !important; /* Force white border */
+    }
+
     #tileInputs {
       margin-top: 20px;
       padding-bottom: 20px;
@@ -74,9 +82,26 @@
   overflow: auto;
   min-height: 200px;
 min-width: 300px;
-  max-width: none;       /* allow it to expand past 30% now */
-  width: 30%;            /* but generally start at 30% */
+  max-width: none;        /* allow it to expand past 30% now */
+  width: 30%;             /* but generally start at 30% */
   flex-shrink: 0;
+  position: relative; /* Added for background image positioning */
+}
+.live-preview .background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5; /* Adjust opacity as needed */
+  z-index: 0; /* Ensure it's behind content */
+}
+.live-preview > *:not(.background-overlay) {
+  position: relative; /* Ensure content is above the background */
+  z-index: 1;
 }
     .code-editor {
       position: relative;
@@ -105,10 +130,11 @@ min-width: 300px;
         /* —— Shrink the tile-code editors so you can fit more on screen —— */
 .tile-editor-preview .CodeMirror {
   font-size: 0.8rem !important;      /* smaller text */
-  line-height: 1.2 !important;       /* tighter lines */
-  min-height: 80px     !important;   /* reduce overall box height */
-  max-height: 200px    !important;   /* so they don’t grow too tall when you type */
+  line-height: 1.2 !important;        /* tighter lines */
+  min-height: 80px      !important;    /* reduce overall box height */
+  max-height: 200px    !important;    /* so they don’t grow too tall when you type */
 }
+
         /* —— 1) Force CodeMirror to full width in the flex container —— */
 .tile-editor-preview .code-editor .CodeMirror {
   width: 100% !important;    /* so it fills the available space */
@@ -465,7 +491,9 @@ min-width: 300px;
     const codeView = document.getElementById("codeView");
     const copyBannerBtn = document.getElementById("copyBannerBtn");
     const downloadBannerBtn = document.getElementById("downloadBannerBtn");
-    let tileEditors = [];
+    // Store CodeMirror instances along with their associated background image and border inputs
+    let tileEditors = []; // Array of objects: { editor: CodeMirrorInstance, bgImageUrlInput: HTMLInputElement, borderToggle: HTMLInputElement }
+
     const tileContainer = document.createElement("div");
     tileContainer.id = "tileContainer";
     tileContainer.className = "col-12";
@@ -551,13 +579,60 @@ min-width: 300px;
         let groupHTML = "";
         for (let r = 0; r < rowSize; r++) {
           const index = i + r;
-          const tileHTML = tileEditors[index].getValue().trim() ||
+          const tileInfo = tileEditors[index];
+          const tileHTML = tileInfo.editor.getValue().trim() ||
             `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+          const bgImageUrl = tileInfo.bgImageUrlInput.value.trim();
+          const addBorder = tileInfo.borderToggle.checked; // Get border toggle state
+          
           const tileWrapper = document.createElement("div");
           tileWrapper.classList.add("tile", colClass);
-          tileWrapper.innerHTML = tileHTML;
-          rowDiv.appendChild(tileWrapper);
-          groupHTML += `<div class="tile ${colClass}">${tileHTML}</div>\n`;
+          let inlineTileStyle = '';
+
+          if (bgImageUrl) {
+              inlineTileStyle += `
+                  background-image: url('${bgImageUrl}');
+                  background-size: cover;
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  position: relative;
+                  z-index: 0;
+              `;
+              // Add a div inside for the actual content to sit on top of the background
+              const contentWrapper = document.createElement("div");
+              contentWrapper.style.cssText = `position: relative; z-index: 1; height: 100%;`;
+              contentWrapper.innerHTML = tileHTML;
+              tileWrapper.appendChild(contentWrapper);
+          } else {
+              tileWrapper.innerHTML = tileHTML;
+          }
+
+          if (addBorder) {
+            inlineTileStyle += `border: 2px solid white !important;`;
+          }
+          tileWrapper.style.cssText += inlineTileStyle; // Apply combined styles
+
+          nestedRow.appendChild(tileWrapper);
+
+          // For the code view, construct the HTML with inline styles for background and border
+          let tileHtmlForCode = tileHTML;
+          let codeInlineStyle = '';
+          if (bgImageUrl) {
+            codeInlineStyle += `background-image: url('${bgImageUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; z-index: 0; height: 100%;`;
+          }
+          if (addBorder) {
+            codeInlineStyle += `border: 2px solid white !important;`;
+          }
+
+          if (codeInlineStyle) {
+            tileHtmlForCode = `<div style="${codeInlineStyle}">
+  <div style="position: relative; z-index: 1; height: 100%;">
+    ${tileHTML}
+  </div>
+</div>`;
+          }
+          
+          groupHTML += `<div class="tile ${colClass}">${tileHtmlForCode}</div>\n`;
         }
         nestedRow.appendChild(rowDiv);
         renderedHTML += `<div class="row g-0">\n${groupHTML}</div>\n`;
@@ -579,17 +654,62 @@ min-width: 300px;
       if (totalTiles > 0) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("row", "g-0");
-        const tileHTML = tileEditors[0].getValue().trim() ||
+        const tileInfo = tileEditors[0];
+        const tileHTML = tileInfo.editor.getValue().trim() ||
           `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+        const bgImageUrl = tileInfo.bgImageUrlInput.value.trim();
+        const addBorder = tileInfo.borderToggle.checked; // Get border toggle state
+
         const tileWrapper = document.createElement("div");
         tileWrapper.classList.add("tile", "col-12");
-        tileWrapper.innerHTML = tileHTML;
+        let inlineTileStyle = '';
+
+        if (bgImageUrl) {
+            inlineTileStyle += `
+                background-image: url('${bgImageUrl}');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                position: relative;
+                z-index: 0;
+            `;
+            const contentWrapper = document.createElement("div");
+            contentWrapper.style.cssText = `position: relative; z-index: 1; height: 100%;`;
+            contentWrapper.innerHTML = tileHTML;
+            tileWrapper.appendChild(contentWrapper);
+        } else {
+            tileWrapper.innerHTML = tileHTML;
+        }
+
+        if (addBorder) {
+          inlineTileStyle += `border: 2px solid white !important;`;
+        }
+        tileWrapper.style.cssText += inlineTileStyle; // Apply combined styles
+
         rowDiv.appendChild(tileWrapper);
         nestedRow.appendChild(rowDiv);
+
+        let tileHtmlForCode = tileHTML;
+        let codeInlineStyle = '';
+        if (bgImageUrl) {
+          codeInlineStyle += `background-image: url('${bgImageUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; z-index: 0; height: 100%;`;
+        }
+        if (addBorder) {
+          codeInlineStyle += `border: 2px solid white !important;`;
+        }
+
+        if (codeInlineStyle) {
+          tileHtmlForCode = `<div style="${codeInlineStyle}">
+  <div style="position: relative; z-index: 1; height: 100%;">
+    ${tileHTML}
+  </div>
+</div>`;
+        }
         renderedHTML += `
 <div class="row g-0">
-  <div class="tile col-12">${tileHTML}</div>
+  <div class="tile col-12">${tileHtmlForCode}</div>
 </div>\n`;
+
         let leftover = totalTiles - 1;
         let currentIndex = 1;
         while (leftover > 0) {
@@ -600,13 +720,57 @@ min-width: 300px;
           let leftoverHTML = "";
           for (let r = 0; r < rowSize; r++) {
             const index = currentIndex + r;
-            const leftoverTileHTML = tileEditors[index].getValue().trim() ||
+            const leftoverTileInfo = tileEditors[index];
+            const leftoverTileHTML = leftoverTileInfo.editor.getValue().trim() ||
               `<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`;
+            const leftoverBgImageUrl = leftoverTileInfo.bgImageUrlInput.value.trim();
+            const leftoverAddBorder = leftoverTileInfo.borderToggle.checked; // Get border toggle state
+
             const tileWrapper2 = document.createElement("div");
             tileWrapper2.classList.add("tile", colClass);
-            tileWrapper2.innerHTML = leftoverTileHTML;
+            let inlineTileStyle2 = '';
+
+            if (leftoverBgImageUrl) {
+                inlineTileStyle2 += `
+                    background-image: url('${leftoverBgImageUrl}');
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    position: relative;
+                    z-index: 0;
+                `;
+                const contentWrapper2 = document.createElement("div");
+                contentWrapper2.style.cssText = `position: relative; z-index: 1; height: 100%;`;
+                contentWrapper2.innerHTML = leftoverTileHTML;
+                tileWrapper2.appendChild(contentWrapper2);
+            } else {
+                tileWrapper2.innerHTML = leftoverTileHTML;
+            }
+
+            if (leftoverAddBorder) {
+              inlineTileStyle2 += `border: 2px solid white !important;`;
+            }
+            tileWrapper2.style.cssText += inlineTileStyle2; // Apply combined styles
+
             rowDiv2.appendChild(tileWrapper2);
-            leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHTML}</div>\n`;
+
+            let leftoverTileHtmlForCode = leftoverTileHTML;
+            let codeInlineStyle2 = '';
+            if (leftoverBgImageUrl) {
+              codeInlineStyle2 += `background-image: url('${leftoverBgImageUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; z-index: 0; height: 100%;`;
+            }
+            if (leftoverAddBorder) {
+              codeInlineStyle2 += `border: 2px solid white !important;`;
+            }
+
+            if (codeInlineStyle2) {
+              leftoverTileHtmlForCode = `<div style="${codeInlineStyle2}">
+  <div style="position: relative; z-index: 1; height: 100%;">
+    ${leftoverTileHTML}
+  </div>
+</div>`;
+            }
+            leftoverHTML += `<div class="tile ${colClass}">${leftoverTileHtmlForCode}</div>\n`;
           }
           nestedRow.appendChild(rowDiv2);
           renderedHTML += `<div class="row g-0">\n${leftoverHTML}</div>\n`;
@@ -636,33 +800,126 @@ min-width: 300px;
         }
         const inputsTargetDiv = document.getElementById('tileInputs');
         inputsTargetDiv.querySelectorAll('.form-group.mb-3').forEach(el => el.remove());
-        tileEditors = [];
+        tileEditors = []; // Reset tileEditors array
         for (let i = 0; i < numTiles; i++) {
           const inputGroup = document.createElement("div");
           inputGroup.classList.add("form-group", "mb-3");
           const editorId = `codeMirrorEditor${i + 1}`;
           const previewId = `livePreview${i + 1}`;
+          const bgImageUrlInputId = `bgImageUrl${i + 1}`;
+          const borderToggleId = `borderToggle${i + 1}`; // New ID for border toggle
+
           inputGroup.innerHTML = `
             <div class="d-flex align-items-center justify-content-between mb-2"> <label for="${editorId}" class="me-2">Banner Tile ${i + 1}</label> </div>
-            <div class="tile-editor-preview"> <div class="live-preview" id="${previewId}"></div> <div class="code-editor d-flex flex-column"> <div class="d-flex align-items-center mb-2" style="gap: 10px;"> <select class="banner-tile-template-dropdown form-select w-auto"> <option value="placeholder" selected>placeholder</option> <option value="1tileAuto">1tileAuto</option> <option value="2tileAuto">2tileAuto</option> <option value="3tileAuto">3tileAuto</option> <option value="4tileAuto">4tileAuto</option> <option value="5tileAuto">5tileAuto</option> <option value="6tileAuto">6tileAuto</option> <option value="7tileAuto">7tileAuto</option> <option value="bookNow">bookNow</option> <option value="flexDates">flexDates</option> <option value="carbonFoot">carbonFoot</option> <option value="rateTarget">rateTarget</option> <option value="gate4">gate4</option> </select> <button type="button" class="btn btn-sm btn-outline-primary copy-banner-tile-code-btn">Copy Code</button> </div> <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Banner Tile ${i + 1}"></textarea> </div> </div>
+            <div class="tile-editor-preview"> 
+              <div class="live-preview" id="${previewId}">
+                <div class="background-overlay" id="${previewId}-bg"></div>
+              </div> 
+              <div class="code-editor d-flex flex-column"> 
+                <div class="d-flex align-items-center mb-2" style="gap: 10px;"> 
+                  <select class="banner-tile-template-dropdown form-select w-auto"> 
+                    <option value="placeholder" selected>placeholder</option> 
+                    <option value="1tileAuto">1tileAuto</option> 
+                    <option value="2tileAuto">2tileAuto</option> 
+                    <option value="3tileAuto">3tileAuto</option> 
+                    <option value="4tileAuto">4tileAuto</option> 
+                    <option value="5tileAuto">5tileAuto</option> 
+                    <option value="6tileAuto">6tileAuto</option> 
+                    <option value="7tileAuto">7tileAuto</option> 
+                    <option value="bookNow">bookNow</option> 
+                    <option value="flexDates">flexDates</option> 
+                    <option value="carbonFoot">carbonFoot</option> 
+                    <option value="rateTarget">rateTarget</option> 
+                    <option value="gate4">gate4</option> 
+                  </select> 
+                  <button type="button" class="btn btn-sm btn-outline-primary copy-banner-tile-code-btn">Copy Code</button> 
+                </div> 
+                <div class="mb-2 d-flex align-items-center gap-2">
+                  <label for="${bgImageUrlInputId}" class="form-label visually-hidden">Background Image URL</label>
+                  <input type="text" id="${bgImageUrlInputId}" class="form-control form-control-sm" placeholder="Background Image URL (optional)">
+                  <div class="form-check form-switch ms-auto">
+                    <input class="form-check-input" type="checkbox" id="${borderToggleId}">
+                    <label class="form-check-label text-nowrap" for="${borderToggleId}">White Border</label>
+                  </div>
+                </div>
+                <textarea id="${editorId}" class="form-control code-editor-textarea" placeholder="Enter HTML for Banner Tile ${i + 1}"></textarea> 
+              </div> 
+            </div>
           `;
           inputsTargetDiv.appendChild(inputGroup);
+
           const textarea = inputGroup.querySelector(`#${editorId}`);
           const editor = CodeMirror.fromTextArea(textarea, { mode: "htmlmixed", theme: "dracula", lineNumbers: true, styleActiveLine: true, lineWrapping: true, autoCloseTags: true, matchBrackets: true });
-          tileEditors.push(editor);
-          editor.on("change", () => { const content = editor.getValue(); const previewDiv = document.getElementById(previewId); if (previewDiv) previewDiv.innerHTML = content; });
+          const bgImageUrlInput = inputGroup.querySelector(`#${bgImageUrlInputId}`);
+          const borderToggle = inputGroup.querySelector(`#${borderToggleId}`); // Get border toggle
+          const previewDiv = document.getElementById(previewId);
+          const previewBgOverlay = document.getElementById(`${previewId}-bg`);
+
+          // Store all related elements
+          tileEditors.push({ editor: editor, bgImageUrlInput: bgImageUrlInput, borderToggle: borderToggle });
+
+          // Function to update the live preview
+          const updateLivePreview = () => {
+            const content = editor.getValue();
+            previewDiv.innerHTML = content;
+            // Re-append the background overlay to ensure it's the first child
+            if (previewBgOverlay) {
+                previewDiv.prepend(previewBgOverlay);
+            }
+
+            const url = bgImageUrlInput.value.trim();
+            if (previewBgOverlay) {
+                previewBgOverlay.style.backgroundImage = url ? `url('${url}')` : 'none';
+            }
+
+            if (borderToggle.checked) {
+              previewDiv.classList.add('with-white-border');
+            } else {
+              previewDiv.classList.remove('with-white-border');
+            }
+          };
+
+          // Event listeners
+          editor.on("change", updateLivePreview);
+          bgImageUrlInput.addEventListener("input", updateLivePreview);
+          borderToggle.addEventListener("change", updateLivePreview); // Listen for border toggle change
+
           const copyButton = inputGroup.querySelector(".copy-banner-tile-code-btn");
-          copyButton.addEventListener("click", () => { const content = editor.getValue(); navigator.clipboard.writeText(content) .then(() => alert("Banner tile code copied to clipboard!")) .catch((err) => { console.error("Failed to copy: ", err); alert("Failed to copy code."); }); });
+          copyButton.addEventListener("click", () => { 
+            const content = editor.getValue(); 
+            navigator.clipboard.writeText(content)
+              .then(() => alert("Banner tile code copied to clipboard!"))
+              .catch((err) => { console.error("Failed to copy: ", err); alert("Failed to copy code."); }); 
+          });
+          
           const templateDropdown = inputGroup.querySelector(".banner-tile-template-dropdown");
-          templateDropdown.addEventListener("change", async () => { const selected = templateDropdown.value; if (selected === "placeholder") { editor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim()); } else { const url = templateURLs[selected]; if (!url) return; try { const response = await fetch(url); if (!response.ok) throw new Error("Failed to load template: " + response.status); const templateHTML = await response.text(); editor.setValue(templateHTML.trim()); } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); } } });
-          templateDropdown.dispatchEvent(new Event('change'));
+          templateDropdown.addEventListener("change", async () => { 
+            const selected = templateDropdown.value; 
+            if (selected === "placeholder") { 
+              editor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim()); 
+            } else { 
+              const url = templateURLs[selected]; 
+              if (!url) return; 
+              try { 
+                const response = await fetch(url); 
+                if (!response.ok) throw new Error("Failed to load template: " + response.status); 
+                const templateHTML = await response.text(); 
+                editor.setValue(templateHTML.trim()); 
+              } catch (err) { 
+                console.error("Error loading template:", err); 
+                alert("Could not load template from " + url); 
+              } 
+            }
+            updateLivePreview(); // Update preview after template loads
+          });
+          templateDropdown.dispatchEvent(new Event('change')); // Trigger initial load
         }
         renderTilesButton.disabled = false;
         if (button2) button2.disabled = false;
       });
     } else { console.error("Generate Inputs Button not found"); }
     renderTilesButton.addEventListener("click", renderTilesMode);
-    if (button2) { button2.addEventListener("click", renderTopFullWidthMode); } // Removed redundant listener check
+    if (button2) { button2.addEventListener("click", renderTopFullWidthMode); }
     updateBannerType();
   });
   </script>
