@@ -16,6 +16,11 @@
     :root {
       --tk-white-rgb: 255, 255, 255;
     }
+    .main-wrapper {
+        width: 90%;
+        max-width: 100%; /* Overrides Bootstrap's fixed max-width */
+        margin: 0 auto;
+    }
     .tile {
       padding: 0;
     }
@@ -61,27 +66,37 @@
       max-height: 40vh;
       overflow: auto;
     }
-    @media (max-width: 1200px) {
-      /* Styles for medium/large screens are handled by col-lg-4 */
-    }
-    @media (max-width: 992px) {
-        /* Adjust column behavior for smaller screens if needed */
-    }
-
     .fare-section {
       margin-top: 40px;
       border: 1px solid #ddd;
-      padding: 20px;
+      padding: 0;
       border-radius: 8px;
       background-color: #fdfdfd;
       height: 100%;
       display: flex;
       flex-direction: column;
     }
+    .fare-section-body {
+        padding: 20px;
+    }
+    .fare-section-header {
+        padding: 0.25rem 1rem;
+        border-bottom: 1px solid #ddd;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .fare-section-header h4 {
+        margin-bottom: 0;
+        flex: 1; /* Allow h4 to grow and center its text */
+        text-align: center;
+        font-family: serif;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
      .fare-section .fare-section-content {
         flex-grow: 1;
      }
-
     .fare-section h4 {
       margin-bottom: 20px;
     }
@@ -123,19 +138,45 @@
     [id^="tilePreview"] {
         min-height: 100px;
         overflow: auto;
+        max-width: 100%;
+        transition: max-width 0.3s ease-in-out;
     }
     [id^="modalPreview"] {
-        min-height: 600px;
-        overflow: visible;
-        width: 100%;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        background-color: #fff;
+        overflow: hidden;
+        transition: height 0.3s ease-in-out;
+    }
+    [id^="modalPreview"] > * {
+        transform-origin: top left;
+        transition: transform 0.3s ease-in-out;
+    }
+    .preview-spacer {
+        margin-top: 25px;
     }
     .fare-section textarea {
         min-height: 150px;
     }
+    .btn-section-open {
+        background-color: #f8f9fa !important;
+        border-color: #dee2e6 !important;
+        color: #d3d3d3 !important;
+    }
+    .size-control {
+        cursor: pointer;
+        font-weight: bold;
+        color: #e9ecef;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        padding: 0 4px;
+    }
+     .size-control:hover {
+        color: #adb5bd;
+     }
+     [id^="toggleTileModalBtn"] {
+        padding: 0.15rem 0.5rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+     }
   </style>
 </head>
 <body>
@@ -145,11 +186,11 @@
     <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
     <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
     <span class="badge rounded-pill text-danger border border-primary ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
-      05.25.25
+      07.31.25
     </span>
   </header>
 
-  <div class="container">
+  <div class="main-wrapper">
     <div class="d-flex align-items-center mb-3">
       <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
       <select id="bannerType" class="form-select w-auto">
@@ -168,7 +209,7 @@
       <div class="row">
         <div class="col-12 mb-2">
           <div class="card border border-primary z-0" style="border-radius: 10px 10px 0 10px; z-index: 1;">
-            <div class="card-body p-0"></div>
+            <div class="card-body p-0" id="bannerContent"></div>
           </div>
           <div class="border border-primary border-top-0 z-3 bg-white ps-2"
                style="float: right; width: 136px; position: relative; z-index: 1000; border-top: 5px solid white; border-bottom-left-radius: 8px; box-shadow: 0 0 0 0 rgba(16, 24, 40, 0.03); margin-top: -1px;">
@@ -207,255 +248,296 @@
       <pre id="codeView" hidden></pre>
     </div>
 
-    <div class="row g-3">
-      <div id="pageBanner" class="tk_css mb-3">
+    <div class="row g-4">
+      <div class="tk_css mb-3">
         <iframe src="https://supercolorpalette.com/?scp=G0-hsl-FFDA1F-FBAC23-F68128-F25A2C-ED3731"
                 style="width: 100%; height: 250px; border: none;"
                 title="Color Palette Manipulator"></iframe>
       </div>
 
-      <!-- Tile & Modal Preview 1 -->
       <div class="col-12 col-lg-6">
-        <div class="container fare-section" id="tileModalSection-1">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4>Tile & Modal Preview 1</h4>
-            <button id="toggleTileModalBtn-1" class="btn btn-primary btn-sm">Open Section</button>
-          </div>
-          <div id="tileModalContent-1" class="fare-section-content" style="display: none;">
-            <label class="fw-lighter small">Tile Preview</label>
-            <div id="tilePreview-1"></div>
-            <label class="fw-lighter small">Modal Preview</label>
-            <div id="modalPreview-1"></div>
-            <div class="mt-3 mb-3 d-flex gap-2">
-              <button id="downloadTileModalBtn-1" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
-              <button id="copyTileModalPreviewBtn-1" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+        <div class="container fare-section" id="tileModalSection-1" style="border-color: #ffffff; border-width: 2px; box-shadow: 0 4px 18px 0 rgba(0,0,0,0.4);">
+            <div class="d-flex justify-content-between align-items-center fare-section-header" style="background-color: #427bff;">
+                <h6 class="text-white">Currently Live</h6>
+                <button id="toggleTileModalBtn-1" class="btn btn-primary btn-sm">Open Section</button>
             </div>
-            <div class="code-editor-area mb-3">
-              <div class="label-collapse-wrapper">
-                <label for="tileHtmlEditor-1" class="fw-lighter">Tile HTML</label>
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-1" aria-expanded="true" aria-controls="tileEditorWrapper-1">
-                  Collapse
-                </button>
-              </div>
-              <div class="collapse show" id="tileEditorWrapper-1">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select id="tileTemplateDropdown-1" class="form-select form-select-sm w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1tileAuto">1tileAuto</option>
-                    <option value="2tileAuto">2tileAuto</option>
-                    <option value="3tileAuto">3tileAuto</option>
-                    <option value="4tileAuto">4tileAuto</option>
-                    <option value="5tileAuto">5tileAuto</option>
-                    <option value="6tileAuto">6tileAuto</option>
-                    <option value="7tileAuto">7tileAuto</option>
-                    <option value="bookNow">bookNow</option>
-                    <option value="flexDates">flexDates</option>
-                    <option value="carbonFoot">carbonFoot</option>
-                    <option value="rateTarget">rateTarget</option>
-                    <option value="gate4">gate4</option>
-                  </select>
-                  <button id="copyTileCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+            <div class="fare-section-body">
+              <div id="tileModalContent-1" class="fare-section-content" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <label class="fw-lighter small">Tile Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-action="decrease" data-target="tilePreview-1" title="Decrease width by 5%">-</span>
+                        <span class="size-control" data-action="increase" data-target="tilePreview-1" title="Increase width by 5%">+</span>
+                    </div>
                 </div>
-                <textarea id="tileHtmlEditor-1" class="form-control" placeholder="Enter HTML for Tile"></textarea>
-              </div>
-            </div>
-            <div class="code-editor-area mb-3">
-              <div class="label-collapse-wrapper">
-                <label for="modalHtmlEditor-1" class="fw-lighter">Modal HTML</label>
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-1" aria-expanded="true" aria-controls="modalEditorWrapper-1">
-                  Collapse
-                </button>
-              </div>
-              <div class="collapse show" id="modalEditorWrapper-1">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select id="modalTemplateDropdown-1" class="form-select form-select-sm w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1modalAuto">1modalAuto</option>
-                    <option value="2modalAuto">2modalAuto</option>
-                    <option value="3modalAuto">3modalAuto</option>
-                    <option value="4modalAuto">4modalAuto</option>
-                    <option value="5modalAuto">5modalAuto</option>
-                    <option value="6modalAuto">6modalAuto</option>
-                    <option value="7modalAuto">7modalAuto</option>
-                    <option value="8modalAuto">8modalAuto</option>
-                    <option value="9modalAuto">9modalAuto</option>
-                    <option value="10modalAuto">10modalAuto</option>
-                  </select>
-                  <button id="copyModalCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                <div id="tilePreview-1"></div>
+                <div class="d-flex align-items-center preview-spacer">
+                    <label class="fw-lighter small">Modal Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-control-type="scale" data-action="decrease" data-target="modalPreview-1" title="Decrease size by 5%">-</span>
+                        <span class="size-control" data-control-type="scale" data-action="increase" data-target="modalPreview-1" title="Increase size by 5%">+</span>
+                    </div>
                 </div>
-                <textarea id="modalHtmlEditor-1" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                <div id="modalPreview-1" data-scale="1.0"></div>
+                <div class="mt-3 mb-3 d-flex gap-2">
+                  <button id="downloadTileModalBtn-1" type="button" class="btn btn-warning btn-sm mt-4">Download Preview PNG</button>
+                  <button id="copyTileModalPreviewBtn-1" type="button" class="btn btn-outline-warning btn-sm mt-4">Copy Preview</button>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="tileHtmlEditor-1" class="fw-lighter">Tile HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-1" aria-expanded="true" aria-controls="tileEditorWrapper-1">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="tileEditorWrapper-1">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="tileTemplateDropdown-1" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1tileAuto">1tileAuto</option>
+                        <option value="2tileAuto">2tileAuto</option>
+                        <option value="3tileAuto">3tileAuto</option>
+                        <option value="4tileAuto">4tileAuto</option>
+                        <option value="5tileAuto">5tileAuto</option>
+                        <option value="6tileAuto">6tileAuto</option>
+                        <option value="7tileAuto">7tileAuto</option>
+                        <option value="8tileAuto">8tileAuto</option>
+                        <option value="9tileAuto">9tileAuto</option>
+                        <option value="10tileAuto">10tileAuto</option>
+                        <option value="bookNow">bookNow</option>
+                        <option value="flexDates">flexDates</option>
+                        <option value="carbonFoot">carbonFoot</option>
+                        <option value="rateTarget">rateTarget</option>
+                        <option value="gate4">gate4</option>
+                      </select>
+                      <button id="copyTileCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="tileHtmlEditor-1" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                  </div>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="modalHtmlEditor-1" class="fw-lighter">Modal HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-1" aria-expanded="true" aria-controls="modalEditorWrapper-1">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="modalEditorWrapper-1">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="modalTemplateDropdown-1" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1modalAuto">1modalAuto</option>
+                        <option value="2modalAuto">2modalAuto</option>
+                        <option value="3modalAuto">3modalAuto</option>
+                        <option value="4modalAuto">4modalAuto</option>
+                        <option value="5modalAuto">5modalAuto</option>
+                        <option value="6modalAuto">6modalAuto</option>
+                        <option value="7modalAuto">7modalAuto</option>
+                        <option value="8modalAuto">8modalAuto</option>
+                        <option value="9modalAuto">9modalAuto</option>
+                        <option value="10modalAuto">10modalAuto</option>
+                      </select>
+                      <button id="copyModalCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="modalHtmlEditor-1" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
 
-      <!-- Tile & Modal Preview 2 -->
       <div class="col-12 col-lg-6">
-        <div class="container fare-section" id="tileModalSection-2">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4>Tile & Modal Preview 2</h4>
-            <button id="toggleTileModalBtn-2" class="btn btn-primary btn-sm">Open Section</button>
-          </div>
-          <div id="tileModalContent-2" class="fare-section-content" style="display: none;">
-            <label class="fw-lighter small">Tile Preview</label>
-            <div id="tilePreview-2"></div>
-            <label class="fw-lighter small">Modal Preview</label>
-            <div id="modalPreview-2"></div>
-            <div class="mt-3 mb-3 d-flex gap-2">
-              <button id="downloadTileModalBtn-2" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
-              <button id="copyTileModalPreviewBtn-2" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+        <div class="container fare-section" id="tileModalSection-2" style="border-color: #ffffff; border-width: 2px; box-shadow: 0 4px 18px 0 rgba(0,0,0,0.4);">
+            <div class="d-flex justify-content-between align-items-center fare-section-header" style="background-color: #228B22;">
+                <h6 class="text-white">Pending Update</h6>
+                <button id="toggleTileModalBtn-2" class="btn btn-primary btn-sm">Open Section</button>
             </div>
-            <div class="code-editor-area mb-3">
-              <div class="label-collapse-wrapper">
-                <label for="tileHtmlEditor-2" class="fw-lighter">Tile HTML</label>
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-2" aria-expanded="true" aria-controls="tileEditorWrapper-2">
-                  Collapse
-                </button>
-              </div>
-              <div class="collapse show" id="tileEditorWrapper-2">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select id="tileTemplateDropdown-2" class="form-select form-select-sm w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1tileAuto">1tileAuto</option>
-                    <option value="2tileAuto">2tileAuto</option>
-                    <option value="3tileAuto">3tileAuto</option>
-                    <option value="4tileAuto">4tileAuto</option>
-                    <option value="5tileAuto">5tileAuto</option>
-                    <option value="6tileAuto">6tileAuto</option>
-                    <option value="7tileAuto">7tileAuto</option>
-                    <option value="bookNow">bookNow</option>
-                    <option value="flexDates">flexDates</option>
-                    <option value="carbonFoot">carbonFoot</option>
-                    <option value="rateTarget">rateTarget</option>
-                    <option value="gate4">gate4</option>
-                  </select>
-                  <button id="copyTileCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+            <div class="fare-section-body">
+              <div id="tileModalContent-2" class="fare-section-content" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <label class="fw-lighter small">Tile Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-action="decrease" data-target="tilePreview-2" title="Decrease width by 5%">-</span>
+                        <span class="size-control" data-action="increase" data-target="tilePreview-2" title="Increase width by 5%">+</span>
+                    </div>
                 </div>
-                <textarea id="tileHtmlEditor-2" class="form-control" placeholder="Enter HTML for Tile"></textarea>
-              </div>
-            </div>
-            <div class="code-editor-area mb-3">
-              <div class="label-collapse-wrapper">
-                <label for="modalHtmlEditor-2" class="fw-lighter">Modal HTML</label>
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-2" aria-expanded="true" aria-controls="modalEditorWrapper-2">
-                  Collapse
-                </button>
-              </div>
-              <div class="collapse show" id="modalEditorWrapper-2">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select id="modalTemplateDropdown-2" class="form-select form-select-sm w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1modalAuto">1modalAuto</option>
-                    <option value="2modalAuto">2modalAuto</option>
-                    <option value="3modalAuto">3modalAuto</option>
-                    <option value="4modalAuto">4modalAuto</option>
-                    <option value="5modalAuto">5modalAuto</option>
-                    <option value="6modalAuto">6modalAuto</option>
-                    <option value="7modalAuto">7modalAuto</option>
-                    <option value="8modalAuto">8modalAuto</option>
-                    <option value="9modalAuto">9modalAuto</option>
-                    <option value="10modalAuto">10modalAuto</option>
-                  </select>
-                  <button id="copyModalCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                <div id="tilePreview-2"></div>
+                <div class="d-flex align-items-center preview-spacer">
+                    <label class="fw-lighter small">Modal Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-control-type="scale" data-action="decrease" data-target="modalPreview-2" title="Decrease size by 5%">-</span>
+                        <span class="size-control" data-control-type="scale" data-action="increase" data-target="modalPreview-2" title="Increase size by 5%">+</span>
+                    </div>
                 </div>
-                <textarea id="modalHtmlEditor-2" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                <div id="modalPreview-2" data-scale="1.0"></div>
+                <div class="mt-3 mb-3 d-flex gap-2">
+                  <button id="downloadTileModalBtn-2" type="button" class="btn btn-warning btn-sm mt-4">Download Preview PNG</button>
+                  <button id="copyTileModalPreviewBtn-2" type="button" class="btn btn-outline-warning btn-sm mt-4">Copy Preview</button>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="tileHtmlEditor-2" class="fw-lighter">Tile HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-2" aria-expanded="true" aria-controls="tileEditorWrapper-2">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="tileEditorWrapper-2">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="tileTemplateDropdown-2" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1tileAuto">1tileAuto</option>
+                        <option value="2tileAuto">2tileAuto</option>
+                        <option value="3tileAuto">3tileAuto</option>
+                        <option value="4tileAuto">4tileAuto</option>
+                        <option value="5tileAuto">5tileAuto</option>
+                        <option value="6tileAuto">6tileAuto</option>
+                        <option value="7tileAuto">7tileAuto</option>
+                        <option value="8tileAuto">8tileAuto</option>
+                        <option value="9tileAuto">9tileAuto</option>
+                        <option value="10tileAuto">10tileAuto</option>
+                        <option value="bookNow">bookNow</option>
+                        <option value="flexDates">flexDates</option>
+                        <option value="carbonFoot">carbonFoot</option>
+                        <option value="rateTarget">rateTarget</option>
+                        <option value="gate4">gate4</option>
+                      </select>
+                      <button id="copyTileCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="tileHtmlEditor-2" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                  </div>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="modalHtmlEditor-2" class="fw-lighter">Modal HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-2" aria-expanded="true" aria-controls="modalEditorWrapper-2">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="modalEditorWrapper-2">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="modalTemplateDropdown-2" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1modalAuto">1modalAuto</option>
+                        <option value="2modalAuto">2modalAuto</option>
+                        <option value="3modalAuto">3modalAuto</option>
+                        <option value="4modalAuto">4modalAuto</option>
+                        <option value="5modalAuto">5modalAuto</option>
+                        <option value="6modalAuto">6modalAuto</option>
+                        <option value="7modalAuto">7modalAuto</option>
+                        <option value="8modalAuto">8modalAuto</option>
+                        <option value="9modalAuto">9modalAuto</option>
+                        <option value="10modalAuto">10modalAuto</option>
+                      </select>
+                      <button id="copyModalCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="modalHtmlEditor-2" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
 
-      <!-- Tile & Modal Preview 3 (full width below) -->
       <div class="col-12">
         <div class="container fare-section" id="tileModalSection-3">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h4>Tile & Modal Preview 3</h4>
             <button id="toggleTileModalBtn-3" class="btn btn-primary btn-sm">Open Section</button>
           </div>
-          <div id="tileModalContent-3" class="fare-section-content" style="display: none;">
-            <label class="fw-lighter small">Tile Preview</label>
-            <div id="tilePreview-3"></div>
-            <label class="fw-lighter small">Modal Preview</label>
-            <div id="modalPreview-3"></div>
-            <div class="mt-3 mb-3 d-flex gap-2">
-              <button id="downloadTileModalBtn-3" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
-              <button id="copyTileModalPreviewBtn-3" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
-            </div>
-            <div class="code-editor-area mb-3">
-              <div class="label-collapse-wrapper">
-                <label for="tileHtmlEditor-3" class="fw-lighter">Tile HTML</label>
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-3" aria-expanded="true" aria-controls="tileEditorWrapper-3">
-                  Collapse
-                </button>
+          <div class="fare-section-body">
+            <div id="tileModalContent-3" class="fare-section-content" style="display: none;">
+              <div class="d-flex align-items-center">
+                  <label class="fw-lighter small">Tile Preview</label>
+                  <div class="ms-auto">
+                      <span class="size-control" data-action="decrease" data-target="tilePreview-3" title="Decrease width by 5%">-</span>
+                      <span class="size-control" data-action="increase" data-target="tilePreview-3" title="Increase width by 5%">+</span>
+                  </div>
               </div>
-              <div class="collapse show" id="tileEditorWrapper-3">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select id="tileTemplateDropdown-3" class="form-select form-select-sm w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1tileAuto">1tileAuto</option>
-                    <option value="2tileAuto">2tileAuto</option>
-                    <option value="3tileAuto">3tileAuto</option>
-                    <option value="4tileAuto">4tileAuto</option>
-                    <option value="5tileAuto">5tileAuto</option>
-                    <option value="6tileAuto">6tileAuto</option>
-                    <option value="7tileAuto">7tileAuto</option>
-                    <option value="bookNow">bookNow</option>
-                    <option value="flexDates">flexDates</option>
-                    <option value="carbonFoot">carbonFoot</option>
-                    <option value="rateTarget">rateTarget</option>
-                    <option value="gate4">gate4</option>
-                  </select>
-                  <button id="copyTileCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+              <div id="tilePreview-3"></div>
+              <div class="d-flex align-items-center preview-spacer">
+                  <label class="fw-lighter small">Modal Preview</label>
+                  <div class="ms-auto">
+                      <span class="size-control" data-control-type="scale" data-action="decrease" data-target="modalPreview-3" title="Decrease size by 5%">-</span>
+                      <span class="size-control" data-control-type="scale" data-action="increase" data-target="modalPreview-3" title="Increase size by 5%">+</span>
+                  </div>
+              </div>
+              <div id="modalPreview-3" data-scale="1.0"></div>
+              <div class="mt-3 mb-3 d-flex gap-2">
+                <button id="downloadTileModalBtn-3" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
+                <button id="copyTileModalPreviewBtn-3" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+              </div>
+              <div class="code-editor-area mb-3">
+                <div class="label-collapse-wrapper">
+                  <label for="tileHtmlEditor-3" class="fw-lighter">Tile HTML</label>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-3" aria-expanded="true" aria-controls="tileEditorWrapper-3">
+                    Collapse
+                  </button>
                 </div>
-                <textarea id="tileHtmlEditor-3" class="form-control" placeholder="Enter HTML for Tile"></textarea>
-              </div>
-            </div>
-            <div class="code-editor-area mb-3">
-              <div class="label-collapse-wrapper">
-                <label for="modalHtmlEditor-3" class="fw-lighter">Modal HTML</label>
-                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-3" aria-expanded="true" aria-controls="modalEditorWrapper-3">
-                  Collapse
-                </button>
-              </div>
-              <div class="collapse show" id="modalEditorWrapper-3">
-                <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                  <select id="modalTemplateDropdown-3" class="form-select form-select-sm w-auto">
-                    <option value="placeholder" selected>placeholder</option>
-                    <option value="1modalAuto">1modalAuto</option>
-                    <option value="2modalAuto">2modalAuto</option>
-                    <option value="3modalAuto">3modalAuto</option>
-                    <option value="4modalAuto">4modalAuto</option>
-                    <option value="5modalAuto">5modalAuto</option>
-                    <option value="6modalAuto">6modalAuto</option>
-                    <option value="7modalAuto">7modalAuto</option>
-                    <option value="8modalAuto">8modalAuto</option>
-                    <option value="9modalAuto">9modalAuto</option>
-                    <option value="10modalAuto">10modalAuto</option>
-                  </select>
-                  <button id="copyModalCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                <div class="collapse show" id="tileEditorWrapper-3">
+                  <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                    <select id="tileTemplateDropdown-3" class="form-select form-select-sm w-auto">
+                      <option value="placeholder" selected>placeholder</option>
+                      <option value="1tileAuto">1tileAuto</option>
+                      <option value="2tileAuto">2tileAuto</option>
+                      <option value="3tileAuto">3tileAuto</option>
+                      <option value="4tileAuto">4tileAuto</option>
+                      <option value="5tileAuto">5tileAuto</option>
+                      <option value="6tileAuto">6tileAuto</option>
+                      <option value="7tileAuto">7tileAuto</option>
+                      <option value="8tileAuto">8tileAuto</option>
+                      <option value="9tileAuto">9tileAuto</option>
+                      <option value="10tileAuto">10tileAuto</option>
+                      <option value="bookNow">bookNow</option>
+                      <option value="flexDates">flexDates</option>
+                      <option value="carbonFoot">carbonFoot</option>
+                      <option value="rateTarget">rateTarget</option>
+                      <option value="gate4">gate4</option>
+                    </select>
+                    <button id="copyTileCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                  </div>
+                  <textarea id="tileHtmlEditor-3" class="form-control" placeholder="Enter HTML for Tile"></textarea>
                 </div>
-                <textarea id="modalHtmlEditor-3" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+              </div>
+              <div class="code-editor-area mb-3">
+                <div class="label-collapse-wrapper">
+                  <label for="modalHtmlEditor-3" class="fw-lighter">Modal HTML</label>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-3" aria-expanded="true" aria-controls="modalEditorWrapper-3">
+                    Collapse
+                  </button>
+                </div>
+                <div class="collapse show" id="modalEditorWrapper-3">
+                  <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                    <select id="modalTemplateDropdown-3" class="form-select form-select-sm w-auto">
+                      <option value="placeholder" selected>placeholder</option>
+                      <option value="1modalAuto">1modalAuto</option>
+                      <option value="2modalAuto">2modalAuto</option>
+                      <option value="3modalAuto">3modalAuto</option>
+                      <option value="4modalAuto">4modalAuto</option>
+                      <option value="5modalAuto">5modalAuto</option>
+                      <option value="6modalAuto">6modalAuto</option>
+                      <option value="7modalAuto">7modalAuto</option>
+                      <option value="8modalAuto">8modalAuto</option>
+                      <option value="9modalAuto">9modalAuto</option>
+                      <option value="10modalAuto">10modalAuto</option>
+                    </select>
+                    <button id="copyModalCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                  </div>
+                  <textarea id="modalHtmlEditor-3" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-    </div> <!-- end row -->
-
-    <!-- Lodging and Airfare sections unchanged below -->
-    <div class="container fare-section mt-4" id="lodgingFareSection">
-      <!-- ... rest of your lodging fare HTML ... -->
-    </div>
+    </div> <div class="container fare-section mt-4" id="lodgingFareSection">
+      </div>
 
     <div class="container fare-section mt-4" id="airfareSection">
-      <!-- ... rest of your airfare fare HTML ... -->
-    </div>
+      </div>
 
-  </div> <!-- end container -->
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
@@ -528,27 +610,49 @@
       // --- Tile & Modal Preview Logic ---
       const tileTemplates = {
         placeholder: '\n<div style="padding: 10px; background-color: #f8f9fa; border: 1px dashed #ccc; text-align: center; color: #666;">Tile Preview Area</div>',
-        '1tileAuto': `<div style="border: 1px solid rgb(222, 226, 230); border-radius: 4px; padding: 16px; background-color: rgb(255, 255, 255); display: flex; align-items: center; gap: 12px;"> <img alt="AstraZeneca Logo" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/astrazeneca.png" style="max-height: 25px; height: auto;"> <div style="flex-grow: 1;"> <div style="font-size: 14px; font-weight: 600; color: rgb(52, 64, 84); margin-bottom: 4px;"> Transportation from Airport </div> <div style="font-size: 12px; color: rgb(102, 112, 133);"> View options here. </div> </div> <img alt="Info Icon" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/info-circle.png" style="height: 20px; width: 20px;"> </div>`,
-        '2tileAuto': '<div class="card bg-info text-white p-2">Sample Tile 2</div>',
-        '3tileAuto': '<div class="alert alert-warning">Sample Tile 3</div>',
+        bookNow: '<div class="alert alert-success">Book Now Tile (Embedded)</div>',
+        flexDates: '<div class="alert alert-info">Flexible Dates Tile (Embedded)</div>',
+        carbonFoot: '<div class="alert alert-secondary">Carbon Footprint Tile (Embedded)</div>',
+        rateTarget: '<div class="alert alert-warning">Rate Target Tile (Embedded)</div>',
+        gate4: '<div class="alert alert-danger">Gate 4 Tile (Embedded)</div>',
       };
       const modalTemplates = {
         placeholder: '\n<div style="padding: 20px; background-color: #f8f9fa; border: 1px dashed #aaa; text-align: center; color: #555; height: 100%; display: flex; align-items: center; justify-content: center;">Modal Preview Area</div>',
-        '1modalAuto': `<div class="modal-dialog" style="max-width: 494px; margin: 0;"> <div class="modal-content" style="border-radius: 8px; border: 1px solid rgb(234, 236, 240); box-shadow: rgba(16, 24, 40, 0.1) 0px 20px 24px -4px, rgba(16, 24, 40, 0.04) 0px 8px 8px -4px; background-color: rgb(255, 255, 255);"> <div class="modal-header" style="padding: 16px 24px; border-bottom: 1px solid rgb(242, 244, 247);"> <div style="display: flex; align-items: center; gap: 8px;"> <img alt="AstraZeneca Logo" src="https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/astrazeneca.png" style="max-height: 25px; height: auto;"> <h5 class="modal-title" style="font-size: 18px; font-weight: 600; color: rgb(16, 24, 40);">modal_template_A_AstraZeneca</h5> </div> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 1.2rem;">×</button> </div> <div class="modal-body" style="padding: 24px;"> <p style="font-size: 14px; color: rgb(102, 112, 133); margin-bottom: 16px;"> This first line of text is the same as the tile's text. </p> <p style="font-size: 14px; color: rgb(102, 112, 133); margin-bottom: 16px;"> More details go here that support the bulleted list below. If there are no bullets then the text continues here, and the modal has a minimum height of 600px. </p> <ul style="list-style-position: outside; padding-left: 20px; font-size: 14px; color: rgb(102, 112, 133); margin-bottom: 0px;"> <li style="margin-bottom: 8px;">Bullet1Text</li> <li style="margin-bottom: 8px;">Bullet2Text</li> <li style="margin-bottom: 0px;">Bullet3Text <a href="https://astrazeneca.com" target="_blank" style="color: rgb(0, 94, 184); text-decoration: underline;">lastImportlink</a> </li> </ul> </div> </div> </div>`,
-        '2modalAuto': '<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Modal 2 (Large)</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><p>Some different content for modal 2.</p><button class="btn btn-primary">A Button</button></div></div></div>',
       };
 
       function updatePreview(editor, preview) {
         preview.innerHTML = editor.value;
-      }
-
-      function loadTemplate(dropdown, editor, templates, preview) {
-        const selected = dropdown.value;
-        if (templates[selected]) {
-          editor.value = templates[selected];
-          updatePreview(editor, preview);
+        if (preview.id.startsWith('modalPreview')) {
+            handleModalScaling(preview);
         }
       }
+
+      async function loadTemplate(dropdown, editor, templates, preview) {
+        const selected = dropdown.value;
+        const isDynamicTemplate = /^\d+(modal|tile)Auto$/.test(selected);
+
+        if (isDynamicTemplate) {
+            const url = `https://info.tripkicks.com/hubfs/mock/auto/${selected}.html`;
+            editor.value = ``;
+            updatePreview(editor, preview);
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const html = await response.text();
+                editor.value = html;
+            } catch (error) {
+                console.error(`Failed to fetch template for ${selected}:`, error);
+                editor.value = ``;
+            }
+        } else if (templates[selected]) {
+            editor.value = templates[selected];
+        } else {
+             editor.value = ``;
+        }
+        updatePreview(editor, preview);
+    }
 
       function copyCode(editor, type) {
         navigator.clipboard.writeText(editor.value)
@@ -561,37 +665,38 @@
         container.style.padding = '10px';
         container.style.backgroundColor = '#ffffff';
         container.style.display = 'inline-block';
-        container.appendChild(tilePreview.cloneNode(true));
+
+        const tileClone = tilePreview.cloneNode(true);
+        container.appendChild(tileClone);
+        
         const spacer = document.createElement('div');
         spacer.style.height = '10px';
         container.appendChild(spacer);
-        const modalClone = document.createElement('div');
-        modalClone.innerHTML = modalPreview.innerHTML;
+        
+        const modalClone = modalPreview.cloneNode(true);
+        // Temporarily reset scaling for accurate capture
+        const modalContent = modalClone.querySelector(':first-child');
+        if (modalContent) {
+            modalContent.style.transform = 'scale(1)';
+        }
+        modalClone.style.height = ''; 
+
         container.appendChild(modalClone);
+        
         document.body.appendChild(container);
 
-        const imgs = container.querySelectorAll('img');
-        const promises = [];
-        imgs.forEach(img => {
-          if (!img.complete) {
-            promises.push(new Promise(res => { img.onload = img.onerror = res; }));
-          }
-        });
-
-        Promise.all(promises).then(() => {
-          html2canvas(container, { scale: 2, backgroundColor: null })
-            .then(canvas => {
-              const link = document.createElement('a');
-              link.download = `tile-modal-preview-${section}.png`;
-              link.href = canvas.toDataURL('image/png');
-              link.click();
-              document.body.removeChild(container);
-            })
-            .catch(err => {
-              console.error('Error generating preview image:', err);
-              document.body.removeChild(container);
-            });
-        });
+        html2canvas(container, { scale: 2, backgroundColor: null })
+          .then(canvas => {
+            const link = document.createElement('a');
+            link.download = `tile-modal-preview-${section}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.body.removeChild(container);
+          })
+          .catch(err => {
+            console.error('Error generating preview image:', err);
+            document.body.removeChild(container);
+          });
       }
 
       async function copyPreviewImage(tilePreview, modalPreview) {
@@ -599,23 +704,24 @@
         container.style.padding = '10px';
         container.style.backgroundColor = '#ffffff';
         container.style.display = 'inline-block';
+        
         container.appendChild(tilePreview.cloneNode(true));
+        
         const spacer = document.createElement('div');
         spacer.style.height = '10px';
         container.appendChild(spacer);
-        const modalClone = document.createElement('div');
-        modalClone.innerHTML = modalPreview.innerHTML;
-        container.appendChild(modalClone);
-        document.body.appendChild(container);
+        
+        const modalClone = modalPreview.cloneNode(true);
+        // Temporarily reset scaling for accurate capture
+        const modalContent = modalClone.querySelector(':first-child');
+        if (modalContent) {
+            modalContent.style.transform = 'scale(1)';
+        }
+        modalClone.style.height = '';
 
-        const imgs = container.querySelectorAll('img');
-        const promises = [];
-        imgs.forEach(img => {
-          if (!img.complete) {
-            promises.push(new Promise(res => { img.onload = img.onerror = res; }));
-          }
-        });
-        await Promise.all(promises);
+        container.appendChild(modalClone);
+
+        document.body.appendChild(container);
 
         try {
           const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
@@ -644,11 +750,29 @@
         if (content.style.display === 'none' || content.style.display === '') {
           content.style.display = 'block';
           button.textContent = 'Close Section';
+          button.classList.add('btn-section-open');
         } else {
           content.style.display = 'none';
           button.textContent = 'Open Section';
+          button.classList.remove('btn-section-open');
         }
       }
+
+      function handleModalScaling(modalPreviewContainer) {
+          const content = modalPreviewContainer.querySelector(':first-child');
+          if (content) {
+              const currentScale = parseFloat(modalPreviewContainer.dataset.scale || 1.0);
+              content.style.transform = `scale(${currentScale})`;
+              
+              // Use scrollHeight for accurate content height, then apply scale
+              const contentHeight = content.scrollHeight;
+              modalPreviewContainer.style.height = (contentHeight * currentScale) + 'px';
+          } else {
+              // If no content, reset height
+              modalPreviewContainer.style.height = 'auto';
+          }
+      }
+
 
       function setupTileModalSection(num) {
         const tileEditor = document.getElementById(`tileHtmlEditor-${num}`);
@@ -681,6 +805,43 @@
         loadTemplate(tileDropdown, tileEditor, tileTemplates, tilePreview);
         loadTemplate(modalDropdown, modalEditor, modalTemplates, modalPreview);
       }
+      
+      document.querySelectorAll('.size-control').forEach(control => {
+        control.addEventListener('click', function() {
+            const action = this.dataset.action;
+            const targetId = this.dataset.target;
+            const targetElement = document.getElementById(targetId);
+            const controlType = this.dataset.controlType;
+
+            if (targetElement) {
+                if (controlType === 'scale') {
+                    // Modal Scaling Logic
+                    let currentScale = parseFloat(targetElement.dataset.scale || 1.0);
+
+                    if (action === 'increase') {
+                        currentScale = Math.min(1.0, currentScale + 0.05);
+                    } else if (action === 'decrease') {
+                        currentScale = Math.max(0.75, currentScale - 0.05);
+                    }
+                    
+                    currentScale = Math.round(currentScale * 100) / 100;
+                    targetElement.dataset.scale = currentScale;
+                    
+                    handleModalScaling(targetElement); // Call the dedicated handler
+
+                } else {
+                    // Tile Width Logic
+                    let currentWidth = parseInt(targetElement.style.maxWidth || 100);
+                    if (action === 'increase') {
+                        currentWidth = Math.min(100, currentWidth + 5);
+                    } else if (action === 'decrease') {
+                        currentWidth = Math.max(60, currentWidth - 5);
+                    }
+                    targetElement.style.maxWidth = currentWidth + '%';
+                }
+            }
+        });
+      });
 
       setupTileModalSection(1);
       setupTileModalSection(2);
@@ -723,6 +884,7 @@
       }
 
       function renderLodgingFare() {
+        if (!lodgingElements.previewImage) return;
         lodgingElements.previewImage.src = lodgingElements.image.value || 'https://via.placeholder.com/150/cccccc/969696?text=Image';
         lodgingElements.previewImage.alt = lodgingElements.hotelName.value;
         lodgingElements.previewHotelName.textContent = lodgingElements.hotelName.value;
@@ -759,27 +921,29 @@
         renderLodgingFare();
       }
 
-      lodgingElements.renderBtn.addEventListener('click', renderLodgingFare);
-      lodgingElements.resetBtn.addEventListener('click', resetLodgingFare);
-      document.getElementById('lodgingFareSection').querySelectorAll('input, select').forEach(el=>{
-        el.addEventListener('input', renderLodgingFare);
-        if(el.type==='checkbox'|| el.tagName==='SELECT') el.addEventListener('change', renderLodgingFare);
-      });
-      lodgingElements.copyBtn.addEventListener('click', ()=>{
-        navigator.clipboard.writeText(lodgingElements.preview.innerHTML)
-          .then(()=>alert('Lodging Fare HTML copied!'))
-          .catch(err=>console.error(err));
-      });
-      lodgingElements.downloadBtn.addEventListener('click', ()=>{
-        html2canvas(lodgingElements.previewCard, { scale:2, backgroundColor:'#ffffff' })
-          .then(canvas=>{
-            const link=document.createElement('a');
-            link.download='lodging-fare.png';
-            link.href=canvas.toDataURL('image/png');
-            link.click();
-          })
-          .catch(err=>console.error(err));
-      });
+      if (document.getElementById('lodgingFareSection')) {
+          lodgingElements.renderBtn.addEventListener('click', renderLodgingFare);
+          lodgingElements.resetBtn.addEventListener('click', resetLodgingFare);
+          document.getElementById('lodgingFareSection').querySelectorAll('input, select').forEach(el=>{
+            el.addEventListener('input', renderLodgingFare);
+            if(el.type==='checkbox'|| el.tagName==='SELECT') el.addEventListener('change', renderLodgingFare);
+          });
+          lodgingElements.copyBtn.addEventListener('click', ()=>{
+            navigator.clipboard.writeText(lodgingElements.preview.innerHTML)
+              .then(()=>alert('Lodging Fare HTML copied!'))
+              .catch(err=>console.error(err));
+          });
+          lodgingElements.downloadBtn.addEventListener('click', ()=>{
+            html2canvas(lodgingElements.previewCard, { scale:2, backgroundColor:'#ffffff' })
+              .then(canvas=>{
+                const link=document.createElement('a');
+                link.download='lodging-fare.png';
+                link.href=canvas.toDataURL('image/png');
+                link.click();
+              })
+              .catch(err=>console.error(err));
+          });
+      }
 
       // --- Airfare Logic (Unaffected) ---
       const airfareElements = {
@@ -807,6 +971,7 @@
       }
 
       function renderAirfareFare() {
+        if(!airfareElements.previewContainer) return; 
         const iconsHtml = airfareElements.selects.map((sel,i)=>{
           if(airfareElements.toggles[i].checked){
             return `<img src="${getAirfareIconUrl(sel)}" style="height:35px;margin-right:3px;" />`;
@@ -839,7 +1004,7 @@
                   <div class="text-center px-2">
                     <span class="text-muted small d-block">${durText.split('/')[0].trim()}</span>
                     <div style="border-bottom:1px solid #ccc;margin:2px 0;"></div>
-                    <span class="text-muted small d-block">${durText.split('/')[1]?.trim()||''}</span>
+                    <span class="text-muted small d-block">${(durText.split('/')[1] || '').trim()}</span>
                   </div>
                   <div>
                     <span class="fw-bold">${destText.split(' ')[0]}</span>
@@ -873,34 +1038,41 @@
         renderAirfareFare();
       }
 
-      airfareElements.renderBtn.addEventListener('click', renderAirfareFare);
-      airfareElements.resetBtn.addEventListener('click', resetAirfareFare);
-      document.getElementById('airfareSection').querySelectorAll('input, select').forEach(el=>{
-        el.addEventListener('input', renderAirfareFare);
-        if(el.type==='checkbox'|| el.tagName==='SELECT') el.addEventListener('change', renderAirfareFare);
-      });
-      airfareElements.copyBtn.addEventListener('click', ()=>{
-        navigator.clipboard.writeText(airfareElements.previewContainer.innerHTML)
-          .then(()=>alert('Airfare HTML copied!'))
-          .catch(err=>console.error(err));
-      });
-      airfareElements.downloadBtn.addEventListener('click', ()=>{
-        const card = airfareElements.previewContainer.querySelector('.fare-preview-card');
-        if(!card) return;
-        html2canvas(card, { scale:2, backgroundColor:'#ffffff' })
-          .then(canvas=>{
-            const link=document.createElement('a');
-            link.download='airfare-fare.png';
-            link.href=canvas.toDataURL('image/png');
-            link.click();
-          })
-          .catch(err=>console.error(err));
-      });
+      if (document.getElementById('airfareSection')) {
+          airfareElements.renderBtn.addEventListener('click', renderAirfareFare);
+          airfareElements.resetBtn.addEventListener('click', resetAirfareFare);
+          document.getElementById('airfareSection').querySelectorAll('input, select').forEach(el=>{
+            el.addEventListener('input', renderAirfareFare);
+            if(el.type==='checkbox'|| el.tagName==='SELECT') el.addEventListener('change', renderAirfareFare);
+          });
+          airfareElements.copyBtn.addEventListener('click', ()=>{
+            navigator.clipboard.writeText(airfareElements.previewContainer.innerHTML)
+              .then(()=>alert('Airfare HTML copied!'))
+              .catch(err=>console.error(err));
+          });
+          airfareElements.downloadBtn.addEventListener('click', ()=>{
+            const card = airfareElements.previewContainer.querySelector('.fare-preview-card');
+            if(!card) return;
+            html2canvas(card, { scale:2, backgroundColor:'#ffffff' })
+              .then(canvas=>{
+                const link=document.createElement('a');
+                link.download='airfare-fare.png';
+                link.href=canvas.toDataURL('image/png');
+                link.click();
+              })
+              .catch(err=>console.error(err));
+          });
+      }
+
 
       // Initial load
       updateBanner();
-      renderLodgingFare();
-      renderAirfareFare();
+      if (document.getElementById('lodgingFareSection')) {
+        renderLodgingFare();
+      }
+      if (document.getElementById('airfareSection')) {
+        renderAirfareFare();
+      }
     });
   </script>
 </body>
