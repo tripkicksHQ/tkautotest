@@ -56,6 +56,9 @@ function sanitizeHtml(html) {
 app.get('/', async (req, res) => {
   let liveTile = '', liveModal = '', pendingTile = '', pendingModal = '', errorMsg = '';
   let tkid3 = '', lastEdited = '', client = '';
+  
+  // Check if there's a specific ID requested via query parameter
+  const requestedId = req.query.id;
 
   try {
     // Check if required environment variables are set
@@ -63,22 +66,69 @@ app.get('/', async (req, res) => {
       throw new Error('Missing required environment variables: NOTION_TOKEN or DATABASE_ID');
     }
 
-    const db = await notion.databases.query({
-      database_id: process.env.DATABASE_ID,
-      page_size: 1,
-      sorts: [{ timestamp: 'last_edited_time', direction: 'descending' }]
-    });
+    let page;
+    
+    if (requestedId) {
+      // Parse the requested ID (e.g., "Bloom.1012")
+      const parts = requestedId.split('.');
+      if (parts.length === 2) {
+        const clientPrefix = parts[0];
+        const tkId = parts[1];
+        
+        // Query for the specific record
+        const searchResults = await notion.databases.query({
+          database_id: process.env.DATABASE_ID,
+          filter: {
+            and: [
+              {
+                property: 'TK id',
+                title: {
+                  equals: tkId
+                }
+              }
+            ]
+          }
+        });
+        
+        // Find the matching record by checking client prefix
+        for (const result of searchResults.results) {
+          const resultClient = extractText(result.properties['Client']) || '';
+          const resultClientPrefix = resultClient.substring(0, 5);
+          
+          if (resultClientPrefix.toLowerCase() === clientPrefix.toLowerCase()) {
+            page = result;
+            break;
+          }
+        }
+        
+        if (!page) {
+          errorMsg = `<div style="color:#c00; padding:1em;">No record found for ID: ${requestedId}</div>`;
+        }
+      } else {
+        errorMsg = `<div style="color:#c00; padding:1em;">Invalid ID format. Use: ClientPrefix.TKid (e.g., Bloom.1012)</div>`;
+      }
+    } else {
+      // Default behavior - get the last edited
+      const db = await notion.databases.query({
+        database_id: process.env.DATABASE_ID,
+        page_size: 1,
+        sorts: [{ timestamp: 'last_edited_time', direction: 'descending' }]
+      });
+      
+      if (db.results.length) {
+        page = db.results[0];
+      }
+    }
 
-    if (db.results.length) {
-      const page = db.results[0];
-      tkid3       = extractText(page.properties['tkid3']) || 'tkid3';
+    if (page && !errorMsg) {
+      tkid3       = extractText(page.properties['TK id']) || 'tkid';
       client      = extractText(page.properties['Client']) || 'Client';
       lastEdited  = page.last_edited_time;
       liveTile    = sanitizeHtml(extractHtml(page.properties['Tile HTML']));
       liveModal   = sanitizeHtml(extractHtml(page.properties['Modal HTML']));
       pendingTile = sanitizeHtml(extractHtml(page.properties['Builder ⓵ TILE']));
       pendingModal= sanitizeHtml(extractHtml(page.properties['Builder ⓵ MODAL']));
-    } else {
+    } else if (!errorMsg) {
       errorMsg = `<div style="color:#c00; padding:1em;">No pages found in database.</div>`;
     }
   } catch (e) {
@@ -198,7 +248,7 @@ app.get('/', async (req, res) => {
     }
     .icon-btn:hover { background:#f3f6fb; color:#427bff; opacity:1; }
     .icon-btn.tk-branded {
-      background-image: url('https://portal.tripkicks.com/hubfs/system/tk2.png');
+      background-image: url('https://info.tripkicks.com/hubfs/system/tkIcon.png');
       background-size: 20px 20px;
       background-position: center;
       background-repeat: no-repeat;
@@ -255,6 +305,29 @@ app.get('/', async (req, res) => {
       opacity: 1;
       transform: translateY(0);
     }
+    .secret-input-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      opacity: 0.3;
+      transition: opacity 0.3s ease;
+    }
+    .secret-input-container:hover {
+      opacity: 1;
+    }
+    .secret-input {
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      width: 150px;
+      background: #f9f9f9;
+    }
+    .secret-input:focus {
+      outline: none;
+      border-color: #427bff;
+      background: #fff;
+    }
     @media(max-width:1080px) {
       .preview-row { flex-direction:column; gap:18px; }
       .preview-col { max-width:98vw; }
@@ -262,6 +335,7 @@ app.get('/', async (req, res) => {
     @media(max-width:650px) {
       .main-wrapper { width:100vw; }
       .modal-html-preview-box { width:100%; }
+      .secret-input-container { bottom: 10px; right: 10px; }
     }
   </style>
 </head>
@@ -411,12 +485,41 @@ app.get('/', async (req, res) => {
     </div>
   </div>
 
+  <!-- Secret Input -->
+  <div class="secret-input-container">
+    <input 
+      type="text" 
+      id="secretInput" 
+      class="secret-input" 
+      placeholder="Client.TKid"
+      title="Enter Client.TKid (e.g., Bloom.1012)"
+    >
+  </div>
+
   <script>
     // Inject HTML content safely
     document.getElementById('tileHtmlPreview1').innerHTML  = ${JSON.stringify(liveTile)};
     document.getElementById('modalHtmlPreview1').innerHTML = ${JSON.stringify(liveModal)};
     document.getElementById('tileHtmlPreview2').innerHTML  = ${JSON.stringify(pendingTile)};
     document.getElementById('modalHtmlPreview2').innerHTML = ${JSON.stringify(pendingModal)};
+
+    // Secret input handler
+    const secretInput = document.getElementById('secretInput');
+    secretInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const value = this.value.trim();
+        if (value) {
+          window.location.href = '?id=' + encodeURIComponent(value);
+        }
+      }
+    });
+
+    // Check if there's an ID in the URL and populate the input
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentId = urlParams.get('id');
+    if (currentId) {
+      secretInput.value = currentId;
+    }
 
     // Size controls with heights
     let [t1, t2] = [360, 360], [m1, m2] = [520, 520], [h1, h2] = [650, 650];
