@@ -37,8 +37,12 @@ function extractText(prop) {
     return prop.title.map(t => t.plain_text).join('');
   if (prop.type === 'rich_text' && prop.rich_text.length)
     return prop.rich_text.map(t => t.plain_text).join('');
-  if (prop.type === 'formula' && typeof prop.formula.string === 'string')
-    return prop.formula.string;
+  if (prop.type === 'formula') {
+    if (prop.formula.type === 'string' && prop.formula.string !== null)
+      return prop.formula.string;
+    if (prop.formula.type === 'number' && prop.formula.number !== null)
+      return String(prop.formula.number);
+  }
   if (typeof prop.plain_text === 'string')
     return prop.plain_text;
   return '';
@@ -69,43 +73,28 @@ app.get('/', async (req, res) => {
     let page;
     
     if (requestedId) {
-      // Parse the requested ID (e.g., "Bloom.1012")
-      const parts = requestedId.split('.');
-      if (parts.length === 2) {
-        const clientPrefix = parts[0];
-        const tkId = parts[1];
-        
-        // Query for the specific record
-        const searchResults = await notion.databases.query({
-          database_id: process.env.DATABASE_ID,
-          filter: {
-            and: [
-              {
-                property: 'TK id',
-                title: {
-                  equals: tkId
-                }
-              }
-            ]
-          }
-        });
-        
-        // Find the matching record by checking client prefix
-        for (const result of searchResults.results) {
-          const resultClient = extractText(result.properties['Client']) || '';
-          const resultClientPrefix = resultClient.substring(0, 5);
-          
-          if (resultClientPrefix.toLowerCase() === clientPrefix.toLowerCase()) {
-            page = result;
-            break;
+      // For requested ID like "Bloom.1012", search for matching tkid1
+      console.log('Searching for tkid1:', requestedId);
+      
+      // Query for the specific record using tkid1
+      const searchResults = await notion.databases.query({
+        database_id: process.env.DATABASE_ID,
+        filter: {
+          property: 'tkid1',
+          formula: {
+            string: {
+              equals: requestedId
+            }
           }
         }
-        
-        if (!page) {
-          errorMsg = `<div style="color:#c00; padding:1em;">No record found for ID: ${requestedId}</div>`;
-        }
+      });
+      
+      console.log('Search results:', searchResults.results.length);
+      
+      if (searchResults.results.length > 0) {
+        page = searchResults.results[0];
       } else {
-        errorMsg = `<div style="color:#c00; padding:1em;">Invalid ID format. Use: ClientPrefix.TKid (e.g., Bloom.1012)</div>`;
+        errorMsg = `<div style="color:#c00; padding:1em;">No record found for ID: ${requestedId}</div>`;
       }
     } else {
       // Default behavior - get the last edited
@@ -121,8 +110,17 @@ app.get('/', async (req, res) => {
     }
 
     if (page && !errorMsg) {
+      // Extract values from the page
       tkid3       = extractText(page.properties['TK id']) || 'tkid';
-      client      = extractText(page.properties['Client']) || 'Client';
+      const tkid1Value = extractText(page.properties['tkid1']) || '';
+      
+      // Extract client name from tkid1 (e.g., "Bloom" from "Bloom.1012")
+      if (tkid1Value && tkid1Value.includes('.')) {
+        client = tkid1Value.split('.')[0];
+      } else {
+        client = 'Client';
+      }
+      
       lastEdited  = page.last_edited_time;
       liveTile    = sanitizeHtml(extractHtml(page.properties['Tile HTML']));
       liveModal   = sanitizeHtml(extractHtml(page.properties['Modal HTML']));
@@ -180,7 +178,7 @@ app.get('/', async (req, res) => {
       border-top-left-radius:18px; border-top-right-radius:18px;
     }
     .card-live-header    { background:#427bff; color:#f5f7fa; }
-    .card-pending-header { background:#21921c; color:#f6fff6; }
+    .card-pending-header { background:#434c5c; color:#f6f9fc; }
     .tile-preview-row, .modal-preview-row { display:flex; align-items:center; margin:20px 0 4px; }
     .tile-preview-label, .modal-label {
       color:#bac2d2; font-size:.92rem; font-weight:500; opacity:.70; margin-left:22px;
@@ -207,7 +205,35 @@ app.get('/', async (req, res) => {
     .tile-html-preview-box.pending {
       border-radius:12px; box-shadow:0 12px 48px rgba(36,40,70,0.18);
     }
-    .light-divider { background:#e5e9f0; height:2px; margin:20px auto 16px; width:92%; border-radius:1px; }
+    .light-divider { 
+      background:#e5e9f0; 
+      height:2px; 
+      margin:20px 22px 16px; 
+      border-radius:1px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .light-divider::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 100px;
+      height: 2px;
+      background: #e5e9f0;
+    }
+    .light-divider::after {
+      content: '';
+      width: 80px;
+      height: 80px;
+      background-image: url('https://info.tripkicks.com/hubfs/system/tkPortalwsm.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(0 0 5px rgba(66, 123, 255, 0.25));
+      margin-right: 5px;
+    }
     .modal-html-preview-box {
       background:#fff; color:#1a1a1a;
       border:1.5px solid #eaf0fc; border-radius:7px;
@@ -248,8 +274,8 @@ app.get('/', async (req, res) => {
     }
     .icon-btn:hover { background:#f3f6fb; color:#427bff; opacity:1; }
     .icon-btn.tk-branded {
-      background-image: url('https://info.tripkicks.com/hubfs/system/tkIcon.png');
-      background-size: 20px 20px;
+      background-image: url('https://info.tripkicks.com/hubfs/system/ausTk.png');
+      background-size: 22px 22px;
       background-position: center;
       background-repeat: no-repeat;
       opacity: 0.5;
@@ -306,28 +332,37 @@ app.get('/', async (req, res) => {
       transform: translateY(0);
     }
     .secret-input-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      opacity: 0.3;
-      transition: opacity 0.3s ease;
-    }
-    .secret-input-container:hover {
-      opacity: 1;
-    }
-    .secret-input {
-      padding: 8px 12px;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      width: 150px;
-      background: #f9f9f9;
-    }
-    .secret-input:focus {
-      outline: none;
-      border-color: #427bff;
-      background: #fff;
-    }
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.05;
+  transition: opacity 0.5s ease;
+  z-index: 999;
+}
+.secret-input-container:hover {
+  opacity: 0.8;
+}
+.secret-input {
+  padding: 6px 10px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  width: 120px;
+  background: #fafafa;
+  color: #999;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+.secret-input:focus {
+  outline: none;
+  border-color: #ddd;
+  background: #fff;
+  color: #333;
+  opacity: 1;
+}
+.secret-input::placeholder {
+  color: #ccc;
+  font-size: 0.75rem;
+}
     @media(max-width:1080px) {
       .preview-row { flex-direction:column; gap:18px; }
       .preview-col { max-width:98vw; }
@@ -411,6 +446,10 @@ app.get('/', async (req, res) => {
             <i data-lucide="clipboard-check" style="width:23px;height:23px;"></i>
             <span class="tooltip">Copy modal code for AUSTIN</span>
           </button>
+          <button id="homeBtn1" class="icon-btn" aria-label="Home" style="margin-left:auto;">
+            <i data-lucide="home" style="width:23px;height:23px;"></i>
+            <span class="tooltip">Go to last edited</span>
+          </button>
         </div>
       </div>
 
@@ -480,6 +519,10 @@ app.get('/', async (req, res) => {
             <i data-lucide="clipboard-check" style="width:23px;height:23px;"></i>
             <span class="tooltip">Copy modal code for AUSTIN</span>
           </button>
+          <button id="homeBtn2" class="icon-btn" aria-label="Home" style="margin-left:auto;">
+            <i data-lucide="home" style="width:23px;height:23px;"></i>
+            <span class="tooltip">Go to last edited</span>
+          </button>
         </div>
       </div>
     </div>
@@ -491,8 +534,8 @@ app.get('/', async (req, res) => {
       type="text" 
       id="secretInput" 
       class="secret-input" 
-      placeholder="Client.TKid"
-      title="Enter Client.TKid (e.g., Bloom.1012)"
+      placeholder="Bloom.1012"
+      title="Enter tkid1 value (e.g., Bloom.1012)&#10;&#10;Keyboard shortcuts:&#10;• Tab 3 times&#10;• Ctrl/Cmd + K&#10;• Press 'g' twice"
     >
   </div>
 
@@ -520,6 +563,69 @@ app.get('/', async (req, res) => {
     if (currentId) {
       secretInput.value = currentId;
     }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      // Tab 3 times to focus the secret input (track consecutive tabs)
+      if (e.key === 'Tab' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        window.tabCount = (window.tabCount || 0) + 1;
+        
+        // Reset tab count after a delay
+        clearTimeout(window.tabTimer);
+        window.tabTimer = setTimeout(() => {
+          window.tabCount = 0;
+        }, 1000);
+        
+        // Focus on 3rd tab
+        if (window.tabCount === 3) {
+          e.preventDefault();
+          secretInput.focus();
+          secretInput.select();
+          window.tabCount = 0;
+        }
+      } else {
+        // Reset tab count on any other key
+        window.tabCount = 0;
+      }
+      
+      // Alternative: Ctrl/Cmd + K (common search shortcut)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        secretInput.focus();
+        secretInput.select();
+      }
+      
+      // Alternative: Press 'g' twice quickly (like vim's gg)
+      if (e.key === 'g' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        window.gCount = (window.gCount || 0) + 1;
+        
+        clearTimeout(window.gTimer);
+        window.gTimer = setTimeout(() => {
+          window.gCount = 0;
+        }, 500);
+        
+        if (window.gCount === 2) {
+          e.preventDefault();
+          secretInput.focus();
+          secretInput.select();
+          window.gCount = 0;
+        }
+      } else if (e.key !== 'g') {
+        window.gCount = 0;
+      }
+      
+      // Escape to go home (last edited)
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        window.location.href = '/';
+      }
+    });
+
+    // Home button handlers
+    document.getElementById('homeBtn1').onclick = 
+    document.getElementById('homeBtn2').onclick = () => {
+      window.location.href = '/';
+    };
 
     // Size controls with heights
     let [t1, t2] = [360, 360], [m1, m2] = [520, 520], [h1, h2] = [650, 650];
@@ -604,7 +710,9 @@ app.get('/', async (req, res) => {
           if (blob) {
             navigator.clipboard.write([
               new ClipboardItem({ 'image/png': blob })
-            ]).catch(err => {
+            ]).then(() => {
+              showCopySuccess();
+            }).catch(err => {
               console.error('Failed to copy to clipboard:', err);
               alert('Failed to copy to clipboard. Please try again.');
             });
@@ -669,34 +777,134 @@ app.get('/', async (req, res) => {
         if (!card) throw new Error('Card element not found');
         
         const footer = card.querySelector('.footer-bar')?.innerText || '';
-        const cardContent = card.querySelector('.card-content')?.innerHTML || '';
+        const headerClass = card.querySelector('.card-live-header') ? 'card-live-header' : 'card-pending-header';
+        const headerText = card.querySelector('.' + headerClass)?.innerText || label;
+        const tileContent = card.querySelector('.tile-html-preview-box')?.innerHTML || '';
+        const modalContent = card.querySelector('.modal-html-preview-box')?.innerHTML || '';
         const filename = footer.replace(/[<>:"/\\|?*]/g, '_') || label.replace(/\s+/g, '_');
+        const isPending = headerClass === 'card-pending-header';
+        
         const html = \`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>\${label}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://info.tripkicks.com/hubfs/system/mockup/tk-css.css" rel="stylesheet">
   <style>
-    body { margin: 0; background: #f4f9ff; font-family: system-ui; }
+    body { 
+      margin: 0; 
+      background: #f4f9ff; 
+      font-family: system-ui;
+      padding: 2em 0;
+    }
     .wrapper {
-      margin: 2em auto; width: 90%; max-width: 620px;
-      background: #fff; border-radius: 18px; border: 1.5px solid #fff;
-      box-shadow: 0 10px 48px rgba(36,40,70,0.18);
+      margin: 0 auto; 
+      width: 90%; 
+      max-width: 620px;
+      background: #f6f9fc; 
+      border-radius: 18px; 
+      border: 1.5px solid #fff;
+      box-shadow: 0 16px 48px rgba(36,40,70,0.15), 0 4px 22px rgba(36,40,70,0.09);
+      overflow: hidden;
     }
-    .footer-bar {
-      padding: 8px 0 13px 22px; font-size: .98em; color: #7ca0d7;
-      letter-spacing: .03em; font-weight: 500; opacity: .96;
-      user-select: all; border-radius: 0 0 18px 18px;
+    .card-header-section {
+      padding: 9px 22px 7px; 
+      font-size: 1rem; 
+      font-weight: 400;
+      \${isPending ? 
+        'background: #434c5c; color: #f6f9fc;' : 
+        'background: #427bff; color: #f5f7fa;'
+      }
+    }
+    .content-section { 
+      padding: 20px 22px 30px; 
+    }
+    .preview-label {
+      color: #bac2d2; 
+      font-size: .92rem; 
+      font-weight: 500; 
+      opacity: .70; 
+      margin-bottom: 10px;
+    }
+    .tile-container {
+      background: #156eff; 
+      color: #fff;
+      \${isPending ? 'border-radius: 12px;' : 'border-radius: 0;'}
+      border: 1px solid #fff;
+      box-shadow: 0 6px 32px rgba(36,40,70,0.16);
+      margin-bottom: 30px; 
+      min-height: 60px;
+      padding: 0;
+      overflow: hidden;
+    }
+    .divider-section {
+      position: relative;
+      height: 40px;
+      margin: 30px 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .divider-line {
+      position: absolute;
+      left: 0;
+      right: 80px;
+      height: 2px;
+      background: #e5e9f0;
+      top: 50%;
+    }
+    .divider-logo {
+      width: 70px;
+      height: 70px;
+      background-image: url('https://info.tripkicks.com/hubfs/system/tkPortalwsm.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(0 0 5px rgba(66, 123, 255, 0.25));
+      z-index: 1;
+      margin-right: 5px;
+    }
+    .modal-container {
+      background: #fff; 
+      color: #1a1a1a;
+      border: 1.5px solid #eaf0fc; 
+      border-radius: 7px;
+      box-shadow: 0 6px 32px rgba(36,40,70,0.15);
+      min-height: 400px; 
+      overflow: auto;
+      padding: 0;
+    }
+    .footer-section {
+      padding: 8px 0 13px 22px; 
+      font-size: .89em; 
+      color: #9db0d7;
+      letter-spacing: .03em; 
+      font-weight: 500; 
+      opacity: .96;
       font-family: 'Menlo','Consolas','monospace',system-ui;
+      background: #f6f9fc;
     }
-    .card-content { padding-bottom: 20px; }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <div class="card-content">\${cardContent}</div>
-    <div class="footer-bar">\${footer}</div>
+    <div class="card-header-section">\${headerText}</div>
+    
+    <div class="content-section">
+      <div class="preview-label">Tile Preview</div>
+      <div class="tile-container">\${tileContent}</div>
+      
+      <div class="divider-section">
+        <div class="divider-line"></div>
+        <div class="divider-logo"></div>
+      </div>
+      
+      <div class="preview-label">Modal Preview</div>
+      <div class="modal-container">\${modalContent}</div>
+    </div>
+    
+    <div class="footer-section">\${footer}</div>
   </div>
 </body>
 </html>\`;
