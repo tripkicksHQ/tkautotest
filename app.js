@@ -240,45 +240,8 @@ app.get('/', async (req, res) => {
     }
     .tile-html-preview-box.pending {
       border-radius:12px; box-shadow:0 12px 48px rgba(36,40,70,0.18);
-      background:#f6f9fc; /* Match the card background */
-      border:none; /* Remove border for cleaner look */
     }
-    /* Override any internal padding that might be in the HTML content */
-    .tile-html-preview-box > * {
-      margin: 0 !important;
-    }
-    .tile-html-preview-box > div:first-child {
-      padding: 0 !important;
-    }
-    .light-divider { 
-      background:#e5e9f0; 
-      height:2px; 
-      margin:20px 22px 16px; 
-      border-radius:1px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-    .light-divider::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 100px;
-      height: 2px;
-      background: #e5e9f0;
-    }
-    .light-divider::after {
-      content: '';
-      width: 80px;
-      height: 80px;
-      background-image: url('https://info.tripkicks.com/hubfs/system/tkPortalwsm.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      filter: drop-shadow(0 0 5px rgba(66, 123, 255, 0.25));
-      margin-right: 5px;
-    }
+    .light-divider { background:#e5e9f0; height:2px; margin:20px auto 16px; width:92%; border-radius:1px; }
     .modal-html-preview-box {
       background:#fff; color:#1a1a1a;
       border:1.5px solid #eaf0fc; border-radius:7px;
@@ -909,80 +872,10 @@ app.get('/', async (req, res) => {
       box-shadow: 0 16px 48px rgba(36,40,70,0.15), 0 4px 22px rgba(36,40,70,0.09);
       overflow: hidden;
     }
-    .card-header-section {
-      padding: 9px 22px 7px; 
-      font-size: 1rem; 
-      font-weight: 400;
-      \${isPending ? 
-        'background: #434c5c; color: #f6f9fc;' : 
-        'background: #427bff; color: #f5f7fa;'
-      }
-    }
-    .content-section { 
-      padding: 20px 22px 30px; 
-    }
-    .preview-label {
-      color: #bac2d2; 
-      font-size: .92rem; 
-      font-weight: 500; 
-      opacity: .70; 
-      margin-bottom: 10px;
-    }
-    .tile-container {
-      background: #156eff; 
-      color: #fff;
-      \${isPending ? 'border-radius: 12px;' : 'border-radius: 0;'}
-      border: 1px solid #fff;
-      box-shadow: 0 6px 32px rgba(36,40,70,0.16);
-      margin-bottom: 30px; 
-      min-height: 60px;
-      padding: 0.25em 0.5em;
-      overflow: hidden;
-    }
-    .divider-section {
-      position: relative;
-      height: 40px;
-      margin: 30px 0;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-    .divider-line {
-      position: absolute;
-      left: 0;
-      right: 80px;
-      height: 2px;
-      background: #e5e9f0;
-      top: 50%;
-    }
-    .divider-logo {
-      width: 70px;
-      height: 70px;
-      background-image: url('https://info.tripkicks.com/hubfs/system/tkPortalwsm.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      filter: drop-shadow(0 0 5px rgba(66, 123, 255, 0.25));
-      z-index: 1;
-      margin-right: 5px;
-    }
-    .modal-container {
-      background: #fff; 
-      color: #1a1a1a;
-      border: 1.5px solid #eaf0fc; 
-      border-radius: 7px;
-      box-shadow: 0 6px 32px rgba(36,40,70,0.15);
-      min-height: 400px; 
-      overflow: auto;
-      padding: 0.5em 1em;
-    }
-    .footer-section {
-      padding: 8px 0 13px 22px; 
-      font-size: .89em; 
-      color: #9db0d7;
-      letter-spacing: .03em; 
-      font-weight: 500; 
-      opacity: .96;
+    .footer-bar {
+      padding: 8px 0 13px 22px; font-size: .98em; color: #7ca0d7;
+      letter-spacing: .03em; font-weight: 500; opacity: .96;
+      user-select: all; border-radius: 0 0 18px 18px;
       font-family: 'Menlo','Consolas','monospace',system-ui;
       background: #f6f9fc;
     }
