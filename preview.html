@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>tkAuto Notion Live Preview</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://info.tripkicks.com/hubfs/system/mockup/tk-css.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    html, body { background:#fff; color:#222; font-family:system-ui; margin:0; padding:0; }
+    .main-wrapper { max-width:1280px; margin:2em auto; width:98%; }
+    .preview-row { display:flex; gap:3vw; justify-content:center; align-items:flex-start; min-height:900px; }
+    .preview-col {
+      flex:1 1 0; min-width:340px; max-width:620px;
+      display:flex; flex-direction:column; background:#f6f9fc;
+      border:1.5px solid #fff; border-radius:18px 18px 0 0;
+      box-shadow: 0 16px 48px rgba(36,40,70,0.15), 0 4px 22px rgba(36,40,70,0.09), 0 1.5px 10px rgba(36,40,70,0.08);
+      margin-bottom:24px; padding-bottom:0; position:relative; min-height:800px;
+    }
+    .card-content { flex: 1; display: flex; flex-direction: column; }
+    .card-live-header, .card-pending-header {
+      padding:9px 22px 7px; font-size:1rem; font-weight:400; border-radius:18px 18px 0 0;
+    }
+    .card-live-header { background:#427bff; color:#f5f7fa; }
+    .card-pending-header { background:#434c5c; color:#f6f9fc; }
+    .tile-preview-row, .modal-preview-row { display:flex; align-items:center; margin:20px 0 4px; }
+    .tile-preview-label, .modal-label {
+      color:#bac2d2; font-size:.92rem; font-weight:500; opacity:.70; margin-left:22px;
+    }
+    .tile-preview-controls, .modal-preview-controls { margin-left:auto; margin-right:20px; display:flex; gap:6px; align-items:center; }
+    .tile-size-btn, .modal-size-btn {
+      background:transparent; border:none; border-radius:5px; font-size:1.18rem; width:22px; height:22px;
+      color:#ccd4e3; opacity:.6; cursor:pointer; transition:background .12s, color .12s;
+    }
+    .tile-size-btn:hover, .modal-size-btn:hover { background:#f3f6fb; color:#427bff; opacity:.95; }
+    .font-size-control {
+      display: flex; align-items: center; gap: 4px; margin-left: 12px;
+      padding: 2px 6px; background: #f0f4f9; border-radius: 6px;
+    }
+    .font-size-btn {
+      background: transparent; border: none; border-radius: 4px; font-size: 0.85rem; width: 20px; height: 20px;
+      color: #8899b8; cursor: pointer; transition: all 0.12s; display: flex; align-items: center; justify-content: center; font-weight: 600;
+    }
+    .font-size-btn:hover { background: #e3e9f2; color: #427bff; }
+    .font-size-indicator {
+      font-size: 0.75rem; color: #7388a9; min-width: 30px; text-align: center; font-family: 'Menlo', 'Consolas', monospace;
+    }
+    .tile-html-preview-box {
+      background:#156eff; color:#fff;
+      border:1px solid #fff; box-shadow:0 6px 32px rgba(36,40,70,0.16);
+      display:flex; font-weight:500; margin:0 22px 10px; min-height:40px;
+      overflow-x:auto; transition:width .3s; width:360px; max-width:94%; padding: 0.25em 0.5em;
+    }
+    .tile-html-preview-box.pending {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
+    .tile-html-preview-box > * { margin: 0 !important; }
+    .light-divider { 
+      background:#e5e9f0; height:2px; margin:20px 22px 16px; border-radius:1px;
+      position: relative; display: flex; align-items: center; justify-content: flex-end;
+    }
+    .light-divider::before {
+      content: ''; position: absolute; left: 0; right: 100px; height: 2px; background: #e5e9f0;
+    }
+    .light-divider::after {
+      content: ''; width: 80px; height: 80px;
+      background-image: url('https://info.tripkicks.com/hubfs/system/tkPortalwsm.png');
+      background-size: contain; background-repeat: no-repeat; background-position: center;
+      margin-right: 5px;
+    }
+    .modal-html-preview-box {
+      background:#fff; color:#1a1a1a;
+      border:1.5px solid #eaf0fc; border-radius:7px; box-shadow:0 6px 32px rgba(36,40,70,0.15);
+      margin:0 22px 12px; height:650px; overflow:auto; transition:width .3s, height .3s;
+      width:520px; max-width:100%; scrollbar-width: thin; scrollbar-color:#dde1ee #f6f9fc; padding: 0.5em 1em;
+    }
+    .modal-html-preview-box > * { margin: 0 !important; }
+    .modal-html-preview-box > div:first-child { padding-left: 0 !important; padding-right: 0 !important; }
+    .modal-html-preview-box::-webkit-scrollbar { width:6px; background:#f6f9fc; }
+    .modal-html-preview-box::-webkit-scrollbar-thumb { background:#dde1ee; border-radius:4px; min-height:24px; }
+    .modal-html-preview-box:hover::-webkit-scrollbar-thumb { background:#bac6e4; }
+    .footer-bar {
+      width:100%; text-align:left; padding:4px 0 9px 18px;
+      font-size:.89em; color:#9db0d7; opacity:.96; letter-spacing:.03em; font-weight:500;
+      font-family:'Menlo','Consolas','monospace',system-ui; margin-top: auto;
+    }
+    .footer-bar i { font-style:italic; opacity:.88; letter-spacing:.04em; }
+    .icon-bar { 
+      display:flex; gap:10px; margin:0 0 0 18px; 
+      align-items:center; padding-bottom: 10px; flex-wrap: wrap; position: relative; 
+    }
+    .icon-bar.hide-for-capture { display:none!important; }
+    .icon-btn {
+      background:transparent; border:none; border-radius:7px; color:#b6bac5; cursor:pointer; 
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.23rem; width:34px; height:34px; padding:0; opacity:.7; position: relative;
+      transition:background .15s, color .14s;
+    }
+    .icon-btn:hover { background:#f3f6fb; color:#427bff; opacity:1; }
+    .icon-btn.tk-branded {
+      background-image: url('https://info.tripkicks.com/hubfs/system/ausTk.png');
+      background-size: 22px 22px; background-position: center; background-repeat: no-repeat; opacity: 0.5;
+    }
+    .icon-btn.tk-branded:hover { opacity: 0.8; background-color: #f3f6fb; }
+    .icon-btn.tk-branded i { opacity: 0; }
+    .icon-btn .tooltip {
+      position:absolute; bottom:100%; left:50%; transform:translateX(-50%) translateY(-8px);
+      background:#31343c; color:#fff; padding:6px 10px; border-radius:6px; white-space:nowrap;
+      font-size:.75rem; font-weight:500; opacity:0; visibility:hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      z-index:1000; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .icon-btn .tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%); border-width: 5px; border-style: solid;
+      border-color: #31343c transparent transparent transparent;
+    }
+    .icon-btn:hover .tooltip { opacity:1; visibility:visible; }
+    .copy-success {
+      position: fixed; top: 20px; right: 20px; background: #21921c; color: white;
+      padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000;
+    }
+    .copy-success.show { opacity: 1; transform: translateY(0); }
+    .secret-input-container {
+      position: fixed; bottom: 20px; right: 20px; opacity: 0.05; transition: opacity 0.5s ease; z-index: 999;
+    }
+    .secret-input-container:hover { opacity: 0.8; }
+    .secret-input {
+      padding: 6px 10px; border: 1px solid #f0f0f0; border-radius: 4px;
+      font-size: 0.8rem; width: 120px; background: #fafafa; color: #999;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .secret-input:focus { outline: none; border-color: #ddd; background: #fff; color: #333; opacity: 1; }
+    .secret-input::placeholder { color: #ccc; font-size: 0.75rem; }
+    @media(max-width:1080px) { .preview-row { flex-direction:column; gap:18px; } .preview-col { max-width:98vw; } }
+    @media(max-width:650px) { .main-wrapper { width:100vw; } .modal-html-preview-box { width:100%; } .secret-input-container { bottom: 10px; right: 10px; } }
+  </style>
+</head>
+<body>
+  <div class="copy-success" id="copySuccess">Copied to clipboard!</div>
+  <div class="main-wrapper">
+    <div class="preview-row">
+      <div class="preview-col" id="col1">
+        <div class="card-content">
+          <div class="card-live-header">Currently Live</div>
+          <div class="tile-preview-row">
+            <div class="tile-preview-label">Tile Preview</div>
+            <div class="tile-preview-controls">
+              <button id="tileWidthMinus1" class="tile-size-btn">−</button>
+              <button id="tileWidthPlus1" class="tile-size-btn">+</button>
+              <div class="font-size-control">
+                <button id="tileFontMinus1" class="font-size-btn">A-</button>
+                <span id="tileFontIndicator1" class="font-size-indicator">100%</span>
+                <button id="tileFontPlus1" class="font-size-btn">A+</button>
+              </div>
+            </div>
+          </div>
+          <div id="tileHtmlPreview1" class="tile-html-preview-box"></div>
+          <div class="light-divider"></div>
+          <div class="modal-preview-row">
+            <div class="modal-label">Modal Preview</div>
+            <div class="modal-preview-controls">
+              <button id="modalWidthMinus1" class="modal-size-btn">−</button>
+              <button id="modalWidthPlus1" class="modal-size-btn">+</button>
+              <button id="modalHeightMinus1" class="modal-size-btn" style="margin-left:12px;">↓</button>
+              <button id="modalHeightPlus1" class="modal-size-btn">↑</button>
+              <div class="font-size-control">
+                <button id="modalFontMinus1" class="font-size-btn">A-</button>
+                <span id="modalFontIndicator1" class="font-size-indicator">100%</span>
+                <button id="modalFontPlus1" class="font-size-btn">A+</button>
+              </div>
+            </div>
+          </div>
+          <div id="modalHtmlPreview1" class="modal-html-preview-box"></div>
+        </div>
+        <div class="footer-bar" id="footer1"></div>
+        <div class="icon-bar">
+          <button id="refreshBtn1" class="icon-btn" aria-label="Refresh"><i data-lucide="refresh-ccw" style="width:23px;height:23px;"></i><span class="tooltip">Refresh page</span></button>
+          <button id="copyTile1" class="icon-btn" aria-label="Copy Tile"><i data-lucide="copy" style="width:23px;height:23px;"></i><span class="tooltip">Copy tile as image</span></button>
+          <button id="copyModal1" class="icon-btn" aria-label="Copy Modal"><i data-lucide="copy" style="width:23px;height:23px;"></i><span class="tooltip">Copy modal as image</span></button>
+          <button id="copyCard1" class="icon-btn" aria-label="Copy Full Card"><i data-lucide="camera" style="width:23px;height:23px;"></i><span class="tooltip">Copy entire card as image</span></button>
+          <button id="download2up" class="icon-btn" aria-label="Download 2-Up"><i data-lucide="download" style="width:23px;height:23px;"></i><span class="tooltip">Download both cards as image</span></button>
+          <button id="exportHtml1" class="icon-btn" aria-label="Export HTML"><i data-lucide="file-code" style="width:23px;height:23px;"></i><span class="tooltip">Export card as HTML file</span></button>
+          <button id="saveTileHtml1" class="icon-btn" aria-label="Save Tile HTML"><i data-lucide="code" style="width:23px;height:23px;"></i><span class="tooltip">Download tile HTML file</span></button>
+          <button id="saveModalHtml1" class="icon-btn" aria-label="Save Modal HTML"><i data-lucide="code-2" style="width:23px;height:23px;"></i><span class="tooltip">Download modal HTML file</span></button>
+          <button id="copyTileCode1" class="icon-btn tk-branded" aria-label="Copy Tile Code"><i data-lucide="clipboard-copy" style="width:23px;height:23px;"></i><span class="tooltip">Copy tile code for AUSTIN</span></button>
+          <button id="copyModalCode1" class="icon-btn tk-branded" aria-label="Copy Modal Code"><i data-lucide="clipboard-check" style="width:23px;height:23px;"></i><span class="tooltip">Copy modal code for AUSTIN</span></button>
+          <button id="homeBtn1" class="icon-btn" aria-label="Home" style="margin-left:auto;"><i data-lucide="home" style="width:23px;height:23px;"></i><span class="tooltip">Go to last edited</span></button>
+        </div>
+      </div>
+      <div class="preview-col" id="col2">
+        <div class="card-content">
+          <div class="card-pending-header">Pending Update</div>
+          <div class="tile-preview-row">
+            <div class="tile-preview-label">Tile Preview</div>
+            <div class="tile-preview-controls">
+              <button id="tileWidthMinus2" class="tile-size-btn">−</button>
+              <button id="tileWidthPlus2" class="tile-size-btn">+</button>
+              <div class="font-size-control">
+                <button id="tileFontMinus2" class="font-size-btn">A-</button>
+                <span id="tileFontIndicator2" class="font-size-indicator">100%</span>
+                <button id="tileFontPlus2" class="font-size-btn">A+</button>
+              </div>
+            </div>
+          </div>
+          <div id="tileHtmlPreview2" class="tile-html-preview-box pending"></div>
+          <div class="light-divider"></div>
+          <div class="modal-preview-row">
+            <div class="modal-label">Modal Preview</div>
+            <div class="modal-preview-controls">
+              <button id="modalWidthMinus2" class="modal-size-btn">−</button>
+              <button id="modalWidthPlus2" class="modal-size-btn">+</button>
+              <button id="modalHeightMinus2" class="modal-size-btn" style="margin-left:12px;">↓</button>
+              <button id="modalHeightPlus2" class="modal-size-btn">↑</button>
+              <div class="font-size-control">
+                <button id="modalFontMinus2" class="font-size-btn">A-</button>
+                <span id="modalFontIndicator2" class="font-size-indicator">100%</span>
+                <button id="modalFontPlus2" class="font-size-btn">A+</button>
+              </div>
+            </div>
+          </div>
+          <div id="modalHtmlPreview2" class="modal-html-preview-box"></div>
+        </div>
+        <div class="footer-bar" id="footer2"></div>
+        <div class="icon-bar">
+            <button id="refreshBtn2" class="icon-btn" aria-label="Refresh"><i data-lucide="refresh-ccw" style="width:23px;height:23px;"></i><span class="tooltip">Refresh page</span></button>
+            <button id="copyTile2" class="icon-btn" aria-label="Copy Tile"><i data-lucide="copy" style="width:23px;height:23px;"></i><span class="tooltip">Copy tile as image</span></button>
+            <button id="copyModal2" class="icon-btn" aria-label="Copy Modal"><i data-lucide="copy" style="width:23px;height:23px;"></i><span class="tooltip">Copy modal as image</span></button>
+            <button id="copyCard2" class="icon-btn" aria-label="Copy Full Card"><i data-lucide="camera" style="width:23px;height:23px;"></i><span class="tooltip">Copy entire card as image</span></button>
+            <button id="download2up2" class="icon-btn" aria-label="Download 2-Up"><i data-lucide="download" style="width:23px;height:23px;"></i><span class="tooltip">Download both cards as image</span></button>
+            <button id="exportHtml2" class="icon-btn" aria-label="Export HTML"><i data-lucide="file-code" style="width:23px;height:23px;"></i><span class="tooltip">Export card as HTML file</span></button>
+            <button id="saveTileHtml2" class="icon-btn" aria-label="Save Tile HTML"><i data-lucide="code" style="width:23px;height:23px;"></i><span class="tooltip">Download tile HTML file</span></button>
+            <button id="saveModalHtml2" class="icon-btn" aria-label="Save Modal HTML"><i data-lucide="code-2" style="width:23px;height:23px;"></i><span class="tooltip">Download modal HTML file</span></button>
+            <button id="copyTileCode2" class="icon-btn tk-branded" aria-label="Copy Tile Code"><i data-lucide="clipboard-copy" style="width:23px;height:23px;"></i><span class="tooltip">Copy tile code for AUSTIN</span></button>
+            <button id="copyModalCode2" class="icon-btn tk-branded" aria-label="Copy Modal Code"><i data-lucide="clipboard-check" style="width:23px;height:23px;"></i><span class="tooltip">Copy modal code for AUSTIN</span></button>
+            <button id="homeBtn2" class="icon-btn" aria-label="Home" style="margin-left:auto;"><i data-lucide="home" style="width:23px;height:23px;"></i><span class="tooltip">Go to last edited</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="secret-input-container">
+    <input type="text" id="secretInput" class="secret-input" placeholder="Bloom.1012" title="Enter tkid1 value (e.g., Bloom.1012)&#10;&#10;Keyboard shortcuts:&#10;• Tab 3 times&#10;• Ctrl/Cmd + K&#10;• Press 'g' twice">
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inject HTML content from server
+      document.getElementById('tileHtmlPreview1').innerHTML = /*LIVE_TILE_JSON*/ "";
+      document.getElementById('modalHtmlPreview1').innerHTML = /*LIVE_MODAL_JSON*/ "";
+      document.getElementById('tileHtmlPreview2').innerHTML = /*PENDING_TILE_JSON*/ "";
+      document.getElementById('modalHtmlPreview2').innerHTML = /*PENDING_MODAL_JSON*/ "";
+      
+      // I have removed the complex export/download functions for now to ensure the core UI works.
+      // They can be added back carefully one by one.
+
+      let tileFontSizes = { 1: 100, 2: 100 };
+      let modalFontSizes = { 1: 100, 2: 100 };
+
+      function updateFontSize(type, num, delta) {
+        const sizes = type === 'tile' ? tileFontSizes : modalFontSizes;
+        const prefix = type === 'tile' ? 'tile' : 'modal';
+        sizes[num] = Math.max(50, Math.min(200, sizes[num] + delta));
+        const element = document.getElementById(`${prefix}HtmlPreview${num}`);
+        const indicator = document.getElementById(`${prefix}FontIndicator${num}`);
+        if (element) element.style.fontSize = `${sizes[num]}%`;
+        if (indicator) indicator.textContent = `${sizes[num]}%`;
+      }
+
+      const secretInput = document.getElementById('secretInput');
+      secretInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const value = e.target.value.trim();
+          if (value) window.location.href = `?id=${encodeURIComponent(value)}`;
+        }
+      });
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentId = urlParams.get('id');
+      if (currentId) secretInput.value = currentId;
+
+      document.addEventListener('keydown', (e) => {
+        if (e.target === secretInput) return;
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); secretInput.focus(); secretInput.select(); }
+        if (e.key === 'Escape') { e.preventDefault(); window.location.href = '/'; }
+      });
+      
+      let [t1, t2, m1, m2, h1, h2] = [360, 360, 520, 520, 650, 650];
+      const T1 = document.getElementById('tileHtmlPreview1'), T2 = document.getElementById('tileHtmlPreview2');
+      const M1 = document.getElementById('modalHtmlPreview1'), M2 = document.getElementById('modalHtmlPreview2');
+      if (T1) T1.style.width = `${t1}px`; if (T2) T2.style.width = `${t2}px`;
+      if (M1) { M1.style.width = `${m1}px`; M1.style.height = `${h1}px`; }
+      if (M2) { M2.style.width = `${m2}px`; M2.style.height = `${h2}px`; }
+      
+      document.getElementById('tileFontPlus1').onclick = () => updateFontSize('tile', 1, 10);
+      document.getElementById('tileFontMinus1').onclick = () => updateFontSize('tile', 1, -10);
+      document.getElementById('tileFontPlus2').onclick = () => updateFontSize('tile', 2, 10);
+      document.getElementById('tileFontMinus2').onclick = () => updateFontSize('tile', 2, -10);
+      document.getElementById('modalFontPlus1').onclick = () => updateFontSize('modal', 1, 10);
+      document.getElementById('modalFontMinus1').onclick = () => updateFontSize('modal', 1, -10);
+      document.getElementById('modalFontPlus2').onclick = () => updateFontSize('modal', 2, 10);
+      document.getElementById('modalFontMinus2').onclick = () => updateFontSize('modal', 2, -10);
+      document.getElementById('tileWidthPlus1').onclick  = () => { t1 = Math.min(t1 + 40, 600); T1.style.width = `${t1}px`; };
+      document.getElementById('tileWidthMinus1').onclick = () => { t1 = Math.max(t1 - 40, 200); T1.style.width = `${t1}px`; };
+      document.getElementById('tileWidthPlus2').onclick  = () => { t2 = Math.min(t2 + 40, 600); T2.style.width = `${t2}px`; };
+      document.getElementById('tileWidthMinus2').onclick = () => { t2 = Math.max(t2 - 40, 200); T2.style.width = `${t2}px`; };
+      document.getElementById('modalWidthPlus1').onclick = () => { m1 = Math.min(m1 + 40, 800); M1.style.width = `${m1}px`; };
+      document.getElementById('modalWidthMinus1').onclick = () => { m1 = Math.max(m1 - 40, 320); M1.style.width = `${m1}px`; };
+      document.getElementById('modalHeightPlus1').onclick = () => { h1 = Math.min(h1 + 50, 900); M1.style.height = `${h1}px`; };
+      document.getElementById('modalHeightMinus1').onclick = () => { h1 = Math.max(h1 - 50, 300); M1.style.height = `${h1}px`; };
+      document.getElementById('modalHeightPlus2').onclick = () => { h2 = Math.min(h2 + 50, 900); M2.style.height = `${h2}px`; };
+      document.getElementById('modalHeightMinus2').onclick = () => { h2 = Math.max(h2 - 50, 300); M2.style.height = `${h2}px`; };
+      document.getElementById('homeBtn1').onclick = () => window.location.href = '/';
+      document.getElementById('homeBtn2').onclick = () => window.location.href = '/';
+      document.getElementById('refreshBtn1').onclick = () => window.location.reload();
+      document.getElementById('refreshBtn2').onclick = () => window.location.reload();
+
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
