@@ -134,10 +134,10 @@ app.get('/', async (req, res) => {
     errorMsg = `<div style="color:#c00; padding:1em;">Error: ${e.message}</div>`;
   }
 
-  if (!liveTile)      liveTile    = `<div style="padding:1em;color:#fff;background:#156eff;">No HTML found in <b>Tile HTML</b>.</div>`;
-  if (!liveModal)     liveModal   = `<div style="padding:1em;color:#222;">No HTML found in <b>Modal HTML</b>.</div>`;
-  if (!pendingTile)   pendingTile = `<div style="padding:1em;color:#fff;background:#156eff;">No HTML found in <b>Builder ⓵ TILE</b>.</div>`;
-  if (!pendingModal)  pendingModal= `<div style="padding:1em;color:#222;">No HTML found in <b>Builder ⓵ MODAL</b>.</div>`;
+  if (!liveTile)      liveTile    = `<div style="padding:0.5em;color:#fff;background:#156eff;">No HTML found in <b>Tile HTML</b>.</div>`;
+  if (!liveModal)     liveModal   = `<div style="padding:0.5em;color:#222;">No HTML found in <b>Modal HTML</b>.</div>`;
+  if (!pendingTile)   pendingTile = `<div style="padding:0.5em;color:#fff;background:#156eff;">No HTML found in <b>Builder ⓵ TILE</b>.</div>`;
+  if (!pendingModal)  pendingModal= `<div style="padding:0.5em;color:#222;">No HTML found in <b>Builder ⓵ MODAL</b>.</div>`;
 
   const mainShadow = `0 16px 48px rgba(36,40,70,0.15), 0 4px 22px rgba(36,40,70,0.09), 0 1.5px 10px rgba(36,40,70,0.08)`;
 
@@ -183,7 +183,7 @@ app.get('/', async (req, res) => {
     .tile-preview-label, .modal-label {
       color:#bac2d2; font-size:.92rem; font-weight:500; opacity:.70; margin-left:22px;
     }
-    .tile-preview-controls, .modal-preview-controls { margin-left:auto; margin-right:20px; display:flex; gap:6px; }
+    .tile-preview-controls, .modal-preview-controls { margin-left:auto; margin-right:20px; display:flex; gap:6px; align-items:center; }
     .tile-size-btn, .modal-size-btn {
       background:transparent; border:none; border-radius:5px;
       font-size:1.18rem; width:22px; height:22px;
@@ -193,17 +193,62 @@ app.get('/', async (req, res) => {
     .tile-size-btn:hover, .modal-size-btn:hover {
       background:#f3f6fb; color:#427bff; opacity:.95;
     }
+    .font-size-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 12px;
+      padding: 2px 6px;
+      background: #f0f4f9;
+      border-radius: 6px;
+    }
+    .font-size-btn {
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      width: 20px;
+      height: 20px;
+      color: #8899b8;
+      cursor: pointer;
+      transition: all 0.12s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .font-size-btn:hover {
+      background: #e3e9f2;
+      color: #427bff;
+    }
+    .font-size-indicator {
+      font-size: 0.75rem;
+      color: #7388a9;
+      min-width: 30px;
+      text-align: center;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
     .tile-html-preview-box {
       background:#156eff; color:#fff;
       border-radius:0; border:1px solid #fff;
       box-shadow:0 6px 32px rgba(36,40,70,0.16);
       display:flex; font-size:1.08rem; font-weight:500;
       margin:0 22px 10px; min-height:40px;
-      overflow-x:auto; transition:width .3s;
+      overflow-x:auto; transition:width .3s, font-size .2s;
       width:360px; max-width:94%;
+      padding: 0.25em 0.5em; /* Reduced padding from 1em to 0.25em/0.5em */
     }
     .tile-html-preview-box.pending {
       border-radius:12px; box-shadow:0 12px 48px rgba(36,40,70,0.18);
+      background:transparent; /* Remove blue background for pending */
+      border:none; /* Remove border for cleaner look */
+    }
+    /* Override any internal padding that might be in the HTML content */
+    .tile-html-preview-box > * {
+      margin: 0 !important;
+    }
+    .tile-html-preview-box > div:first-child {
+      padding: 0 !important;
     }
     .light-divider { 
       background:#e5e9f0; 
@@ -242,6 +287,15 @@ app.get('/', async (req, res) => {
       overflow:auto; transition:width .3s, height .3s;
       width:520px; max-width:100%;
       scrollbar-width: thin; scrollbar-color:#dde1ee #f6f9fc;
+      padding: 0.5em 1em; /* Reduced padding from default to 0.5em/1em */
+    }
+    /* Override any internal padding for modal content */
+    .modal-html-preview-box > * {
+      margin: 0 !important;
+    }
+    .modal-html-preview-box > div:first-child {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
     }
     .modal-html-preview-box::-webkit-scrollbar { width:6px; background:#f6f9fc; }
     .modal-html-preview-box::-webkit-scrollbar-thumb {
@@ -379,7 +433,6 @@ app.get('/', async (req, res) => {
   <div class="main-wrapper">
     <div class="preview-row">
 
-      <!-- Column 1 -->
       <div class="preview-col" id="col1">
         <div class="card-content">
           <div class="card-live-header">Currently Live</div>
@@ -389,6 +442,11 @@ app.get('/', async (req, res) => {
             <div class="tile-preview-controls">
               <button id="tileWidthMinus1" class="tile-size-btn">−</button>
               <button id="tileWidthPlus1" class="tile-size-btn">+</button>
+              <div class="font-size-control">
+                <button id="tileFontMinus1" class="font-size-btn">A-</button>
+                <span id="tileFontIndicator1" class="font-size-indicator">100%</span>
+                <button id="tileFontPlus1" class="font-size-btn">A+</button>
+              </div>
             </div>
           </div>
           <div id="tileHtmlPreview1" class="tile-html-preview-box"></div>
@@ -400,6 +458,11 @@ app.get('/', async (req, res) => {
               <button id="modalWidthPlus1" class="modal-size-btn">+</button>
               <button id="modalHeightMinus1" class="modal-size-btn" style="margin-left:12px;">↓</button>
               <button id="modalHeightPlus1" class="modal-size-btn">↑</button>
+              <div class="font-size-control">
+                <button id="modalFontMinus1" class="font-size-btn">A-</button>
+                <span id="modalFontIndicator1" class="font-size-indicator">100%</span>
+                <button id="modalFontPlus1" class="font-size-btn">A+</button>
+              </div>
             </div>
           </div>
           <div id="modalHtmlPreview1" class="modal-html-preview-box"></div>
@@ -453,7 +516,6 @@ app.get('/', async (req, res) => {
         </div>
       </div>
 
-      <!-- Column 2 -->
       <div class="preview-col" id="col2">
         <div class="card-content">
           <div class="card-pending-header">Pending Update</div>
@@ -462,6 +524,11 @@ app.get('/', async (req, res) => {
             <div class="tile-preview-controls">
               <button id="tileWidthMinus2" class="tile-size-btn">−</button>
               <button id="tileWidthPlus2" class="tile-size-btn">+</button>
+              <div class="font-size-control">
+                <button id="tileFontMinus2" class="font-size-btn">A-</button>
+                <span id="tileFontIndicator2" class="font-size-indicator">100%</span>
+                <button id="tileFontPlus2" class="font-size-btn">A+</button>
+              </div>
             </div>
           </div>
           <div id="tileHtmlPreview2" class="tile-html-preview-box pending"></div>
@@ -473,6 +540,11 @@ app.get('/', async (req, res) => {
               <button id="modalWidthPlus2" class="modal-size-btn">+</button>
               <button id="modalHeightMinus2" class="modal-size-btn" style="margin-left:12px;">↓</button>
               <button id="modalHeightPlus2" class="modal-size-btn">↑</button>
+              <div class="font-size-control">
+                <button id="modalFontMinus2" class="font-size-btn">A-</button>
+                <span id="modalFontIndicator2" class="font-size-indicator">100%</span>
+                <button id="modalFontPlus2" class="font-size-btn">A+</button>
+              </div>
             </div>
           </div>
           <div id="modalHtmlPreview2" class="modal-html-preview-box"></div>
@@ -528,7 +600,6 @@ app.get('/', async (req, res) => {
     </div>
   </div>
 
-  <!-- Secret Input -->
   <div class="secret-input-container">
     <input 
       type="text" 
@@ -545,6 +616,36 @@ app.get('/', async (req, res) => {
     document.getElementById('modalHtmlPreview1').innerHTML = ${JSON.stringify(liveModal)};
     document.getElementById('tileHtmlPreview2').innerHTML  = ${JSON.stringify(pendingTile)};
     document.getElementById('modalHtmlPreview2').innerHTML = ${JSON.stringify(pendingModal)};
+
+    // Font size state tracking
+    let tileFontSizes = { 1: 100, 2: 100 };
+    let modalFontSizes = { 1: 100, 2: 100 };
+
+    // Font size control functions
+    function updateTileFontSize(num, delta) {
+      tileFontSizes[num] = Math.max(50, Math.min(200, tileFontSizes[num] + delta));
+      const tile = document.getElementById(\`tileHtmlPreview\${num}\`);
+      tile.style.fontSize = \`\${tileFontSizes[num]}%\`;
+      document.getElementById(\`tileFontIndicator\${num}\`).textContent = \`\${tileFontSizes[num]}%\`;
+    }
+
+    function updateModalFontSize(num, delta) {
+      modalFontSizes[num] = Math.max(50, Math.min(200, modalFontSizes[num] + delta));
+      const modal = document.getElementById(\`modalHtmlPreview\${num}\`);
+      modal.style.fontSize = \`\${modalFontSizes[num]}%\`;
+      document.getElementById(\`modalFontIndicator\${num}\`).textContent = \`\${modalFontSizes[num]}%\`;
+    }
+
+    // Font size button handlers
+    document.getElementById('tileFontPlus1').onclick = () => updateTileFontSize(1, 10);
+    document.getElementById('tileFontMinus1').onclick = () => updateTileFontSize(1, -10);
+    document.getElementById('tileFontPlus2').onclick = () => updateTileFontSize(2, 10);
+    document.getElementById('tileFontMinus2').onclick = () => updateTileFontSize(2, -10);
+    
+    document.getElementById('modalFontPlus1').onclick = () => updateModalFontSize(1, 10);
+    document.getElementById('modalFontMinus1').onclick = () => updateModalFontSize(1, -10);
+    document.getElementById('modalFontPlus2').onclick = () => updateModalFontSize(2, 10);
+    document.getElementById('modalFontMinus2').onclick = () => updateModalFontSize(2, -10);
 
     // Secret input handler
     const secretInput = document.getElementById('secretInput');
@@ -835,7 +936,7 @@ app.get('/', async (req, res) => {
       box-shadow: 0 6px 32px rgba(36,40,70,0.16);
       margin-bottom: 30px; 
       min-height: 60px;
-      padding: 0;
+      padding: 0.25em 0.5em;
       overflow: hidden;
     }
     .divider-section {
@@ -873,7 +974,7 @@ app.get('/', async (req, res) => {
       box-shadow: 0 6px 32px rgba(36,40,70,0.15);
       min-height: 400px; 
       overflow: auto;
-      padding: 0;
+      padding: 0.5em 1em;
     }
     .footer-section {
       padding: 8px 0 13px 22px; 
@@ -956,8 +1057,8 @@ app.get('/', async (req, res) => {
     }
     .content-wrapper {
       \${elementId.includes('tile') ? 
-        'background: #156eff; color: #fff; border-radius: 12px; padding: 0; min-height: 40px; width: fit-content; max-width: 600px;' : 
-        'background: #fff; color: #1a1a1a; border: 1.5px solid #eaf0fc; border-radius: 7px; box-shadow: 0 6px 32px rgba(36,40,70,0.15); padding: 0; width: 100%; max-width: 800px; min-height: 300px;'
+        'background: #156eff; color: #fff; border-radius: 12px; padding: 0.25em 0.5em; min-height: 40px; width: fit-content; max-width: 600px;' : 
+        'background: #fff; color: #1a1a1a; border: 1.5px solid #eaf0fc; border-radius: 7px; box-shadow: 0 6px 32px rgba(36,40,70,0.15); padding: 0.5em 1em; width: 100%; max-width: 800px; min-height: 300px;'
       }
     }
   </style>
