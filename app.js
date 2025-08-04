@@ -240,7 +240,7 @@ app.get('/', async (req, res) => {
     }
     .tile-html-preview-box.pending {
       border-radius:12px; box-shadow:0 12px 48px rgba(36,40,70,0.18);
-      background:transparent; /* Remove blue background for pending */
+      background:#f6f9fc; /* Match the card background */
       border:none; /* Remove border for cleaner look */
     }
     /* Override any internal padding that might be in the HTML content */
@@ -284,7 +284,7 @@ app.get('/', async (req, res) => {
       border:1.5px solid #eaf0fc; border-radius:7px;
       box-shadow:0 6px 32px rgba(36,40,70,0.15);
       margin:0 22px 12px; height:650px;
-      overflow:auto; transition:width .3s, height .3s;
+      overflow:auto; transition:width .3s, height .3s, font-size .2s;
       width:520px; max-width:100%;
       scrollbar-width: thin; scrollbar-color:#dde1ee #f6f9fc;
       padding: 0.5em 1em; /* Reduced padding from default to 0.5em/1em */
