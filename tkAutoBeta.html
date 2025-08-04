@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>tkAuto</title>
+  <link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://info.tripkicks.com/hubfs/system/mockup/tk-css.css" rel="stylesheet" type="text/css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css" />
+
+  <style>
+    :root {
+      --tk-white-rgb: 255, 255, 255;
+    }
+    .main-wrapper {
+        width: 90%;
+        max-width: 100%; /* Overrides Bootstrap's fixed max-width */
+        margin: 0 auto;
+    }
+    .tile {
+      padding: 0;
+    }
+    .tile .card {
+      width: 100%;
+      margin: 0;
+      border-radius: 0;
+      border: 2px solid rgba(var(--tk-white-rgb), 1);
+    }
+    #tileInputs {
+      margin-top: 20px;
+      padding-bottom: 20px;
+    }
+    #banner {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #codeViewContainer {
+      margin-top: 20px;
+    }
+    #codeView {
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 600px;
+      overflow: auto;
+    }
+    .code-editor-area {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    .copy-code-btn {
+      margin-top: 10px;
+    }
+    .CodeMirror {
+      height: auto;
+      min-height: 100px;
+      max-height: 40vh;
+      overflow: auto;
+    }
+    .fare-section {
+      margin-top: 40px;
+      border: 1px solid #ddd;
+      padding: 0;
+      border-radius: 8px;
+      background-color: #fdfdfd;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .fare-section-body {
+        padding: 20px;
+    }
+    .fare-section-header {
+        padding: 0.25rem 1rem;
+        border-bottom: 1px solid #ddd;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .fare-section-header h4 {
+        margin-bottom: 0;
+        flex: 1; /* Allow h4 to grow and center its text */
+        text-align: center;
+        font-family: serif;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+     .fare-section .fare-section-content {
+        flex-grow: 1;
+     }
+    .fare-section h4 {
+      margin-bottom: 20px;
+    }
+    .icon-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .fare-preview-card {
+      max-width: 1500px;
+    }
+    .fare-preview-icons img {
+      height: 35px;
+      margin-right: 3px;
+    }
+    .fare-inputs .form-check {
+      margin-left: 10px;
+    }
+    #farePreviewImage {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      object-position: center;
+    }
+    .label-collapse-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    [id^="tilePreview"], [id^="modalPreview"] {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background-color: #fff;
+    }
+    [id^="tilePreview"] {
+        min-height: 100px;
+        overflow: auto;
+        max-width: 100%;
+        transition: max-width 0.3s ease-in-out;
+    }
+    [id^="modalPreview"] {
+        overflow: hidden;
+        transition: height 0.3s ease-in-out;
+    }
+    [id^="modalPreview"] > * {
+        transform-origin: top left;
+        transition: transform 0.3s ease-in-out;
+    }
+    .preview-spacer {
+        margin-top: 25px;
+    }
+    .fare-section textarea {
+        min-height: 150px;
+    }
+    .btn-section-open {
+        background-color: #f8f9fa !important;
+        border-color: #dee2e6 !important;
+        color: #d3d3d3 !important;
+    }
+    .size-control {
+        cursor: pointer;
+        font-weight: bold;
+        color: #e9ecef;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        padding: 0 4px;
+    }
+     .size-control:hover {
+        color: #adb5bd;
+     }
+     [id^="toggleTileModalBtn"] {
+        padding: 0.15rem 0.5rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+     }
+  </style>
+</head>
+<body>
+  <header style="text-align: left; padding: 20px; margin-bottom: 20px; background-color: #ffc107;">
+    <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBETA</a>
+    <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Banner</a>
+    <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Fares</a>
+    <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">Insights</a>
+    <span class="badge rounded-pill text-danger border border-primary ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
+      07.31.25
+    </span>
+  </header>
+
+  <div class="main-wrapper">
+    <div class="d-flex align-items-center mb-3">
+      <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
+      <select id="bannerType" class="form-select w-auto">
+        <option value="search">Search (with city image)</option>
+        <option value="anytime">Anytime (without city image)</option>
+      </select>
+      <div id="cityInputs" class="d-flex align-items-center ms-4 d-none">
+        <label for="cityName" class="me-2 fs-6 fw-lighter">City:</label>
+        <input type="text" id="cityName" class="form-control me-3" placeholder="Enter city name" value="New York City" />
+        <label for="cityImageUrl" class="me-2 fs-6 fw-lighter">URL:</label>
+        <input type="text" id="cityImageUrl" class="form-control" placeholder="Enter image URL" value="https://info.tripkicks.com/hubfs/ClientInsights/tkDemo/cityimage_NYC.png" />
+      </div>
+    </div>
+
+    <div class="tk_css" id="pageBanner">
+      <div class="row">
+        <div class="col-12 mb-2">
+          <div class="card border border-primary z-0" style="border-radius: 10px 10px 0 10px; z-index: 1;">
+            <div class="card-body p-0" id="bannerContent"></div>
+          </div>
+          <div class="border border-primary border-top-0 z-3 bg-white ps-2"
+               style="float: right; width: 136px; position: relative; z-index: 1000; border-top: 5px solid white; border-bottom-left-radius: 8px; box-shadow: 0 0 0 0 rgba(16, 24, 40, 0.03); margin-top: -1px;">
+            <div style="justify-content: flex-start; align-items: center; display: flex;">
+              <div style="text-align: right; color: #326bf4; font-size: 8px; font-family: 'Helvetica Neue', sans-serif; font-weight: 300; line-height: 18px; white-space: nowrap;">
+                powered by
+              </div>
+              <img style="margin-left: 5px; width: 70px;" src="https://info.tripkicks.com/hubfs/system/tkEmail150.png" alt="Tripkicks Logo" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <button id="copyBannerBtn" class="btn btn-outline-warning">Copy Banner</button>
+      <button id="downloadBannerBtn" class="btn btn-warning">Download Banner PNG</button>
+    </div>
+
+    <div id="tileInputs">
+      <div class="form-group fs-6 fw-lighter col-sm-3 pb-2">
+        <label for="numTiles">Number of Tiles:</label>
+        <input type="number" id="numTiles" class="form-control" min="1" placeholder="Enter number of tiles" />
+      </div>
+      <button id="generateInputs" class="btn btn-primary btn-sm">Generate Tile Inputs</button>
+    </div>
+
+    <button id="renderTiles" class="btn btn-success btn-sm mt-3" disabled>Render Tiles</button>
+    <button id="button2" class="btn btn-success btn-sm mt-3">Render Top Full-Width</button>
+    <button id="button3" class="btn btn-secondary btn-sm mt-3" disabled>Button 3</button>
+
+    <div id="codeViewContainer" class="mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Rendered HTML</h5>
+      </div>
+      <pre id="codeView" hidden></pre>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-12 col-lg-6">
+        <div class="container fare-section" id="tileModalSection-1" style="border-color: #ffffff; border-width: 2px; box-shadow: 0 4px 18px 0 rgba(0,0,0,0.4);">
+            <div class="d-flex justify-content-between align-items-center fare-section-header" style="background-color: #427bff;">
+                <h6 class="text-white">Currently Live</h6>
+                <button id="toggleTileModalBtn-1" class="btn btn-primary btn-sm">Open Section</button>
+            </div>
+            <div class="fare-section-body">
+              <div id="tileModalContent-1" class="fare-section-content" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <label class="fw-lighter small">Tile Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-action="decrease" data-target="tilePreview-1" title="Decrease width by 5%">-</span>
+                        <span class="size-control" data-action="increase" data-target="tilePreview-1" title="Increase width by 5%">+</span>
+                    </div>
+                </div>
+                <div id="tilePreview-1"></div>
+                <div class="d-flex align-items-center preview-spacer">
+                    <label class="fw-lighter small">Modal Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-control-type="scale" data-action="decrease" data-target="modalPreview-1" title="Decrease size by 5%">-</span>
+                        <span class="size-control" data-control-type="scale" data-action="increase" data-target="modalPreview-1" title="Increase size by 5%">+</span>
+                    </div>
+                </div>
+                <div id="modalPreview-1" data-scale="1.0"></div>
+                <div class="mt-3 mb-3 d-flex gap-2">
+                  <button id="downloadTileModalBtn-1" type="button" class="btn btn-warning btn-sm mt-4">Download Preview PNG</button>
+                  <button id="copyTileModalPreviewBtn-1" type="button" class="btn btn-outline-warning btn-sm mt-4">Copy Preview</button>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="tileHtmlEditor-1" class="fw-lighter">Tile HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-1" aria-expanded="true" aria-controls="tileEditorWrapper-1">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="tileEditorWrapper-1">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="tileTemplateDropdown-1" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1tileAuto">1tileAuto</option>
+                        <option value="2tileAuto">2tileAuto</option>
+                        <option value="3tileAuto">3tileAuto</option>
+                        <option value="4tileAuto">4tileAuto</option>
+                        <option value="5tileAuto">5tileAuto</option>
+                        <option value="6tileAuto">6tileAuto</option>
+                        <option value="7tileAuto">7tileAuto</option>
+                        <option value="8tileAuto">8tileAuto</option>
+                        <option value="9tileAuto">9tileAuto</option>
+                        <option value="10tileAuto">10tileAuto</option>
+                        <option value="bookNow">bookNow</option>
+                        <option value="flexDates">flexDates</option>
+                        <option value="carbonFoot">carbonFoot</option>
+                        <option value="rateTarget">rateTarget</option>
+                        <option value="gate4">gate4</option>
+                      </select>
+                      <button id="copyTileCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="tileHtmlEditor-1" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                  </div>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="modalHtmlEditor-1" class="fw-lighter">Modal HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-1" aria-expanded="true" aria-controls="modalEditorWrapper-1">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="modalEditorWrapper-1">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="modalTemplateDropdown-1" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1modalAuto">1modalAuto</option>
+                        <option value="2modalAuto">2modalAuto</option>
+                        <option value="3modalAuto">3modalAuto</option>
+                        <option value="4modalAuto">4modalAuto</option>
+                        <option value="5modalAuto">5modalAuto</option>
+                        <option value="6modalAuto">6modalAuto</option>
+                        <option value="7modalAuto">7modalAuto</option>
+                        <option value="8modalAuto">8modalAuto</option>
+                        <option value="9modalAuto">9modalAuto</option>
+                        <option value="10modalAuto">10modalAuto</option>
+                      </select>
+                      <button id="copyModalCodeBtn-1" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="modalHtmlEditor-1" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="container fare-section" id="tileModalSection-2" style="border-color: #ffffff; border-width: 2px; box-shadow: 0 4px 18px 0 rgba(0,0,0,0.4);">
+            <div class="d-flex justify-content-between align-items-center fare-section-header" style="background-color: #228B22;">
+                <h6 class="text-white">Pending Update</h6>
+                <button id="toggleTileModalBtn-2" class="btn btn-primary btn-sm">Open Section</button>
+            </div>
+            <div class="fare-section-body">
+              <div id="tileModalContent-2" class="fare-section-content" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <label class="fw-lighter small">Tile Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-action="decrease" data-target="tilePreview-2" title="Decrease width by 5%">-</span>
+                        <span class="size-control" data-action="increase" data-target="tilePreview-2" title="Increase width by 5%">+</span>
+                    </div>
+                </div>
+                <div id="tilePreview-2"></div>
+                <div class="d-flex align-items-center preview-spacer">
+                    <label class="fw-lighter small">Modal Preview</label>
+                    <div class="ms-auto">
+                        <span class="size-control" data-control-type="scale" data-action="decrease" data-target="modalPreview-2" title="Decrease size by 5%">-</span>
+                        <span class="size-control" data-control-type="scale" data-action="increase" data-target="modalPreview-2" title="Increase size by 5%">+</span>
+                    </div>
+                </div>
+                <div id="modalPreview-2" data-scale="1.0"></div>
+                <div class="mt-3 mb-3 d-flex gap-2">
+                  <button id="downloadTileModalBtn-2" type="button" class="btn btn-warning btn-sm mt-4">Download Preview PNG</button>
+                  <button id="copyTileModalPreviewBtn-2" type="button" class="btn btn-outline-warning btn-sm mt-4">Copy Preview</button>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="tileHtmlEditor-2" class="fw-lighter">Tile HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-2" aria-expanded="true" aria-controls="tileEditorWrapper-2">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="tileEditorWrapper-2">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="tileTemplateDropdown-2" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1tileAuto">1tileAuto</option>
+                        <option value="2tileAuto">2tileAuto</option>
+                        <option value="3tileAuto">3tileAuto</option>
+                        <option value="4tileAuto">4tileAuto</option>
+                        <option value="5tileAuto">5tileAuto</option>
+                        <option value="6tileAuto">6tileAuto</option>
+                        <option value="7tileAuto">7tileAuto</option>
+                        <option value="8tileAuto">8tileAuto</option>
+                        <option value="9tileAuto">9tileAuto</option>
+                        <option value="10tileAuto">10tileAuto</option>
+                        <option value="bookNow">bookNow</option>
+                        <option value="flexDates">flexDates</option>
+                        <option value="carbonFoot">carbonFoot</option>
+                        <option value="rateTarget">rateTarget</option>
+                        <option value="gate4">gate4</option>
+                      </select>
+                      <button id="copyTileCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="tileHtmlEditor-2" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                  </div>
+                </div>
+                <div class="code-editor-area mb-3">
+                  <div class="label-collapse-wrapper">
+                    <label for="modalHtmlEditor-2" class="fw-lighter">Modal HTML</label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-2" aria-expanded="true" aria-controls="modalEditorWrapper-2">
+                      Collapse
+                    </button>
+                  </div>
+                  <div class="collapse show" id="modalEditorWrapper-2">
+                    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                      <select id="modalTemplateDropdown-2" class="form-select form-select-sm w-auto">
+                        <option value="placeholder" selected>placeholder</option>
+                        <option value="1modalAuto">1modalAuto</option>
+                        <option value="2modalAuto">2modalAuto</option>
+                        <option value="3modalAuto">3modalAuto</option>
+                        <option value="4modalAuto">4modalAuto</option>
+                        <option value="5modalAuto">5modalAuto</option>
+                        <option value="6modalAuto">6modalAuto</option>
+                        <option value="7modalAuto">7modalAuto</option>
+                        <option value="8modalAuto">8modalAuto</option>
+                        <option value="9modalAuto">9modalAuto</option>
+                        <option value="10modalAuto">10modalAuto</option>
+                      </select>
+                      <button id="copyModalCodeBtn-2" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                    </div>
+                    <textarea id="modalHtmlEditor-2" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="container fare-section" id="tileModalSection-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4>Tile & Modal Preview 3</h4>
+            <button id="toggleTileModalBtn-3" class="btn btn-primary btn-sm">Open Section</button>
+          </div>
+          <div class="fare-section-body">
+            <div id="tileModalContent-3" class="fare-section-content" style="display: none;">
+              <div class="d-flex align-items-center">
+                  <label class="fw-lighter small">Tile Preview</label>
+                  <div class="ms-auto">
+                      <span class="size-control" data-action="decrease" data-target="tilePreview-3" title="Decrease width by 5%">-</span>
+                      <span class="size-control" data-action="increase" data-target="tilePreview-3" title="Increase width by 5%">+</span>
+                  </div>
+              </div>
+              <div id="tilePreview-3"></div>
+              <div class="d-flex align-items-center preview-spacer">
+                  <label class="fw-lighter small">Modal Preview</label>
+                  <div class="ms-auto">
+                      <span class="size-control" data-control-type="scale" data-action="decrease" data-target="modalPreview-3" title="Decrease size by 5%">-</span>
+                      <span class="size-control" data-control-type="scale" data-action="increase" data-target="modalPreview-3" title="Increase size by 5%">+</span>
+                  </div>
+              </div>
+              <div id="modalPreview-3" data-scale="1.0"></div>
+              <div class="mt-3 mb-3 d-flex gap-2">
+                <button id="downloadTileModalBtn-3" type="button" class="btn btn-warning btn-sm">Download Preview PNG</button>
+                <button id="copyTileModalPreviewBtn-3" type="button" class="btn btn-outline-warning btn-sm">Copy Preview</button>
+              </div>
+              <div class="code-editor-area mb-3">
+                <div class="label-collapse-wrapper">
+                  <label for="tileHtmlEditor-3" class="fw-lighter">Tile HTML</label>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#tileEditorWrapper-3" aria-expanded="true" aria-controls="tileEditorWrapper-3">
+                    Collapse
+                  </button>
+                </div>
+                <div class="collapse show" id="tileEditorWrapper-3">
+                  <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                    <select id="tileTemplateDropdown-3" class="form-select form-select-sm w-auto">
+                      <option value="placeholder" selected>placeholder</option>
+                      <option value="1tileAuto">1tileAuto</option>
+                      <option value="2tileAuto">2tileAuto</option>
+                      <option value="3tileAuto">3tileAuto</option>
+                      <option value="4tileAuto">4tileAuto</option>
+                      <option value="5tileAuto">5tileAuto</option>
+                      <option value="6tileAuto">6tileAuto</option>
+                      <option value="7tileAuto">7tileAuto</option>
+                      <option value="8tileAuto">8tileAuto</option>
+                      <option value="9tileAuto">9tileAuto</option>
+                      <option value="10tileAuto">10tileAuto</option>
+                      <option value="bookNow">bookNow</option>
+                      <option value="flexDates">flexDates</option>
+                      <option value="carbonFoot">carbonFoot</option>
+                      <option value="rateTarget">rateTarget</option>
+                      <option value="gate4">gate4</option>
+                    </select>
+                    <button id="copyTileCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                  </div>
+                  <textarea id="tileHtmlEditor-3" class="form-control" placeholder="Enter HTML for Tile"></textarea>
+                </div>
+              </div>
+              <div class="code-editor-area mb-3">
+                <div class="label-collapse-wrapper">
+                  <label for="modalHtmlEditor-3" class="fw-lighter">Modal HTML</label>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#modalEditorWrapper-3" aria-expanded="true" aria-controls="modalEditorWrapper-3">
+                    Collapse
+                  </button>
+                </div>
+                <div class="collapse show" id="modalEditorWrapper-3">
+                  <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                    <select id="modalTemplateDropdown-3" class="form-select form-select-sm w-auto">
+                      <option value="placeholder" selected>placeholder</option>
+                      <option value="1modalAuto">1modalAuto</option>
+                      <option value="2modalAuto">2modalAuto</option>
+                      <option value="3modalAuto">3modalAuto</option>
+                      <option value="4modalAuto">4modalAuto</option>
+                      <option value="5modalAuto">5modalAuto</option>
+                      <option value="6modalAuto">6modalAuto</option>
+                      <option value="7modalAuto">7modalAuto</option>
+                      <option value="8modalAuto">8modalAuto</option>
+                      <option value="9modalAuto">9modalAuto</option>
+                      <option value="10modalAuto">10modalAuto</option>
+                    </select>
+                    <button id="copyModalCodeBtn-3" type="button" class="btn btn-sm btn-outline-primary ms-auto">Copy Code</button>
+                  </div>
+                  <textarea id="modalHtmlEditor-3" class="form-control" placeholder="Enter HTML for Modal"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> <div class="container fare-section mt-4" id="lodgingFareSection">
+      </div>
+
+    <div class="container fare-section mt-4" id="airfareSection">
+      </div>
+
+  </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // --- Banner Logic (Unaffected) ---
+      const bannerTypeSelect = document.getElementById("bannerType");
+      const cityInputsDiv = document.getElementById("cityInputs");
+      const cityNameInput = document.getElementById("cityName");
+      const cityImageUrlInput = document.getElementById("cityImageUrl");
+      const bannerContentDiv = document.getElementById("bannerContent");
+      const pageBannerDiv = document.getElementById('pageBanner');
+      const copyBannerBtn = document.getElementById('copyBannerBtn');
+      const downloadBannerBtn = document.getElementById('downloadBannerBtn');
+
+      function updateBanner() {
+        const type = bannerTypeSelect.value;
+        const city = cityNameInput.value;
+        const imageUrl = cityImageUrlInput.value;
+        let bannerHTML = "";
+
+        if (type === "search") {
+          cityInputsDiv.classList.remove("d-none");
+          bannerHTML = `
+            <div class="col-md-9 ps-4 pt-3 pb-3">
+              <h4 class="fw-bold" style="color: #101828;">Plan smarter for your trip to ${city || 'your destination'}</h4>
+              <p style="color: #475467;">Tripkicks helps you find the best travel options while keeping costs and carbon emissions in check.</p>
+              <a href="#" target="_blank" style="color: #005eb8; text-decoration: none; font-weight: 600;">Explore Tips for ${city || 'your trip'} <span style="margin-left: 5px;">→</span></a>
+            </div>
+            <div class="col-md-3 d-none d-md-flex align-items-center justify-content-end p-0">
+              <div style="width: 100%; height: 130px; border-top-right-radius: 10px; background: url('${imageUrl || 'https://via.placeholder.com/300x130/cccccc/969696?text=Image'}') center center / cover; background-repeat: no-repeat;"></div>
+            </div>`;
+        } else {
+          cityInputsDiv.classList.add("d-none");
+          bannerHTML = `
+            <div class="col-12 ps-4 pt-3 pb-3">
+              <h4 class="fw-bold" style="color: #101828;">Make every trip count</h4>
+              <p style="color: #475467;">Tripkicks provides insights to help you book smarter, save money, and reduce your environmental impact.</p>
+              <a href="#" target="_blank" style="color: #005eb8; text-decoration: none; font-weight: 600;">Learn how Tripkicks works <span style="margin-left: 5px;">→</span></a>
+            </div>`;
+        }
+        bannerContentDiv.innerHTML = bannerHTML;
+      }
+
+      bannerTypeSelect.addEventListener("change", updateBanner);
+      cityNameInput.addEventListener("input", updateBanner);
+      cityImageUrlInput.addEventListener("input", updateBanner);
+
+      copyBannerBtn.addEventListener('click', () => {
+        const bannerHTML = pageBannerDiv.outerHTML;
+        navigator.clipboard.writeText(bannerHTML)
+          .then(() => alert('Banner HTML copied to clipboard!'))
+          .catch(err => console.error('Failed to copy banner HTML: ', err));
+      });
+
+      downloadBannerBtn.addEventListener('click', () => {
+        html2canvas(pageBannerDiv, { scale: 2, backgroundColor: null })
+          .then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'tripkicks-banner.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          })
+          .catch(err => console.error('Error generating banner image:', err));
+      });
+
+      // --- Tile & Modal Preview Logic ---
+      const tileTemplates = {
+        placeholder: '\n<div style="padding: 10px; background-color: #f8f9fa; border: 1px dashed #ccc; text-align: center; color: #666;">Tile Preview Area</div>',
+        bookNow: '<div class="alert alert-success">Book Now Tile (Embedded)</div>',
+        flexDates: '<div class="alert alert-info">Flexible Dates Tile (Embedded)</div>',
+        carbonFoot: '<div class="alert alert-secondary">Carbon Footprint Tile (Embedded)</div>',
+        rateTarget: '<div class="alert alert-warning">Rate Target Tile (Embedded)</div>',
+        gate4: '<div class="alert alert-danger">Gate 4 Tile (Embedded)</div>',
+      };
+      const modalTemplates = {
+        placeholder: '\n<div style="padding: 20px; background-color: #f8f9fa; border: 1px dashed #aaa; text-align: center; color: #555; height: 100%; display: flex; align-items: center; justify-content: center;">Modal Preview Area</div>',
+      };
+
+      function updatePreview(editor, preview) {
+        preview.innerHTML = editor.value;
+        if (preview.id.startsWith('modalPreview')) {
+            handleModalScaling(preview);
+        }
+      }
+
+      async function loadTemplate(dropdown, editor, templates, preview) {
+        const selected = dropdown.value;
+        const isDynamicTemplate = /^\d+(modal|tile)Auto$/.test(selected);
+
+        if (isDynamicTemplate) {
+            const url = `https://info.tripkicks.com/hubfs/mock/auto/${selected}.html`;
+            editor.value = ``;
+            updatePreview(editor, preview);
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const html = await response.text();
+                editor.value = html;
+            } catch (error) {
+                console.error(`Failed to fetch template for ${selected}:`, error);
+                editor.value = ``;
+            }
+        } else if (templates[selected]) {
+            editor.value = templates[selected];
+        } else {
+             editor.value = ``;
+        }
+        updatePreview(editor, preview);
+    }
+
+      function copyCode(editor, type) {
+        navigator.clipboard.writeText(editor.value)
+          .then(() => alert(`${type} HTML copied!`))
+          .catch(err => console.error(`Failed to copy ${type} HTML:`, err));
+      }
+
+      function downloadPreview(tilePreview, modalPreview, section) {
+        const container = document.createElement('div');
+        container.style.padding = '10px';
+        container.style.backgroundColor = '#ffffff';
+        container.style.display = 'inline-block';
+
+        const tileClone = tilePreview.cloneNode(true);
+        container.appendChild(tileClone);
+        
+        const spacer = document.createElement('div');
+        spacer.style.height = '10px';
+        container.appendChild(spacer);
+        
+        const modalClone = modalPreview.cloneNode(true);
+        // Temporarily reset scaling for accurate capture
+        const modalContent = modalClone.querySelector(':first-child');
+        if (modalContent) {
+            modalContent.style.transform = 'scale(1)';
+        }
+        modalClone.style.height = ''; 
+
+        container.appendChild(modalClone);
+        
+        document.body.appendChild(container);
+
+        html2canvas(container, { scale: 2, backgroundColor: null })
+          .then(canvas => {
+            const link = document.createElement('a');
+            link.download = `tile-modal-preview-${section}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.body.removeChild(container);
+          })
+          .catch(err => {
+            console.error('Error generating preview image:', err);
+            document.body.removeChild(container);
+          });
+      }
+
+      async function copyPreviewImage(tilePreview, modalPreview) {
+        const container = document.createElement('div');
+        container.style.padding = '10px';
+        container.style.backgroundColor = '#ffffff';
+        container.style.display = 'inline-block';
+        
+        container.appendChild(tilePreview.cloneNode(true));
+        
+        const spacer = document.createElement('div');
+        spacer.style.height = '10px';
+        container.appendChild(spacer);
+        
+        const modalClone = modalPreview.cloneNode(true);
+        // Temporarily reset scaling for accurate capture
+        const modalContent = modalClone.querySelector(':first-child');
+        if (modalContent) {
+            modalContent.style.transform = 'scale(1)';
+        }
+        modalClone.style.height = '';
+
+        container.appendChild(modalClone);
+
+        document.body.appendChild(container);
+
+        try {
+          const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
+          canvas.toBlob(async blob => {
+            if (!blob) {
+              alert('Failed to copy image (Blob creation failed).');
+              document.body.removeChild(container);
+              return;
+            }
+            try {
+              await navigator.clipboard.write([ new ClipboardItem({ 'image/png': blob }) ]);
+              alert('Preview image copied to clipboard!');
+            } catch (copyErr) {
+              alert('Failed to copy image. Browser might not support it.');
+            } finally {
+              document.body.removeChild(container);
+            }
+          }, 'image/png');
+        } catch (err) {
+          alert('Error rendering preview for copying.');
+          document.body.removeChild(container);
+        }
+      }
+
+      function toggleSection(content, button) {
+        if (content.style.display === 'none' || content.style.display === '') {
+          content.style.display = 'block';
+          button.textContent = 'Close Section';
+          button.classList.add('btn-section-open');
+        } else {
+          content.style.display = 'none';
+          button.textContent = 'Open Section';
+          button.classList.remove('btn-section-open');
+        }
+      }
+
+      function handleModalScaling(modalPreviewContainer) {
+          const content = modalPreviewContainer.querySelector(':first-child');
+          if (content) {
+              const currentScale = parseFloat(modalPreviewContainer.dataset.scale || 1.0);
+              content.style.transform = `scale(${currentScale})`;
+              
+              // Use scrollHeight for accurate content height, then apply scale
+              const contentHeight = content.scrollHeight;
+              modalPreviewContainer.style.height = (contentHeight * currentScale) + 'px';
+          } else {
+              // If no content, reset height
+              modalPreviewContainer.style.height = 'auto';
+          }
+      }
+
+
+      function setupTileModalSection(num) {
+        const tileEditor = document.getElementById(`tileHtmlEditor-${num}`);
+        const modalEditor = document.getElementById(`modalHtmlEditor-${num}`);
+        const tilePreview = document.getElementById(`tilePreview-${num}`);
+        const modalPreview = document.getElementById(`modalPreview-${num}`);
+        const tileDropdown = document.getElementById(`tileTemplateDropdown-${num}`);
+        const modalDropdown = document.getElementById(`modalTemplateDropdown-${num}`);
+        const copyTileBtn = document.getElementById(`copyTileCodeBtn-${num}`);
+        const copyModalBtn = document.getElementById(`copyModalCodeBtn-${num}`);
+        const downloadBtn = document.getElementById(`downloadTileModalBtn-${num}`);
+        const copyImgBtn = document.getElementById(`copyTileModalPreviewBtn-${num}`);
+        const toggleBtn = document.getElementById(`toggleTileModalBtn-${num}`);
+        const contentDiv = document.getElementById(`tileModalContent-${num}`);
+
+        tileEditor.addEventListener('input', () => updatePreview(tileEditor, tilePreview));
+        modalEditor.addEventListener('input', () => updatePreview(modalEditor, modalPreview));
+
+        tileDropdown.addEventListener('change', () => loadTemplate(tileDropdown, tileEditor, tileTemplates, tilePreview));
+        modalDropdown.addEventListener('change', () => loadTemplate(modalDropdown, modalEditor, modalTemplates, modalPreview));
+
+        copyTileBtn.addEventListener('click', () => copyCode(tileEditor, 'Tile'));
+        copyModalBtn.addEventListener('click', () => copyCode(modalEditor, 'Modal'));
+
+        toggleBtn.addEventListener('click', () => toggleSection(contentDiv, toggleBtn));
+
+        downloadBtn.addEventListener('click', () => downloadPreview(tilePreview, modalPreview, num));
+        copyImgBtn.addEventListener('click', () => copyPreviewImage(tilePreview, modalPreview));
+
+        loadTemplate(tileDropdown, tileEditor, tileTemplates, tilePreview);
+        loadTemplate(modalDropdown, modalEditor, modalTemplates, modalPreview);
+      }
+      
+      document.querySelectorAll('.size-control').forEach(control => {
+        control.addEventListener('click', function() {
+            const action = this.dataset.action;
+            const targetId = this.dataset.target;
+            const targetElement = document.getElementById(targetId);
+            const controlType = this.dataset.controlType;
+
+            if (targetElement) {
+                if (controlType === 'scale') {
+                    // Modal Scaling Logic
+                    let currentScale = parseFloat(targetElement.dataset.scale || 1.0);
+
+                    if (action === 'increase') {
+                        currentScale = Math.min(1.0, currentScale + 0.05);
+                    } else if (action === 'decrease') {
+                        currentScale = Math.max(0.75, currentScale - 0.05);
+                    }
+                    
+                    currentScale = Math.round(currentScale * 100) / 100;
+                    targetElement.dataset.scale = currentScale;
+                    
+                    handleModalScaling(targetElement); // Call the dedicated handler
+
+                } else {
+                    // Tile Width Logic
+                    let currentWidth = parseInt(targetElement.style.maxWidth || 100);
+                    if (action === 'increase') {
+                        currentWidth = Math.min(100, currentWidth + 5);
+                    } else if (action === 'decrease') {
+                        currentWidth = Math.max(60, currentWidth - 5);
+                    }
+                    targetElement.style.maxWidth = currentWidth + '%';
+                }
+            }
+        });
+      });
+
+      setupTileModalSection(1);
+      setupTileModalSection(2);
+      setupTileModalSection(3);
+
+      // --- Lodging Fare Logic (Unaffected) ---
+      const lodgingElements = {
+        selects: ['A','B','C','D','E'].map(id => document.getElementById(`fareSelect${id}`)),
+        toggles: ['A','B','C','D','E'].map(id => document.getElementById(`fareToggle${id}`)),
+        badgeText: document.getElementById('fareBadgeText'),
+        badgeToggle: document.getElementById('fareBadgeToggle'),
+        hotelName: document.getElementById('fareHotelName'),
+        address: document.getElementById('fareAddress'),
+        distance: document.getElementById('fareDistance'),
+        price: document.getElementById('farePrice'),
+        image: document.getElementById('fareImage'),
+        width: document.getElementById('lodgingWidth'),
+        resetBtn: document.getElementById('fareResetBtn'),
+        renderBtn: document.getElementById('fareRenderBtn'),
+        copyBtn: document.getElementById('copyFareBtn'),
+        downloadBtn: document.getElementById('downloadFareBtn'),
+        preview: document.getElementById('farePreview'),
+        previewImage: document.getElementById('farePreviewImage'),
+        previewIcons: document.getElementById('fareIconsContainer'),
+        previewHotelName: document.getElementById('farePreviewHotelName'),
+        previewAddress: document.getElementById('farePreviewAddress'),
+        previewDistance: document.getElementById('farePreviewDistance'),
+        previewPrice: document.getElementById('farePreviewPrice'),
+        previewBadge: document.getElementById('fareBadge'),
+        previewCard: document.querySelector('#farePreview .fare-preview-card'),
+        iconImages: ['A','B','C','D','E'].map(id => document.getElementById(`fareIcon${id}`))
+      };
+      const iconBaseUrl = "https://info.tripkicks.com/hubfs/ClientInsights/KeyIcons/mockup/";
+      const defaultIconNames = { A:'A', B:'B', C:'C', D:'D', E:'E' };
+
+      function getIconUrl(selectEl) {
+        const val = selectEl.value;
+        const id = selectEl.id.slice(-1);
+        return `${iconBaseUrl}${val||defaultIconNames[id]}.png`;
+      }
+
+      function renderLodgingFare() {
+        if (!lodgingElements.previewImage) return;
+        lodgingElements.previewImage.src = lodgingElements.image.value || 'https://via.placeholder.com/150/cccccc/969696?text=Image';
+        lodgingElements.previewImage.alt = lodgingElements.hotelName.value;
+        lodgingElements.previewHotelName.textContent = lodgingElements.hotelName.value;
+        lodgingElements.previewAddress.textContent = lodgingElements.address.value;
+        lodgingElements.previewDistance.textContent = lodgingElements.distance.value;
+        lodgingElements.previewPrice.textContent = lodgingElements.price.value;
+        lodgingElements.selects.forEach((sel,i) => {
+          const tog = lodgingElements.toggles[i], img=lodgingElements.iconImages[i];
+          if(tog.checked){
+            img.src = getIconUrl(sel);
+            img.style.display='inline';
+          } else img.style.display='none';
+        });
+        if(lodgingElements.badgeToggle.checked && lodgingElements.badgeText.value.trim()){
+          lodgingElements.previewBadge.textContent = lodgingElements.badgeText.value;
+          lodgingElements.previewBadge.style.display='inline-flex';
+        } else {
+          lodgingElements.previewBadge.style.display='none';
+        }
+        lodgingElements.previewCard.style.maxWidth = `${lodgingElements.width.value}px`;
+        lodgingElements.previewCard.style.width='100%';
+        lodgingElements.preview.style.display='block';
+      }
+
+      function resetLodgingFare() {
+        const sect = document.getElementById('lodgingFareSection');
+        sect.querySelectorAll('input[type="text"], input[type="number"], select, textarea').forEach(el=>{
+          if(el.tagName==='SELECT') el.selectedIndex=0;
+          else el.value=el.defaultValue||'';
+        });
+        sect.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el=>{
+          el.checked=el.defaultChecked;
+        });
+        renderLodgingFare();
+      }
+
+      if (document.getElementById('lodgingFareSection')) {
+          lodgingElements.renderBtn.addEventListener('click', renderLodgingFare);
+          lodgingElements.resetBtn.addEventListener('click', resetLodgingFare);
+          document.getElementById('lodgingFareSection').querySelectorAll('input, select').forEach(el=>{
+            el.addEventListener('input', renderLodgingFare);
+            if(el.type==='checkbox'|| el.tagName==='SELECT') el.addEventListener('change', renderLodgingFare);
+          });
+          lodgingElements.copyBtn.addEventListener('click', ()=>{
+            navigator.clipboard.writeText(lodgingElements.preview.innerHTML)
+              .then(()=>alert('Lodging Fare HTML copied!'))
+              .catch(err=>console.error(err));
+          });
+          lodgingElements.downloadBtn.addEventListener('click', ()=>{
+            html2canvas(lodgingElements.previewCard, { scale:2, backgroundColor:'#ffffff' })
+              .then(canvas=>{
+                const link=document.createElement('a');
+                link.download='lodging-fare.png';
+                link.href=canvas.toDataURL('image/png');
+                link.click();
+              })
+              .catch(err=>console.error(err));
+          });
+      }
+
+      // --- Airfare Logic (Unaffected) ---
+      const airfareElements = {
+        selects: ['A','B','C','D','E'].map(id => document.getElementById(`airfareSelect${id}`)),
+        toggles: ['A','B','C','D','E'].map(id => document.getElementById(`airfareToggle${id}`)),
+        badgeText: document.getElementById('airfareBadgeText'),
+        badgeToggle: document.getElementById('airfareBadgeToggle'),
+        name: document.getElementById('airfareName'),
+        origin: document.getElementById('airfareOrigin'),
+        destination: document.getElementById('airfareDestination'),
+        duration: document.getElementById('airfareDuration'),
+        price: document.getElementById('airfarePrice'),
+        logo: document.getElementById('airfareAirlineLogo'),
+        width: document.getElementById('airfareWidth'),
+        resetBtn: document.getElementById('airfareResetBtn'),
+        renderBtn: document.getElementById('airfareRenderBtn'),
+        copyBtn: document.getElementById('copyAirfareBtn'),
+        downloadBtn: document.getElementById('downloadAirfareBtn'),
+        previewContainer: document.getElementById('airfarePreviewContainer')
+      };
+
+      function getAirfareIconUrl(sel) {
+        const id = sel.id.slice(-1);
+        return `${iconBaseUrl}${sel.value||defaultIconNames[id]}.png`;
+      }
+
+      function renderAirfareFare() {
+        if(!airfareElements.previewContainer) return; 
+        const iconsHtml = airfareElements.selects.map((sel,i)=>{
+          if(airfareElements.toggles[i].checked){
+            return `<img src="${getAirfareIconUrl(sel)}" style="height:35px;margin-right:3px;" />`;
+          }
+          return '';
+        }).join('');
+        const badgeHtml = airfareElements.badgeToggle.checked && airfareElements.badgeText.value.trim()
+          ? `<span class="badge d-flex align-items-center px-3 ms-2" style="background-color:#e7f0ff;color:#1d2d3e;font-size:0.9rem;border:1px solid #427bff;border-radius:50px;height:35px;">${airfareElements.badgeText.value}</span>`
+          : '';
+        const originText = airfareElements.origin.value||'';
+        const destText = airfareElements.destination.value||'';
+        const durText = airfareElements.duration.value||'';
+        const priceText = airfareElements.price.value||'';
+        const nameText = airfareElements.name.value||'';
+        const logoSrc = airfareElements.logo.value||'https://via.placeholder.com/80x50/cccccc/969696?text=Logo';
+
+        const html = `
+          <div class="card border-1 p-3 fare-preview-card" style="max-width:${airfareElements.width.value}px;width:100%;min-height:150px;">
+            <div class="row g-3 align-items-center">
+              <div class="col-2 text-center">
+                <img src="${logoSrc}" alt="${nameText} Logo" class="img-fluid" style="max-height:50px;"/>
+                <p class="small text-muted mt-1 mb-0">${nameText}</p>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="fw-bold">${originText.split(' ')[0]}</span>
+                    <p class="small text-muted mb-0">${originText.substring(originText.indexOf(' ')+1)}</p>
+                  </div>
+                  <div class="text-center px-2">
+                    <span class="text-muted small d-block">${durText.split('/')[0].trim()}</span>
+                    <div style="border-bottom:1px solid #ccc;margin:2px 0;"></div>
+                    <span class="text-muted small d-block">${(durText.split('/')[1] || '').trim()}</span>
+                  </div>
+                  <div>
+                    <span class="fw-bold">${destText.split(' ')[0]}</span>
+                    <p class="small text-muted mb-0">${destText.substring(destText.indexOf(' ')+1)}</p>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-3 fare-preview-icons">
+                  ${iconsHtml}
+                  ${badgeHtml}
+                </div>
+              </div>
+              <div class="col-md-4 text-end">
+                <p class="mb-1 text-muted small">Total Price:</p>
+                <h4 class="fw-bold text-dark">${priceText}</h4>
+                <a href="#" class="btn btn-outline-secondary btn-sm mt-2" style="background-color:white;border-color:#ddd;color:#005eb8;padding:6px 6px;min-width:80px;">Select Fare</a>
+              </div>
+            </div>
+          </div>`;
+        airfareElements.previewContainer.innerHTML = html;
+      }
+
+      function resetAirfareFare() {
+        const sect = document.getElementById('airfareSection');
+        sect.querySelectorAll('input[type="text"], input[type="number"], select, textarea').forEach(el=>{
+          if(el.tagName==='SELECT') el.selectedIndex=0;
+          else el.value=el.defaultValue||'';
+        });
+        sect.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el=>{
+          el.checked=el.defaultChecked;
+        });
+        renderAirfareFare();
+      }
+
+      if (document.getElementById('airfareSection')) {
+          airfareElements.renderBtn.addEventListener('click', renderAirfareFare);
+          airfareElements.resetBtn.addEventListener('click', resetAirfareFare);
+          document.getElementById('airfareSection').querySelectorAll('input, select').forEach(el=>{
+            el.addEventListener('input', renderAirfareFare);
+            if(el.type==='checkbox'|| el.tagName==='SELECT') el.addEventListener('change', renderAirfareFare);
+          });
+          airfareElements.copyBtn.addEventListener('click', ()=>{
+            navigator.clipboard.writeText(airfareElements.previewContainer.innerHTML)
+              .then(()=>alert('Airfare HTML copied!'))
+              .catch(err=>console.error(err));
+          });
+          airfareElements.downloadBtn.addEventListener('click', ()=>{
+            const card = airfareElements.previewContainer.querySelector('.fare-preview-card');
+            if(!card) return;
+            html2canvas(card, { scale:2, backgroundColor:'#ffffff' })
+              .then(canvas=>{
+                const link=document.createElement('a');
+                link.download='airfare-fare.png';
+                link.href=canvas.toDataURL('image/png');
+                link.click();
+              })
+              .catch(err=>console.error(err));
+          });
+      }
+
+
+      // Initial load
+      updateBanner();
+      if (document.getElementById('lodgingFareSection')) {
+        renderLodgingFare();
+      }
+      if (document.getElementById('airfareSection')) {
+        renderAirfareFare();
+      }
+    });
+  </script>
+</body>
+</html>
