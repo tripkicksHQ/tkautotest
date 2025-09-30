@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>tkCloudinaryUploader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; background: #f8f9fa; }
+    .wrap { max-width: 720px; margin: 0 auto; background: white; padding: 32px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { margin-top: 0; color: #1a1a1a; }
+    label { display:block; margin: 20px 0 8px; font-weight: 600; color: #333; }
+    input, select, button { padding: 12px; font-size: 16px; width: 100%; box-sizing: border-box; border: 2px solid #e0e0e0; border-radius: 8px; }
+    input, select { background: white; }
+    input:focus, select:focus { outline: none; border-color: #427bff; }
+    button { background: #427bff; color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+    button:hover:not(:disabled) { background: #3366dd; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .hint { color: #666; font-size: 14px; margin-top: 8px; line-height: 1.5; }
+    .required { color: #d32f2f; }
+    .log { margin-top: 24px; padding: 16px; background:#f6f7fb; border:1px solid #e6e8f0; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; max-height: 200px; overflow-y: auto;}
+    .thumbs { display:flex; gap:12px; flex-wrap:wrap; margin-top: 20px; }
+    .thumbs img { max-width: 160px; border-radius: 8px; border:1px solid #e6e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .field-group { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+    .login-screen { max-width: 400px; margin: 100px auto; }
+    .login-screen h2 { text-align: center; margin-bottom: 24px; }
+    .hidden { display: none; }
+    .user-info { background: #e8f4f8; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: #1565c0; font-weight: 600; }
+    .error-msg { color: #d32f2f; font-size: 14px; margin-top: 8px; }
+  </style>
+  <script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript"></script>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="wrap login-screen">
+    <h2>tkCloudinaryUploader</h2>
+    <div class="field-group">
+      <label for="password">Enter your password</label>
+      <input type="password" id="password" autocomplete="off" />
+      <div id="loginError" class="error-msg hidden">Invalid password. Please try again.</div>
+    </div>
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <!-- Upload Screen -->
+  <div id="uploadScreen" class="wrap hidden">
+    <h1>📤 Tripkicks Asset Uploader</h1>
+    
+    <div class="user-info" id="userInfo">Logged in as: <span id="userName"></span></div>
+
+    <div class="field-group">
+      <label for="client">Client <span class="required">*</span></label>
+      <select id="client">
+        <option value="" disabled selected>— Select a client —</option>
+        <option value="Activision">Activision</option>
+        <option value="Align">Align</option>
+        <option value="Amex">Amex</option>
+        <option value="AstraZeneca">AstraZeneca</option>
+        <option value="BAE">BAE</option>
+        <option value="Blackbaud">Blackbaud</option>
+        <option value="Bloomberg">Bloomberg</option>
+        <option value="Caterpillar">Caterpillar</option>
+        <option value="Covestro">Covestro</option>
+        <option value="Dolby">Dolby</option>
+        <option value="Equinix">Equinix</option>
+        <option value="Gates">Gates</option>
+        <option value="Equifax">Equifax</option>
+        <option value="GoldmanSachs">GoldmanSachs</option>
+        <option value="HP">HP</option>
+        <option value="IPG">IPG</option>
+        <option value="Nike">Nike</option>
+        <option value="NovoNordisk">NovoNordisk</option>
+        <option value="Otsuka">Otsuka</option>
+        <option value="OtsukaEU">OtsukaEU</option>
+        <option value="Qualcomm">Qualcomm</option>
+        <option value="Ravago">Ravago</option>
+        <option value="SaveTheChildren">SaveTheChildren</option>
+        <option value="SEIU">SEIU</option>
+        <option value="Sumitomo">Sumitomo</option>
+      </select>
+      <div class="hint">Select the client for this upload</div>
+    </div>
+
+    <div class="field-group">
+      <label for="location">Location <span class="required">*</span></label>
+      <select id="location">
+        <option value="" disabled selected>— Select a location —</option>
+        <option value="Tile">Tile</option>
+        <option value="Modal">Modal</option>
+        <option value="Other">Other</option>
+      </select>
+      <div class="hint">Select where this asset will be displayed</div>
+    </div>
+
+    <button id="openWidget">Upload Files</button>
+    <div class="hint">Files will be uploaded to: <code>Home/client/&lt;client&gt;</code> with structured metadata applied automatically.</div>
+
+    <div class="log" id="log">Ready to upload...</div>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+
+  <script>
+    // REQUIRED: Configure your Cloudinary settings
+    const CLOUD_NAME = "tripkicks";
+    const UPLOAD_PRESET = "tk_unsigned_uploads";
+
+    // Valid user passwords (firstname.lastname.tk format)
+    const VALID_USERS = {
+      'steve.newton.tk': 'Steve Newton',
+      'jeff.berk.tk': 'Jeff Berk',
+      'david.mcilvaine.tk': 'David McIlvaine'
+      // Add more users here as needed
+    };
+
+    // State
+    let currentUser = null;
+    let currentUserPassword = null;
+
+    // DOM elements
+    const loginScreen = document.getElementById('loginScreen');
+    const uploadScreen = document.getElementById('uploadScreen');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const userNameSpan = document.getElementById('userName');
+    const openBtn = document.getElementById('openWidget');
+    const clientSel = document.getElementById('client');
+    const locationSel = document.getElementById('location');
+    const logEl = document.getElementById('log');
+    const thumbs = document.getElementById('thumbs');
+
+    function log(msg) {
+      const timestamp = new Date().toLocaleTimeString();
+      const text = typeof msg === "string" ? msg : JSON.stringify(msg, null, 2);
+      logEl.textContent = `[${timestamp}] ${text}`;
+    }
+
+    // Login handling
+    function handleLogin() {
+      const password = passwordInput.value.trim().toLowerCase();
+      
+      if (VALID_USERS[password]) {
+        currentUser = VALID_USERS[password];
+        currentUserPassword = password;
+        loginError.classList.add('hidden');
+        loginScreen.classList.add('hidden');
+        uploadScreen.classList.remove('hidden');
+        userNameSpan.textContent = currentUser;
+        log(`Logged in as ${currentUser}`);
+      } else {
+        loginError.classList.remove('hidden');
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    }
+
+    loginBtn.addEventListener('click', handleLogin);
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleLogin();
+    });
+
+    // Cloudinary widget
+    const widget = cloudinary.createUploadWidget(
+      {
+        cloudName: CLOUD_NAME,
+        uploadPreset: UPLOAD_PRESET,
+        sources: ["local", "url", "camera"],
+        multiple: true,
+        maxFiles: 25,
+        showAdvancedOptions: false,
+        styles: {
+          palette: {
+            window: "#ffffff",
+            windowBorder: "#90a0b3",
+            tabIcon: "#427bff",
+            menuIcons: "#5a616a",
+            textDark: "#000000",
+            textLight: "#ffffff",
+            link: "#427bff",
+            action: "#ff9820",
+            inactiveTabIcon: "#b3b3b3",
+            error: "#f44235",
+            inProgress: "#427bff",
+            complete: "#20B832",
+            sourceBg: "#f4f4f5"
+          }
+        }
+      },
+      (error, result) => {
+        if (error) {
+          log(`Error: ${error.message || JSON.stringify(error)}`);
+          return;
+        }
+        if (result && result.event === "success") {
+          const info = result.info;
+          log({
+            status: "uploaded",
+            public_id: info.public_id,
+            folder: info.folder,
+            uploaded_by: currentUser,
+            size: `${(info.bytes / 1024).toFixed(1)} KB`
+          });
+          
+          // Display thumbnail
+          const img = document.createElement("img");
+          img.src = info.secure_url;
+          img.alt = info.public_id;
+          img.title = `${info.public_id} - Uploaded by ${currentUser}`;
+          thumbs.prepend(img);
+        }
+      }
+    );
+
+    openBtn.addEventListener("click", () => {
+      const client = clientSel.value?.trim();
+      const location = locationSel.value?.trim();
+      
+      if (!client) {
+        alert("Please select a client before uploading.");
+        return;
+      }
+      
+      if (!location) {
+        alert("Please select a location before uploading.");
+        return;
+      }
+      
+      // Set folder path and metadata including uploader info
+      const folder = `Home/client/${client}`;
+      const uploadTimestamp = new Date().toISOString();
+      
+      widget.update({
+        uploadParams: {
+          folder: folder,
+          context: { 
+            client: client, 
+            location: location,
+            uploaded_by: currentUser,
+            uploader_id: currentUserPassword,
+            upload_timestamp: uploadTimestamp
+          },
+          metadata: { 
+            CLIENT: client, 
+            LOCATION: location
+          },
+          tags: [
+            `client:${client}`, 
+            `location:${location}`,
+            `uploader:${currentUserPassword}`,
+            `uploaded_by:${currentUser.replace(/\s+/g, '_')}`
+          ]
+        }
+      });
+      
+      log(`Opening upload widget for ${client} (${location}) - User: ${currentUser}...`);
+      widget.open();
+    });
+
+    // Focus password field on load
+    passwordInput.focus();
+  </script>
+</body>
+</html>
