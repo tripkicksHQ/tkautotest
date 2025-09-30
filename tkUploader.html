@@ -144,16 +144,51 @@
       if (VALID_USERS[password]) {
         currentUser = VALID_USERS[password];
         currentUserPassword = password;
-        loginError.classList.add('hidden');
-        loginScreen.classList.add('hidden');
-        uploadScreen.classList.remove('hidden');
-        userNameSpan.textContent = currentUser;
-        log(`Logged in as ${currentUser}`);
+        
+        // Store login with 30 day expiration
+        const loginData = {
+          user: currentUser,
+          password: currentUserPassword,
+          expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+        };
+        localStorage.setItem('tkUploader_login', JSON.stringify(loginData));
+        
+        showUploadScreen();
       } else {
         loginError.classList.remove('hidden');
         passwordInput.value = '';
         passwordInput.focus();
       }
+    }
+
+    function showUploadScreen() {
+      loginError.classList.add('hidden');
+      loginScreen.classList.add('hidden');
+      uploadScreen.classList.remove('hidden');
+      userNameSpan.textContent = currentUser;
+      log(`Logged in as ${currentUser}`);
+    }
+
+    // Check for existing valid login on page load
+    function checkExistingLogin() {
+      try {
+        const stored = localStorage.getItem('tkUploader_login');
+        if (stored) {
+          const loginData = JSON.parse(stored);
+          if (loginData.expires > Date.now() && VALID_USERS[loginData.password]) {
+            currentUser = loginData.user;
+            currentUserPassword = loginData.password;
+            showUploadScreen();
+            return true;
+          } else {
+            // Expired or invalid, clear it
+            localStorage.removeItem('tkUploader_login');
+          }
+        }
+      } catch (e) {
+        console.error('Error checking login:', e);
+      }
+      return false;
     }
 
     loginBtn.addEventListener('click', handleLogin);
@@ -175,6 +210,10 @@
         return;
       }
       
+      // Convert to lowercase to match Cloudinary external IDs
+      const clientLower = client.toLowerCase();
+      const locationLower = location.toLowerCase();
+      
       const uploadTimestamp = new Date().toISOString();
       
       myWidget = cloudinary.createUploadWidget({
@@ -184,19 +223,19 @@
         multiple: true,
         maxFiles: 25,
         context: {
-          client: client,
-          location: location,
+          client: clientLower,
+          location: locationLower,
           uploaded_by: currentUser,
           uploader_id: currentUserPassword,
           upload_timestamp: uploadTimestamp
         },
         metadata: {
-          client: client,
-          location: location
+          client: clientLower,
+          location: locationLower
         },
         tags: [
-          `client:${client}`, 
-          `location:${location}`,
+          `client:${clientLower}`, 
+          `location:${locationLower}`,
           `uploader:${currentUserPassword}`,
           `uploaded_by:${currentUser.replace(/\s+/g, '_')}`
         ]
