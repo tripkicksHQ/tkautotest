@@ -18,8 +18,16 @@
     .hint { color: #666; font-size: 14px; margin-top: 8px; line-height: 1.5; }
     .required { color: #d32f2f; }
     .log { margin-top: 24px; padding: 16px; background:#f6f7fb; border:1px solid #e6e8f0; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; max-height: 200px; overflow-y: auto;}
-    .thumbs { display:flex; gap:12px; flex-wrap:wrap; margin-top: 20px; }
-    .thumbs img { max-width: 160px; border-radius: 8px; border:1px solid #e6e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .uploads-list { margin-top: 20px; }
+    .upload-item { background: white; border: 1px solid #e6e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .upload-item img { max-width: 120px; border-radius: 6px; margin-bottom: 12px; }
+    .upload-url { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+    .upload-url input { flex: 1; padding: 8px; font-size: 13px; font-family: monospace; border: 1px solid #e0e0e0; border-radius: 6px; background: #f8f9fa; }
+    .copy-btn { padding: 8px 16px; background: #427bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .copy-btn:hover { background: #3366dd; }
+    .copy-btn.copied { background: #20B832; }
+    .upload-filename { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .upload-meta { font-size: 12px; color: #666; }
     .field-group { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
     .login-screen { max-width: 400px; margin: 100px auto; }
     .login-screen h2 { text-align: center; margin-bottom: 24px; }
@@ -43,7 +51,7 @@
 
   <!-- Upload Screen -->
   <div id="uploadScreen" class="wrap hidden">
-    <h1>📤 Tripkicks Asset Uploader</h1>
+    <h1>Tripkicks Asset Uploader</h1>
     
     <div class="user-info" id="userInfo">Logged in as: <span id="userName"></span></div>
 
@@ -95,7 +103,7 @@
     <div class="hint">Files will be uploaded to: <code>Home/client/&lt;client&gt;</code> with structured metadata applied automatically.</div>
 
     <div class="log" id="log">Ready to upload...</div>
-    <div class="thumbs" id="thumbs"></div>
+    <div class="uploads-list" id="uploadsList"></div>
   </div>
 
   <script>
@@ -108,7 +116,6 @@
       'steve.newton.tk': 'Steve Newton',
       'jeff.berk.tk': 'Jeff Berk',
       'david.mcilvaine.tk': 'David McIlvaine'
-      // Add more users here as needed
     };
 
     // State
@@ -126,7 +133,7 @@
     const clientSel = document.getElementById('client');
     const locationSel = document.getElementById('location');
     const logEl = document.getElementById('log');
-    const thumbs = document.getElementById('thumbs');
+    const uploadsList = document.getElementById('uploadsList');
 
     function log(msg) {
       const timestamp = new Date().toLocaleTimeString();
@@ -200,12 +207,58 @@
             size: `${(info.bytes / 1024).toFixed(1)} KB`
           });
           
-          // Display thumbnail
+          // Create upload item card
+          const uploadItem = document.createElement("div");
+          uploadItem.className = "upload-item";
+          
+          // Thumbnail
           const img = document.createElement("img");
           img.src = info.secure_url;
           img.alt = info.public_id;
-          img.title = `${info.public_id} - Uploaded by ${currentUser}`;
-          thumbs.prepend(img);
+          uploadItem.appendChild(img);
+          
+          // Filename
+          const filename = document.createElement("div");
+          filename.className = "upload-filename";
+          filename.textContent = info.original_filename || info.public_id.split('/').pop();
+          uploadItem.appendChild(filename);
+          
+          // Metadata
+          const meta = document.createElement("div");
+          meta.className = "upload-meta";
+          meta.textContent = `${(info.bytes / 1024).toFixed(1)} KB • Uploaded by ${currentUser}`;
+          uploadItem.appendChild(meta);
+          
+          // URL with copy button
+          const urlContainer = document.createElement("div");
+          urlContainer.className = "upload-url";
+          
+          const urlInput = document.createElement("input");
+          urlInput.type = "text";
+          urlInput.value = info.secure_url;
+          urlInput.readOnly = true;
+          urlInput.onclick = () => urlInput.select();
+          
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "copy-btn";
+          copyBtn.textContent = "Copy URL";
+          copyBtn.onclick = () => {
+            urlInput.select();
+            navigator.clipboard.writeText(info.secure_url).then(() => {
+              copyBtn.textContent = "Copied!";
+              copyBtn.classList.add("copied");
+              setTimeout(() => {
+                copyBtn.textContent = "Copy URL";
+                copyBtn.classList.remove("copied");
+              }, 2000);
+            });
+          };
+          
+          urlContainer.appendChild(urlInput);
+          urlContainer.appendChild(copyBtn);
+          uploadItem.appendChild(urlContainer);
+          
+          uploadsList.prepend(uploadItem);
         }
       }
     );
@@ -231,17 +284,8 @@
       widget.update({
         uploadParams: {
           folder: folder,
-          context: { 
-            client: client, 
-            location: location,
-            uploaded_by: currentUser,
-            uploader_id: currentUserPassword,
-            upload_timestamp: uploadTimestamp
-          },
-          metadata: { 
-            CLIENT: client, 
-            LOCATION: location
-          },
+          context: `client=${client}|location=${location}|uploaded_by=${currentUser}|uploader_id=${currentUserPassword}|upload_timestamp=${uploadTimestamp}`,
+          metadata: `CLIENT=${client}|LOCATION=${location}`,
           tags: [
             `client:${client}`, 
             `location:${location}`,
