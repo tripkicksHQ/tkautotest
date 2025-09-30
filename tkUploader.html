@@ -59,31 +59,31 @@
       <label for="client">Client <span class="required">*</span></label>
       <select id="client">
         <option value="" disabled selected>— Select a client —</option>
-        <option value="Activision">Activision</option>
-        <option value="Align">Align</option>
-        <option value="Amex">Amex</option>
-        <option value="AstraZeneca">AstraZeneca</option>
-        <option value="BAE">BAE</option>
-        <option value="Blackbaud">Blackbaud</option>
-        <option value="Bloomberg">Bloomberg</option>
-        <option value="Caterpillar">Caterpillar</option>
-        <option value="Covestro">Covestro</option>
-        <option value="Dolby">Dolby</option>
-        <option value="Equinix">Equinix</option>
-        <option value="Gates">Gates</option>
-        <option value="Equifax">Equifax</option>
-        <option value="GoldmanSachs">GoldmanSachs</option>
-        <option value="HP">HP</option>
-        <option value="IPG">IPG</option>
-        <option value="Nike">Nike</option>
-        <option value="NovoNordisk">NovoNordisk</option>
-        <option value="Otsuka">Otsuka</option>
-        <option value="OtsukaEU">OtsukaEU</option>
-        <option value="Qualcomm">Qualcomm</option>
-        <option value="Ravago">Ravago</option>
-        <option value="SaveTheChildren">SaveTheChildren</option>
-        <option value="SEIU">SEIU</option>
-        <option value="Sumitomo">Sumitomo</option>
+        <option value="activision">Activision</option>
+        <option value="align">Align</option>
+        <option value="amex">Amex</option>
+        <option value="astrazeneca">AstraZeneca</option>
+        <option value="bae">BAE</option>
+        <option value="blackbaud">Blackbaud</option>
+        <option value="bloomberg">Bloomberg</option>
+        <option value="caterpillar">Caterpillar</option>
+        <option value="covestro">Covestro</option>
+        <option value="dolby">Dolby</option>
+        <option value="equinix">Equinix</option>
+        <option value="gates">Gates</option>
+        <option value="equifax">Equifax</option>
+        <option value="goldmansachs">GoldmanSachs</option>
+        <option value="hp">HP</option>
+        <option value="ipg">IPG</option>
+        <option value="nike">Nike</option>
+        <option value="novonordisk">NovoNordisk</option>
+        <option value="otsuka">Otsuka</option>
+        <option value="otsukaeu">OtsukaEU</option>
+        <option value="qualcomm">Qualcomm</option>
+        <option value="ravago">Ravago</option>
+        <option value="savethechildren">SaveTheChildren</option>
+        <option value="seiu">SEIU</option>
+        <option value="sumitomo">Sumitomo</option>
       </select>
       <div class="hint">Select the client for this upload</div>
     </div>
@@ -92,9 +92,9 @@
       <label for="location">Location <span class="required">*</span></label>
       <select id="location">
         <option value="" disabled selected>— Select a location —</option>
-        <option value="Tile">Tile</option>
-        <option value="Modal">Modal</option>
-        <option value="Other">Other</option>
+        <option value="tile">Tile</option>
+        <option value="modal">Modal</option>
+        <option value="other">Other</option>
       </select>
       <div class="hint">Select where this asset will be displayed</div>
     </div>
@@ -210,10 +210,6 @@
         return;
       }
       
-      // Convert to lowercase to match Cloudinary external IDs
-      const clientLower = client.toLowerCase();
-      const locationLower = location.toLowerCase();
-      
       const uploadTimestamp = new Date().toISOString();
       
       myWidget = cloudinary.createUploadWidget({
@@ -223,19 +219,19 @@
         multiple: true,
         maxFiles: 25,
         context: {
-          client: clientLower,
-          location: locationLower,
+          client: client,
+          location: location,
           uploaded_by: currentUser,
           uploader_id: currentUserPassword,
           upload_timestamp: uploadTimestamp
         },
         metadata: {
-          client: clientLower,
-          location: locationLower
+          client: client,
+          location: location
         },
         tags: [
-          `client:${clientLower}`, 
-          `location:${locationLower}`,
+          `client:${client}`, 
+          `location:${location}`,
           `uploader:${currentUserPassword}`,
           `uploaded_by:${currentUser.replace(/\s+/g, '_')}`
         ]
@@ -257,61 +253,64 @@
           const info = result.info;
           console.log("Upload success info:", info);
           
-          log({
-            status: "uploaded",
-            public_id: info.public_id,
-            uploaded_by: currentUser,
-            size: `${(info.bytes / 1024).toFixed(1)} KB`,
-            url: info.secure_url
-          });
+          // FAILSAFE: Always log URL to the log area first
+          const urlMessage = `✓ Uploaded: ${info.original_filename || info.public_id}\nURL: ${info.secure_url}`;
+          log(urlMessage);
           
-          const uploadItem = document.createElement("div");
-          uploadItem.className = "upload-item";
-          
-          const img = document.createElement("img");
-          img.src = info.secure_url;
-          img.alt = info.public_id;
-          uploadItem.appendChild(img);
-          
-          const filename = document.createElement("div");
-          filename.className = "upload-filename";
-          filename.textContent = info.original_filename || info.public_id.split('/').pop();
-          uploadItem.appendChild(filename);
-          
-          const meta = document.createElement("div");
-          meta.className = "upload-meta";
-          meta.textContent = `${(info.bytes / 1024).toFixed(1)} KB • Uploaded by ${currentUser}`;
-          uploadItem.appendChild(meta);
-          
-          const urlContainer = document.createElement("div");
-          urlContainer.className = "upload-url";
-          
-          const urlInput = document.createElement("input");
-          urlInput.type = "text";
-          urlInput.value = info.secure_url;
-          urlInput.readOnly = true;
-          urlInput.onclick = () => urlInput.select();
-          
-          const copyBtn = document.createElement("button");
-          copyBtn.className = "copy-btn";
-          copyBtn.textContent = "Copy URL";
-          copyBtn.onclick = () => {
-            urlInput.select();
-            navigator.clipboard.writeText(info.secure_url).then(() => {
-              copyBtn.textContent = "Copied!";
-              copyBtn.classList.add("copied");
-              setTimeout(() => {
-                copyBtn.textContent = "Copy URL";
-                copyBtn.classList.remove("copied");
-              }, 2000);
-            });
-          };
-          
-          urlContainer.appendChild(urlInput);
-          urlContainer.appendChild(copyBtn);
-          uploadItem.appendChild(urlContainer);
-          
-          uploadsList.prepend(uploadItem);
+          // Try to create the upload card
+          try {
+            const uploadItem = document.createElement("div");
+            uploadItem.className = "upload-item";
+            
+            const img = document.createElement("img");
+            img.src = info.secure_url;
+            img.alt = info.public_id;
+            uploadItem.appendChild(img);
+            
+            const filename = document.createElement("div");
+            filename.className = "upload-filename";
+            filename.textContent = info.original_filename || info.public_id.split('/').pop();
+            uploadItem.appendChild(filename);
+            
+            const meta = document.createElement("div");
+            meta.className = "upload-meta";
+            meta.textContent = `${(info.bytes / 1024).toFixed(1)} KB • Uploaded by ${currentUser}`;
+            uploadItem.appendChild(meta);
+            
+            const urlContainer = document.createElement("div");
+            urlContainer.className = "upload-url";
+            
+            const urlInput = document.createElement("input");
+            urlInput.type = "text";
+            urlInput.value = info.secure_url;
+            urlInput.readOnly = true;
+            urlInput.onclick = () => urlInput.select();
+            
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "copy-btn";
+            copyBtn.textContent = "Copy URL";
+            copyBtn.onclick = () => {
+              urlInput.select();
+              navigator.clipboard.writeText(info.secure_url).then(() => {
+                copyBtn.textContent = "Copied!";
+                copyBtn.classList.add("copied");
+                setTimeout(() => {
+                  copyBtn.textContent = "Copy URL";
+                  copyBtn.classList.remove("copied");
+                }, 2000);
+              });
+            };
+            
+            urlContainer.appendChild(urlInput);
+            urlContainer.appendChild(copyBtn);
+            uploadItem.appendChild(urlContainer);
+            
+            uploadsList.prepend(uploadItem);
+          } catch (e) {
+            console.error("Error creating upload card:", e);
+            // If card creation fails, at least show URL in alert as backup
+            alert(`Upload successful!\nURL: ${info.secure_url}`);
+          }
         }
       });
       
