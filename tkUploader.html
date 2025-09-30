@@ -20,14 +20,14 @@
     .log { margin-top: 24px; padding: 16px; background:#f6f7fb; border:1px solid #e6e8f0; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; max-height: 200px; overflow-y: auto;}
     .uploads-list { margin-top: 20px; }
     .upload-item { background: white; border: 1px solid #e6e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-    .upload-item img { max-width: 120px; border-radius: 6px; margin-bottom: 12px; }
+    .upload-item img { max-width: 120px; border-radius: 6px; margin-bottom: 12px; display: block; }
     .upload-url { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
     .upload-url input { flex: 1; padding: 8px; font-size: 13px; font-family: monospace; border: 1px solid #e0e0e0; border-radius: 6px; background: #f8f9fa; }
     .copy-btn { padding: 8px 16px; background: #427bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; }
     .copy-btn:hover { background: #3366dd; }
     .copy-btn.copied { background: #20B832; }
     .upload-filename { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-    .upload-meta { font-size: 12px; color: #666; }
+    .upload-meta { font-size: 12px; color: #666; margin-bottom: 8px; }
     .field-group { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
     .login-screen { max-width: 400px; margin: 100px auto; }
     .login-screen h2 { text-align: center; margin-bottom: 24px; }
@@ -100,29 +100,26 @@
     </div>
 
     <button id="openWidget">Upload Files</button>
-    <div class="hint">Files will be uploaded to: <code>Home/client/&lt;client&gt;</code> with structured metadata applied automatically.</div>
+    <div class="hint">Files will be tagged with client and location metadata automatically.</div>
 
     <div class="log" id="log">Ready to upload...</div>
     <div class="uploads-list" id="uploadsList"></div>
   </div>
 
   <script>
-    // REQUIRED: Configure your Cloudinary settings
     const CLOUD_NAME = "tripkicks";
     const UPLOAD_PRESET = "tk_unsigned_uploads";
 
-    // Valid user passwords (firstname.lastname.tk format)
     const VALID_USERS = {
       'steve.newton.tk': 'Steve Newton',
       'jeff.berk.tk': 'Jeff Berk',
       'david.mcilvaine.tk': 'David McIlvaine'
     };
 
-    // State
     let currentUser = null;
     let currentUserPassword = null;
+    let myWidget = null;
 
-    // DOM elements
     const loginScreen = document.getElementById('loginScreen');
     const uploadScreen = document.getElementById('uploadScreen');
     const passwordInput = document.getElementById('password');
@@ -141,7 +138,6 @@
       logEl.textContent = `[${timestamp}] ${text}`;
     }
 
-    // Login handling
     function handleLogin() {
       const password = passwordInput.value.trim().toLowerCase();
       
@@ -165,71 +161,89 @@
       if (e.key === 'Enter') handleLogin();
     });
 
-    // Cloudinary widget
-    const widget = cloudinary.createUploadWidget(
-      {
+    openBtn.addEventListener("click", () => {
+      const client = clientSel.value?.trim();
+      const location = locationSel.value?.trim();
+      
+      if (!client) {
+        alert("Please select a client before uploading.");
+        return;
+      }
+      
+      if (!location) {
+        alert("Please select a location before uploading.");
+        return;
+      }
+      
+      const uploadTimestamp = new Date().toISOString();
+      
+      myWidget = cloudinary.createUploadWidget({
         cloudName: CLOUD_NAME,
         uploadPreset: UPLOAD_PRESET,
-        sources: ["local", "url", "camera"],
+        sources: ['local', 'url', 'camera'],
         multiple: true,
         maxFiles: 25,
-        showAdvancedOptions: false,
-        styles: {
-          palette: {
-            window: "#ffffff",
-            windowBorder: "#90a0b3",
-            tabIcon: "#427bff",
-            menuIcons: "#5a616a",
-            textDark: "#000000",
-            textLight: "#ffffff",
-            link: "#427bff",
-            action: "#ff9820",
-            inactiveTabIcon: "#b3b3b3",
-            error: "#f44235",
-            inProgress: "#427bff",
-            complete: "#20B832",
-            sourceBg: "#f4f4f5"
-          }
-        }
-      },
+        context: {
+          client: client,
+          location: location,
+          uploaded_by: currentUser,
+          uploader_id: currentUserPassword,
+          upload_timestamp: uploadTimestamp
+        },
+        metadata: {
+          CLIENT: client,
+          LOCATION: location
+        },
+        tags: [
+          `client:${client}`, 
+          `location:${location}`,
+          `uploader:${currentUserPassword}`,
+          `uploaded_by:${currentUser.replace(/\s+/g, '_')}`
+        ]
+      }, 
       (error, result) => {
         if (error) {
+          console.error("Upload error:", error);
           log(`Error: ${error.message || JSON.stringify(error)}`);
           return;
         }
-        if (result && result.event === "success") {
+        
+        if (!result.event) {
+          return;
+        }
+
+        console.log("Upload event:", result.event, result);
+        
+        if (result.event === "success") {
           const info = result.info;
+          console.log("Upload success info:", info);
+          
           log({
             status: "uploaded",
             public_id: info.public_id,
-            folder: info.folder,
             uploaded_by: currentUser,
-            size: `${(info.bytes / 1024).toFixed(1)} KB`
+            size: `${(info.bytes / 1024).toFixed(1)} KB`,
+            url: info.secure_url
           });
           
-          // Create upload item card
           const uploadItem = document.createElement("div");
           uploadItem.className = "upload-item";
           
-          // Thumbnail
           const img = document.createElement("img");
           img.src = info.secure_url;
           img.alt = info.public_id;
           uploadItem.appendChild(img);
           
-          // Filename
           const filename = document.createElement("div");
           filename.className = "upload-filename";
           filename.textContent = info.original_filename || info.public_id.split('/').pop();
           uploadItem.appendChild(filename);
           
-          // Metadata
           const meta = document.createElement("div");
           meta.className = "upload-meta";
           meta.textContent = `${(info.bytes / 1024).toFixed(1)} KB • Uploaded by ${currentUser}`;
           uploadItem.appendChild(meta);
           
-          // URL with copy button
           const urlContainer = document.createElement("div");
           urlContainer.className = "upload-url";
           
@@ -260,46 +274,12 @@
           
           uploadsList.prepend(uploadItem);
         }
-      }
-    );
-
-    openBtn.addEventListener("click", () => {
-      const client = clientSel.value?.trim();
-      const location = locationSel.value?.trim();
-      
-      if (!client) {
-        alert("Please select a client before uploading.");
-        return;
-      }
-      
-      if (!location) {
-        alert("Please select a location before uploading.");
-        return;
-      }
-      
-      // Set folder path and metadata including uploader info
-      const folder = `Home/client/${client}`;
-      const uploadTimestamp = new Date().toISOString();
-      
-      widget.update({
-        uploadParams: {
-          folder: folder,
-          context: `client=${client}|location=${location}|uploaded_by=${currentUser}|uploader_id=${currentUserPassword}|upload_timestamp=${uploadTimestamp}`,
-          metadata: `CLIENT=${client}|LOCATION=${location}`,
-          tags: [
-            `client:${client}`, 
-            `location:${location}`,
-            `uploader:${currentUserPassword}`,
-            `uploaded_by:${currentUser.replace(/\s+/g, '_')}`
-          ]
-        }
       });
       
       log(`Opening upload widget for ${client} (${location}) - User: ${currentUser}...`);
-      widget.open();
+      myWidget.open();
     });
 
-    // Focus password field on load
     passwordInput.focus();
   </script>
 </body>
