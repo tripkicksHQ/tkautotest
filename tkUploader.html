@@ -122,12 +122,15 @@
 
     // Client-specific upload path configuration
     const CLIENT_UPLOAD_PATHS = {
-      'hold': 'home'  // Upload directly to 'home' folder instead of 'tk'
+      'hold': ''  // Upload directly to root 'hold' folder (no parent folder)
     };
 
     // Function to get upload path for a client
     function getUploadPath(client) {
-      return CLIENT_UPLOAD_PATHS[client] || 'tk';
+      const basePath = CLIENT_UPLOAD_PATHS[client];
+      // If basePath is explicitly defined (including empty string), use it
+      // Otherwise default to 'tk'
+      return basePath !== undefined ? basePath : 'tk';
     }
 
     let currentUser = null;
@@ -323,6 +326,12 @@
             urlContainer.appendChild(urlInput);
             urlContainer.appendChild(copyBtn);
             uploadItem.appendChild(urlContainer);
+            
+            // Add tiny URL preview text above Copy URL button
+            const urlPreview = document.createElement("div");
+            urlPreview.className = "url-preview";
+            urlPreview.textContent = info.secure_url;
+            uploadItem.appendChild(urlPreview);
             
             uploadsList.prepend(uploadItem);
           } catch (e) {
