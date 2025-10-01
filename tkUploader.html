@@ -1,358 +1,360 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>tkUploader - Cloudinary Uploader</title>
-	<link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; background: #f8f9fa; }
-    .wrap { max-width: 720px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h1 { margin-top: 0; color: #1a1a1a; }
-    label { display: block; margin: 20px 0 8px; font-weight: 600; color: #333; }
-    input, select, button { padding: 12px; font-size: 12px; width: 100%; box-sizing: border-box; border: 2px solid #e0e0e0; border-radius: 8px; }
-    input, select { background: white; }
-    input:focus, select:focus { outline: none; border-color: #427bff; }
-    button { background: #427bff; color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
-    button:hover:not(:disabled) { background: #3366dd; }
-    button:disabled { background: #ccc; cursor: not-allowed; }
-    .hint { color: #666; font-size: 12px; margin-top: 8px; line-height: 1.5; }
-    .required { color: #d32f2f; }
-    .log { margin-top: 24px; padding: 16px; background:#f6f7fb; border:1px solid #e6e8f0; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; max-height: 200px; overflow-y: auto;}
-    .uploads-list { margin-top: 20px; }
-    .upload-item { background: white; border: 1px solid #e6e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-    .upload-item img { max-width: 120px; border-radius: 6px; margin-bottom: 12px; display: block; }
-    .upload-url { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-    .upload-url input { flex: 1; padding: 8px; font-size: 10px; font-family: monospace; border: 1px solid #e0e0e0; border-radius: 6px; background: #f8f9fa; }
-    .copy-btn { padding: 8px 16px; background: #427bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; white-space: nowrap; }
-    .url-preview { font-size: 10px; color: #999; font-family: monospace; word-break: break-all; margin-top: 8px; margin-bottom: 4px; line-height: 1.3; }
-    .copy-btn:hover { background: #3366dd; }
-    .copy-btn.copied { background: #20B832; }
-    .upload-filename { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-    .upload-meta { font-size: 12px; color: #666; margin-bottom: 8px; }
-    .field-group { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
-    .login-screen { max-width: 400px; margin: 50px auto;}
-    .login-screen h2 { text-align: center; margin-bottom: 24px; }
-    .hidden { display: none; }
-    .user-info { background: #e8f4f8; padding: 6px; border-radius: 0px; margin-bottom: 20px; text-align: right; color: #1565c0; font-size: 10px; font-weight: 400; }
-    .error-msg { color: #d32f2f; font-size: 12px; margin-top: 8px; }
-  </style>
-  <script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript"></script>
+<meta charset="utf-8" />
+<title>tkUploader - Cloudinary Uploader</title>
+<link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon" />
+
+<link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; background: #f8f9fa; }
+.wrap { max-width: 720px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+h1 { margin-top: 0; color: #1a1a1a; }
+label { display: block; margin: 20px 0 8px; font-weight: 600; color: #333; }
+input, select, button { padding: 12px; font-size: 12px; width: 100%; box-sizing: border-box; border: 2px solid #e0e0e0; border-radius: 8px; }
+input, select { background: white; }
+input:focus, select:focus { outline: none; border-color: #427bff; }
+button { background: #427bff; color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+button:hover:not(:disabled) { background: #3366dd; }
+button:disabled { background: #ccc; cursor: not-allowed; }
+.hint { color: #666; font-size: 12px; margin-top: 8px; line-height: 1.5; }
+.required { color: #d32f2f; }
+.log { margin-top: 24px; padding: 16px; background:#f6f7fb; border:1px solid #e6e8f0; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; max-height: 200px; overflow-y: auto;}
+.uploads-list { margin-top: 20px; }
+.upload-item { background: white; border: 1px solid #e6e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+.upload-item img { max-width: 120px; border-radius: 6px; margin-bottom: 12px; display: block; }
+.upload-url { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.upload-url input { flex: 1; padding: 8px; font-size: 10px; font-family: monospace; border: 1px solid #e0e0e0; border-radius: 6px; background: #f8f9fa; }
+.copy-btn { padding: 8px 16px; background: #427bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.url-preview { font-size: 10px; color: #999; font-family: monospace; word-break: break-all; margin-top: 8px; margin-bottom: 4px; line-height: 1.3; }
+.copy-btn:hover { background: #3366dd; }
+.copy-btn.copied { background: #20B832; }
+.upload-filename { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.upload-meta { font-size: 12px; color: #666; margin-bottom: 8px; }
+.field-group { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+.login-screen { max-width: 400px; margin: 50px auto;}
+.login-screen h2 { text-align: center; margin-bottom: 24px; }
+.hidden { display: none; }
+.user-info { background: #e8f4f8; padding: 6px; border-radius: 0px; margin-bottom: 20px; text-align: right; color: #1565c0; font-size: 10px; font-weight: 400; }
+.error-msg { color: #d32f2f; font-size: 12px; margin-top: 8px; }
+</style>
+<script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript"></script>
 </head>
 <body>
-  <!-- Login Screen -->
-  <div id="loginScreen" class="wrap login-screen">
-    <h3 style="text-align: right; ">tkCloudinaryUploader</h3>
-    <div class="field-group">
-      <label for="password">Enter your password</label>
-      <input type="password" id="password" autocomplete="off" />
-      <div id="loginError" class="error-msg hidden">Invalid password. Please try again.</div>
-    </div>
-    <button id="loginBtn">Login</button>
-  </div>
-
-  <!-- Upload Screen -->
-  <div id="uploadScreen" class="wrap hidden">
-   <h3 style="text-align: right; color: lightgray; margin-bottom: 0px;">tkCloudinaryUploader</h3>
-    
-    <div class="user-info" id="userInfo">Logged in as: Steve Newton</div>
- 
-    <div class="field-group">
-      <label for="client">Client <span class="required">*</span></label>
-      <select id="client">
-        <option value="" disabled selected>— Select a client —</option>
-        <option value="activision">Activision</option>
-        <option value="align">Align</option>
-        <option value="amex">Amex</option>
-        <option value="astrazeneca">AstraZeneca</option>
-        <option value="bae">BAE</option>
-        <option value="blackbaud">Blackbaud</option>
-        <option value="bloomberg">Bloomberg</option>
-        <option value="caterpillar">Caterpillar</option>
-        <option value="covestro">Covestro</option>
-        <option value="demo">Demo</option>
-        <option value="dolby">Dolby</option>
-        <option value="equinix">Equinix</option>
-        <option value="gates">Gates</option>
-        <option value="equifax">Equifax</option>
-        <option value="goldmansachs">GoldmanSachs</option>
-        <option value="hold">Hold</option>
-        <option value="hp">HP</option>
-        <option value="ipg">IPG</option>
-        <option value="keyicons">KeyIcons</option>
-        <option value="nike">Nike</option>
-        <option value="novonordisk">NovoNordisk</option>
-        <option value="otsuka">Otsuka</option>
-        <option value="otsukaeu">OtsukaEU</option>
-        <option value="qualcomm">Qualcomm</option>
-        <option value="ravago">Ravago</option>
-        <option value="savethechildren">SaveTheChildren</option>
-        <option value="seiu">SEIU</option>
-        <option value="sumitomo">Sumitomo</option>
-      </select>
-      <div class="hint">Select the client for this upload</div>
-    </div>
-
-    <div class="field-group">
-      <label for="location">Location <span class="required">*</span></label>
-      <select id="location">
-        <option value="" disabled selected>— Select a location —</option>
-        <option value="tile">Tile</option>
-        <option value="modal">Modal</option>
-        <option value="other">Other</option>
-      </select>
-      <div class="hint">Select where this asset will be displayed</div>
-    </div>
-
-    <button id="openWidget">Upload Files</button>
-    <div class="hint">Files will be tagged with client and location metadata automatically.</div>
-
-    <div class="log" id="log">Ready to upload...</div>
-    <div class="uploads-list" id="uploadsList"></div>
+<!-- Login Screen -->
+<div id="loginScreen" class="wrap login-screen">
+<h3 style="text-align: right; ">tkCloudinaryUploader</h3>
+<div class="field-group">
+<label for="password">Enter your password</label>
+<input type="password" id="password" autocomplete="off" />
+<div id="loginError" class="error-msg hidden">Invalid password. Please try again.</div>
+</div>
+<button id="loginBtn">Login</button>
 </div>
 
-  <script>
-    const CLOUD_NAME = "tripkicks";
-    const UPLOAD_PRESET = "tk_unsigned_uploads";
+<!-- Upload Screen -->
+<div id="uploadScreen" class="wrap hidden">
+<h3 style="text-align: right; color: lightgray; margin-bottom: 0px;">tkCloudinaryUploader</h3>
 
-    const VALID_USERS = {
-      'steve.newton.tk': 'Steve Newton',
-      'jeff.berk.tk': 'Jeff Berk',
-      'david.mcilvaine.tk': 'David McIlvaine'
-    };
+<div class="user-info" id="userInfo">Logged in as: Steve Newton</div>
 
-    // Client-specific upload path configuration
-    const CLIENT_UPLOAD_PATHS = {
-      'hold': ''  // Upload directly to root 'hold' folder (no parent folder)
-    };
+<div class="field-group">
+<label for="client">Client <span class="required">*</span></label>
+<select id="client">
+<option value="" disabled selected>— Select a client —</option>
+<option value="activision">Activision</option>
+<option value="align">Align</option>
+<option value="amex">Amex</option>
+<option value="astrazeneca">AstraZeneca</option>
+<option value="bae">BAE</option>
+<option value="blackbaud">Blackbaud</option>
+<option value="bloomberg">Bloomberg</option>
+<option value="caterpillar">Caterpillar</option>
+<option value="covestro">Covestro</option>
+<option value="demo">Demo</option>
+<option value="dolby">Dolby</option>
+<option value="equinix">Equinix</option>
+<option value="gates">Gates</option>
+<option value="equifax">Equifax</option>
+<option value="goldmansachs">GoldmanSachs</option>
+<option value="hold">---- HOLD ----</option>
+<option value="hp">HP</option>
+<option value="ipg">IPG</option>
+<option value="keyicons">KeyIcons</option>
+<option value="nike">Nike</option>
+<option value="novonordisk">NovoNordisk</option>
+<option value="otsuka">Otsuka</option>
+<option value="otsukaeu">OtsukaEU</option>
+<option value="qualcomm">Qualcomm</option>
+<option value="ravago">Ravago</option>
+<option value="savethechildren">SaveTheChildren</option>
+<option value="seiu">SEIU</option>
+<option value="sumitomo">Sumitomo</option>
+</select>
+<div class="hint">Select the client for this upload</div>
+</div>
 
-    // Function to get upload path for a client
-    function getUploadPath(client) {
-      const basePath = CLIENT_UPLOAD_PATHS[client];
-      // If basePath is explicitly defined (including empty string), use it
-      // Otherwise default to 'tk'
-      return basePath !== undefined ? basePath : 'tk';
-    }
+<div class="field-group">
+<label for="location">Location <span class="required">*</span></label>
+<select id="location">
+<option value="" disabled selected>— Select a location —</option>
+<option value="tile">Tile</option>
+<option value="modal">Modal</option>
+<option value="other">Other</option>
+</select>
+<div class="hint">Select where this asset will be displayed</div>
+</div>
 
-    let currentUser = null;
-    let currentUserPassword = null;
-    let myWidget = null;
+<button id="openWidget">Upload Files</button>
+<div class="hint">Files will be tagged with client and location metadata automatically.</div>
 
-    const loginScreen = document.getElementById('loginScreen');
-    const uploadScreen = document.getElementById('uploadScreen');
-    const passwordInput = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginError = document.getElementById('loginError');
-    const userNameSpan = document.getElementById('userName');
-    const openBtn = document.getElementById('openWidget');
-    const clientSel = document.getElementById('client');
-    const locationSel = document.getElementById('location');
-    const logEl = document.getElementById('log');
-    const uploadsList = document.getElementById('uploadsList');
+<div class="log" id="log">Ready to upload...</div>
+<div class="uploads-list" id="uploadsList"></div>
+</div>
 
-    function log(msg) {
-      const timestamp = new Date().toLocaleTimeString();
-      const text = typeof msg === "string" ? msg : JSON.stringify(msg, null, 2);
-      logEl.textContent = `[${timestamp}] ${text}`;
-    }
+<script>
+const CLOUD_NAME = "tripkicks";
+const UPLOAD_PRESET = "tk_unsigned_uploads";
 
-    function handleLogin() {
-      const password = passwordInput.value.trim().toLowerCase();
-      
-      if (VALID_USERS[password]) {
-        currentUser = VALID_USERS[password];
-        currentUserPassword = password;
-        
-        // Store login with 30 day expiration
-        const loginData = {
-          user: currentUser,
-          password: currentUserPassword,
-          expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
-        };
-        localStorage.setItem('tkUploader_login', JSON.stringify(loginData));
-        
-        showUploadScreen();
-      } else {
-        loginError.classList.remove('hidden');
-        passwordInput.value = '';
-        passwordInput.focus();
-      }
-    }
+const VALID_USERS = {
+'steve.newton.tk': 'Steve Newton',
+'jeff.berk.tk': 'Jeff Berk',
+'david.mcilvaine.tk': 'David McIlvaine'
+};
 
-    function showUploadScreen() {
-      loginError.classList.add('hidden');
-      loginScreen.classList.add('hidden');
-      uploadScreen.classList.remove('hidden');
-      userNameSpan.textContent = currentUser;
-      log(`Logged in as ${currentUser}`);
-    }
+// Client-specific upload path configuration
+const CLIENT_UPLOAD_PATHS = {
+'hold': ''  // Upload directly to root 'hold' folder (no parent folder)
+};
 
-    // Check for existing valid login on page load
-    function checkExistingLogin() {
-      try {
-        const stored = localStorage.getItem('tkUploader_login');
-        if (stored) {
-          const loginData = JSON.parse(stored);
-          if (loginData.expires > Date.now() && VALID_USERS[loginData.password]) {
-            currentUser = loginData.user;
-            currentUserPassword = loginData.password;
-            showUploadScreen();
-            return true;
-          } else {
-            // Expired or invalid, clear it
-            localStorage.removeItem('tkUploader_login');
-          }
-        }
-      } catch (e) {
-        console.error('Error checking login:', e);
-      }
-      return false;
-    }
+// Function to get upload path for a client
+function getUploadPath(client) {
+const basePath = CLIENT_UPLOAD_PATHS[client];
+// If basePath is explicitly defined (including empty string), use it
+// Otherwise default to 'tk'
+return basePath !== undefined ? basePath : 'tk';
+}
 
-    loginBtn.addEventListener('click', handleLogin);
-    passwordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
+let currentUser = null;
+let currentUserPassword = null;
+let myWidget = null;
 
-    openBtn.addEventListener("click", () => {
-      const client = clientSel.value?.trim();
-      const location = locationSel.value?.trim();
-      
-      if (!client) {
-        alert("Please select a client before uploading.");
-        return;
-      }
-      
-      if (!location) {
-        alert("Please select a location before uploading.");
-        return;
-      }
-      
-      const uploadTimestamp = new Date().toISOString();
-      
-      // Get the appropriate base path for this client
-      const basePath = getUploadPath(client);
-      const assetFolder = `${basePath}/${client}`;
-      
-      myWidget = cloudinary.createUploadWidget({
-        cloudName: CLOUD_NAME,
-        uploadPreset: UPLOAD_PRESET,
-        sources: ['local', 'url', 'camera'],
-        multiple: true,
-        maxFiles: 25,
-        asset_folder: assetFolder,
-        context: {
-          client: client,
-          location: location,
-          uploaded_by: currentUser,
-          uploader_id: currentUserPassword,
-          upload_timestamp: uploadTimestamp
-        },
-        metadata: {
-          client: client,
-          location: location
-        },
-        tags: [
-          `client:${client}`, 
-          `location:${location}`,
-          `uploader:${currentUserPassword}`,
-          `uploaded_by:${currentUser.replace(/\s+/g, '_')}`
-        ]
-      }, 
-      (error, result) => {
-        if (error) {
-          console.error("Upload error:", error);
-          log(`Error: ${error.message || JSON.stringify(error)}`);
-          return;
-        }
-        
-        if (!result.event) {
-          return;
-        }
+const loginScreen = document.getElementById('loginScreen');
+const uploadScreen = document.getElementById('uploadScreen');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const loginError = document.getElementById('loginError');
+const userNameSpan = document.getElementById('userName');
+const openBtn = document.getElementById('openWidget');
+const clientSel = document.getElementById('client');
+const locationSel = document.getElementById('location');
+const logEl = document.getElementById('log');
+const uploadsList = document.getElementById('uploadsList');
 
-        console.log("Upload event:", result.event, result);
-        
-        if (result.event === "success") {
-          const info = result.info;
-          console.log("Upload success info:", info);
-          
-          // FAILSAFE: Always log URL to the log area first
-          const urlMessage = `✓ Uploaded: ${info.original_filename || info.public_id}\nURL: ${info.secure_url}`;
-          log(urlMessage);
-          
-          // Try to create the upload card
-          try {
-            const uploadItem = document.createElement("div");
-            uploadItem.className = "upload-item";
-            
-            const img = document.createElement("img");
-            img.src = info.secure_url;
-            img.alt = info.public_id;
-            uploadItem.appendChild(img);
-            
-            const filename = document.createElement("div");
-            filename.className = "upload-filename";
-            filename.textContent = info.original_filename || info.public_id.split('/').pop();
-            uploadItem.appendChild(filename);
-            
-            const meta = document.createElement("div");
-            meta.className = "upload-meta";
-            meta.textContent = `${(info.bytes / 1024).toFixed(1)} KB • Uploaded by ${currentUser}`;
-            uploadItem.appendChild(meta);
-            
-            const urlContainer = document.createElement("div");
-            urlContainer.className = "upload-url";
-            
-            const urlInput = document.createElement("input");
-            urlInput.type = "text";
-            urlInput.value = info.secure_url;
-            urlInput.readOnly = true;
-            urlInput.onclick = () => urlInput.select();
-            
-            const copyBtn = document.createElement("button");
-            copyBtn.className = "copy-btn";
-            copyBtn.textContent = "Copy URL";
-            copyBtn.onclick = () => {
-              urlInput.select();
-              navigator.clipboard.writeText(info.secure_url).then(() => {
-                copyBtn.textContent = "Copied!";
-                copyBtn.classList.add("copied");
-                setTimeout(() => {
-                  copyBtn.textContent = "Copy URL";
-                  copyBtn.classList.remove("copied");
-                }, 2000);
-              });
-            };
-            
-            urlContainer.appendChild(urlInput);
-            urlContainer.appendChild(copyBtn);
-            uploadItem.appendChild(urlContainer);
-            
-            // Add tiny URL preview text above Copy URL button
-            const urlPreview = document.createElement("div");
-            urlPreview.className = "url-preview";
-            urlPreview.textContent = info.secure_url;
-            uploadItem.appendChild(urlPreview);
-            
-            uploadsList.prepend(uploadItem);
-          } catch (e) {
-            console.error("Error creating upload card:", e);
-            // If card creation fails, at least show URL in alert as backup
-            alert(`Upload successful!\nURL: ${info.secure_url}`);
-          }
-        }
-      });
-      
-      log(`Opening upload widget for ${client} (${location}) - Path: ${assetFolder} - User: ${currentUser}...`);
-      myWidget.open();
-    });
+function log(msg) {
+const timestamp = new Date().toLocaleTimeString();
+const text = typeof msg === "string" ? msg : JSON.stringify(msg, null, 2);
+logEl.textContent = `[${timestamp}] ${text}`;
+}
 
-    // Check for existing login on page load
-    checkExistingLogin();
-    
-    if (!currentUser) {
-      passwordInput.focus();
-    }
-  </script>
+function handleLogin() {
+const password = passwordInput.value.trim().toLowerCase();
+
+if (VALID_USERS[password]) {
+currentUser = VALID_USERS[password];
+currentUserPassword = password;
+
+// Store login with 30 day expiration
+const loginData = {
+	user: currentUser,
+	password: currentUserPassword,
+	expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+};
+localStorage.setItem('tkUploader_login', JSON.stringify(loginData));
+
+showUploadScreen();
+} else {
+loginError.classList.remove('hidden');
+passwordInput.value = '';
+passwordInput.focus();
+}
+}
+
+function showUploadScreen() {
+loginError.classList.add('hidden');
+loginScreen.classList.add('hidden');
+uploadScreen.classList.remove('hidden');
+userNameSpan.textContent = currentUser;
+log(`Logged in as ${currentUser}`);
+}
+
+// Check for existing valid login on page load
+function checkExistingLogin() {
+try {
+const stored = localStorage.getItem('tkUploader_login');
+if (stored) {
+	const loginData = JSON.parse(stored);
+	if (loginData.expires > Date.now() && VALID_USERS[loginData.password]) {
+		currentUser = loginData.user;
+		currentUserPassword = loginData.password;
+		showUploadScreen();
+		return true;
+	} else {
+		// Expired or invalid, clear it
+		localStorage.removeItem('tkUploader_login');
+	}
+}
+} catch (e) {
+console.error('Error checking login:', e);
+}
+return false;
+}
+
+loginBtn.addEventListener('click', handleLogin);
+passwordInput.addEventListener('keypress', (e) => {
+if (e.key === 'Enter') handleLogin();
+});
+
+openBtn.addEventListener("click", () => {
+const client = clientSel.value?.trim();
+const location = locationSel.value?.trim();
+
+if (!client) {
+alert("Please select a client before uploading.");
+return;
+}
+
+if (!location) {
+alert("Please select a location before uploading.");
+return;
+}
+
+const uploadTimestamp = new Date().toISOString();
+
+// Get the appropriate base path for this client
+const basePath = getUploadPath(client);
+const assetFolder = `${basePath}/${client}`;
+
+myWidget = cloudinary.createUploadWidget({
+cloudName: CLOUD_NAME,
+uploadPreset: UPLOAD_PRESET,
+sources: ['local', 'url', 'camera'],
+multiple: true,
+maxFiles: 25,
+asset_folder: assetFolder,
+context: {
+	client: client,
+	location: location,
+	uploaded_by: currentUser,
+	uploader_id: currentUserPassword,
+	upload_timestamp: uploadTimestamp
+},
+metadata: {
+	client: client,
+	location: location
+},
+tags: [
+	`client:${client}`, 
+	`location:${location}`,
+	`uploader:${currentUserPassword}`,
+	`uploaded_by:${currentUser.replace(/\s+/g, '_')}`
+]
+}, 
+(error, result) => {
+if (error) {
+	console.error("Upload error:", error);
+	log(`Error: ${error.message || JSON.stringify(error)}`);
+	return;
+}
+
+if (!result.event) {
+	return;
+}
+
+console.log("Upload event:", result.event, result);
+
+if (result.event === "success") {
+	const info = result.info;
+	console.log("Upload success info:", info);
+
+	// FAILSAFE: Always log URL to the log area first
+	const urlMessage = `✓ Uploaded: ${info.original_filename || info.public_id}\nURL: ${info.secure_url}`;
+	log(urlMessage);
+
+	// Try to create the upload card
+	try {
+		const uploadItem = document.createElement("div");
+		uploadItem.className = "upload-item";
+
+		const img = document.createElement("img");
+		img.src = info.secure_url;
+		img.alt = info.public_id;
+		uploadItem.appendChild(img);
+
+		const filename = document.createElement("div");
+		filename.className = "upload-filename";
+		filename.textContent = info.original_filename || info.public_id.split('/').pop();
+		uploadItem.appendChild(filename);
+
+		const meta = document.createElement("div");
+		meta.className = "upload-meta";
+		meta.textContent = `${(info.bytes / 1024).toFixed(1)} KB • Uploaded by ${currentUser}`;
+		uploadItem.appendChild(meta);
+
+		const urlContainer = document.createElement("div");
+		urlContainer.className = "upload-url";
+
+		const urlInput = document.createElement("input");
+		urlInput.type = "text";
+		urlInput.value = info.secure_url;
+		urlInput.readOnly = true;
+		urlInput.onclick = () => urlInput.select();
+
+		const copyBtn = document.createElement("button");
+		copyBtn.className = "copy-btn";
+		copyBtn.textContent = "Copy URL";
+		copyBtn.onclick = () => {
+			urlInput.select();
+			navigator.clipboard.writeText(info.secure_url).then(() => {
+				copyBtn.textContent = "Copied!";
+				copyBtn.classList.add("copied");
+				setTimeout(() => {
+					copyBtn.textContent = "Copy URL";
+					copyBtn.classList.remove("copied");
+				}, 2000);
+			});
+		};
+
+		urlContainer.appendChild(urlInput);
+		urlContainer.appendChild(copyBtn);
+		uploadItem.appendChild(urlContainer);
+
+		// Add tiny URL preview text above Copy URL button
+		const urlPreview = document.createElement("div");
+		urlPreview.className = "url-preview";
+		urlPreview.textContent = info.secure_url;
+		uploadItem.appendChild(urlPreview);
+
+		uploadsList.prepend(uploadItem);
+	} catch (e) {
+		console.error("Error creating upload card:", e);
+		// If card creation fails, at least show URL in alert as backup
+		alert(`Upload successful!\nURL: ${info.secure_url}`);
+	}
+}
+});
+
+log(`Opening upload widget for ${client} (${location}) - Path: ${assetFolder} - User: ${currentUser}...`);
+myWidget.open();
+});
+
+// Check for existing login on page load
+checkExistingLogin();
+
+if (!currentUser) {
+passwordInput.focus();
+}
+</script>
 </body>
 </html>
