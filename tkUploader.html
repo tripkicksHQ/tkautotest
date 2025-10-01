@@ -6,7 +6,7 @@
 <link rel="icon" href="https://info.tripkicks.com/hubfs/mock/auto/tkAfav.png" type="image/x-icon" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; background: #f8f9fa; }
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; background: #808080; }
   .wrap { max-width: 720px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
   h1 { margin-top: 0; color: #1a1a1a; }
   label { display: block; margin: 20px 0 8px; font-weight: 600; color: #333; }
@@ -38,7 +38,7 @@
   /* User info header (top-right) */
   .user-info {
     background: #e8f4f8;
-    padding: 6px;
+    padding: 4px;
     border-radius: 0px;
     margin-bottom: 20px;
     /* Right-align and stack name over button */
@@ -52,7 +52,7 @@
     text-align: right;
   }
   .user-info .logout-btn {
-    font-size: 10px;
+    font-size: 06px;
     color: #1565c0;
     background: transparent;
     border: none;
@@ -84,7 +84,7 @@
 
     <div class="user-info" id="userInfo">
       <div>Logged in as: <span id="userName"></span></div>
-      <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+      <button id="logoutBtn" class="logout-btn" type="button">LOGOUT</button>
     </div>
 
     <div class="field-group">
@@ -124,14 +124,14 @@
     </div>
 
     <div class="field-group">
-      <label for="location">Location <span class="required">*</span></label>
+      <label for="location">Tag <span class="required">*</span></label>
       <select id="location">
         <option value="" disabled selected>— Select a location —</option>
         <option value="tile">Tile</option>
         <option value="modal">Modal</option>
         <option value="other">Other</option>
       </select>
-      <div class="hint">Select where this asset will be displayed</div>
+      <div class="hint">Select a location tag for where this asset will be displayed</div>
     </div>
 
     <button id="openWidget">Upload Files</button>
@@ -174,7 +174,7 @@
     const userNameSpan = document.getElementById('userName');
     const openBtn = document.getElementById('openWidget');
     const clientSel = document.getElementById('client');
-    the locationSel = document.getElementById('location');
+    const locationSel = document.getElementById('location');
     const logEl = document.getElementById('log');
     const uploadsList = document.getElementById('uploadsList');
 
