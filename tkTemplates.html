@@ -132,7 +132,7 @@ min-width: 300px;
   font-size: 0.8rem !important;      /* smaller text */
   line-height: 1.2 !important;        /* tighter lines */
   min-height: 80px      !important;    /* reduce overall box height */
-  max-height: 200px    !important;    /* so they don’t grow too tall when you type */
+  max-height: 200px    !important;    /* so they don't grow too tall when you type */
 }
 
         /* —— 1) Force CodeMirror to full width in the flex container —— */
@@ -204,12 +204,12 @@ min-width: 300px;
 </head>
 <body>
 <header style="display: flex; align-items: center; padding: 20px; margin-bottom: 20px; background-color: #f9a5e7;">
-  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta2</a>
+  <a href="#" style="font-size: 12px; font-weight: bold; text-decoration: none; color: #4d5466; margin: 0 15px;">tkTemplates</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAuto.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAuto</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAutoBeta.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta</a>
   <a href="https://tripkickshq.github.io/tkautotest/tkAutoBeta2.html" style="font-size: 12px; text-decoration: none; color: #4d5466; margin: 0 15px;">tkAutoBeta2</a>
   <span class="badge rounded-pill text-primary border border-primary ms-auto" style="font-size: 0.62rem; padding: 0.5em 1em; opacity: 0.6; cursor: not-allowed; pointer-events: none;">
-    07.07.25
+    11.24.25
   </span>
 </header>
   <div class="container">
@@ -286,18 +286,7 @@ min-width: 300px;
               <div class="d-flex align-items-center mb-2" style="gap: 10px;">
                 <select id="tileTemplateDropdown" class="form-select w-auto">
                     <option value="placeholder" selected>placeholder</option>
-                  <option value="1tileAuto">1tileAuto</option>
-                  <option value="2tileAuto">2tileAuto</option>
-                  <option value="3tileAuto">3tileAuto</option>
-                  <option value="4tileAuto">4tileAuto</option>
-                    <option value="5tileAuto">5tileAuto</option>
-                  <option value="6tileAuto">6tileAuto</option>
-                  <option value="7tileAuto">7tileAuto</option>
-                  <option value="bookNow">bookNow</option>
-                  <option value="flexDates">flexDates</option>
-                  <option value="carbonFoot">carbonFoot</option>
-                  <option value="rateTarget">rateTarget</option>
-                  <option value="gate4">gate4</option>
+                    <!-- Options will be populated dynamically -->
                 </select>
                 <button id="copyTileCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
               </div>
@@ -308,16 +297,7 @@ min-width: 300px;
               <div class="d-flex align-items-center mb-2" style="gap: 10px;">
                 <select id="modalTemplateDropdown" class="form-select w-auto">
                   <option value="placeholder" selected>placeholder</option>
-                  <option value="1modalAuto">1modalAuto</option>
-                  <option value="2modalAuto">2modalAuto</option>
-                  <option value="3modalAuto">3modalAuto</option>
-                    <option value="4modalAuto">4modalAuto</option>
-                  <option value="5modalAuto">5modalAuto</option>
-                  <option value="6modalAuto">6modalAuto</option>
-                  <option value="7modalAuto">7modalAuto</option>
-                  <option value="8modalAuto">8modalAuto</option>
-                  <option value="9modalAuto">9modalAuto</option>
-                    <option value="10modalAuto">10modalAuto</option>
+                  <!-- Options will be populated dynamically -->
                 </select>
                 <button id="copyModalCodeBtn" type="button" class="btn btn-sm btn-outline-primary">Copy Code</button>
               </div>
@@ -406,6 +386,101 @@ min-width: 300px;
   <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.3.0/dist/dom-to-image-more.min.js"></script>
 
 <script>
+  // ============================================================
+  // DYNAMIC TEMPLATE LOADING FROM GITHUB
+  // ============================================================
+  const GITHUB_REPO = 'tripkicksHQ/html-snippets';
+  const GITHUB_PAGES_BASE = 'https://tripkickshq.github.io/html-snippets';
+  
+  // Cache for template lists (tiles and modals)
+  let cachedTileTemplates = null;
+  let cachedModalTemplates = null;
+
+  // Fetch template list from GitHub API
+  async function fetchTemplateList(folder) {
+    try {
+      const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${folder}`);
+      if (!response.ok) {
+        console.error(`Failed to fetch ${folder} templates:`, response.status);
+        return [];
+      }
+      const files = await response.json();
+      return files
+        .filter(f => f.name.endsWith('.html'))
+        .map(f => f.name.replace('.html', ''))
+        .sort();
+    } catch (error) {
+      console.error(`Error fetching ${folder} templates:`, error);
+      return [];
+    }
+  }
+
+  // Get tile templates (with caching)
+  async function getTileTemplates() {
+    if (cachedTileTemplates === null) {
+      cachedTileTemplates = await fetchTemplateList('tiles');
+    }
+    return cachedTileTemplates;
+  }
+
+  // Get modal templates (with caching)
+  async function getModalTemplates() {
+    if (cachedModalTemplates === null) {
+      cachedModalTemplates = await fetchTemplateList('modals');
+    }
+    return cachedModalTemplates;
+  }
+
+  // Build URL for a template
+  function getTileTemplateURL(templateName) {
+    return `${GITHUB_PAGES_BASE}/tiles/${templateName}.html`;
+  }
+
+  function getModalTemplateURL(templateName) {
+    return `${GITHUB_PAGES_BASE}/modals/${templateName}.html`;
+  }
+
+  // Populate a dropdown with template options
+  async function populateTileDropdown(selectElement) {
+    const templates = await getTileTemplates();
+    // Keep placeholder option, remove others
+    while (selectElement.options.length > 1) {
+      selectElement.remove(1);
+    }
+    templates.forEach(name => {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  async function populateModalDropdown(selectElement) {
+    const templates = await getModalTemplates();
+    // Keep placeholder option, remove others
+    while (selectElement.options.length > 1) {
+      selectElement.remove(1);
+    }
+    templates.forEach(name => {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  // Generate dropdown HTML string for banner tiles
+  async function generateTileDropdownOptions() {
+    const templates = await getTileTemplates();
+    let optionsHtml = '<option value="placeholder" selected>placeholder</option>\n';
+    templates.forEach(name => {
+      optionsHtml += `<option value="${name}">${name}</option>\n`;
+    });
+    return optionsHtml;
+  }
+</script>
+
+<script>
   // Define handleCapture globally, before any DOMContentLoaded listeners that use it.
   window.handleCapture = async function handleCapture(elementToCapture, scaleFactor, type = 'png_download', filename = 'capture.png') {
       if (typeof domtoimage === 'undefined') {
@@ -477,7 +552,7 @@ min-width: 300px;
 </script>
 
   <script>
-  // Banner Logic (Matches structure from original html2canvas version)
+  // Banner Logic with Dynamic Template Loading
   document.addEventListener("DOMContentLoaded", () => {
     const bannerTypeSelector = document.getElementById("bannerType");
     const cityInputs = document.getElementById("cityInputs");
@@ -788,19 +863,22 @@ min-width: 300px;
       }
 
     bannerTypeSelector.addEventListener("change", updateBannerType);
-    const templateURLs = {
-      "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html", "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html", "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html", "4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html", "5tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/5tileAuto.html", "6tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/6tileAuto.html", "7tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/7tileAuto.html", "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html", "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html", "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html", "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html", "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html"
-    };
+
     if (generateInputsButton) {
-      generateInputsButton.addEventListener("click", () => {
+      generateInputsButton.addEventListener("click", async () => {
         const numTiles = parseInt(numTilesInput.value, 10);
         if (!numTiles || numTiles < 1) {
           alert("Please enter a valid number of tiles for the banner.");
           return;
         }
+
+        // Pre-fetch template list for dropdown options
+        const dropdownOptionsHtml = await generateTileDropdownOptions();
+
         const inputsTargetDiv = document.getElementById('tileInputs');
         inputsTargetDiv.querySelectorAll('.form-group.mb-3').forEach(el => el.remove());
         tileEditors = []; // Reset tileEditors array
+
         for (let i = 0; i < numTiles; i++) {
           const inputGroup = document.createElement("div");
           inputGroup.classList.add("form-group", "mb-3");
@@ -818,19 +896,7 @@ min-width: 300px;
               <div class="code-editor d-flex flex-column"> 
                 <div class="d-flex align-items-center mb-2" style="gap: 10px;"> 
                   <select class="banner-tile-template-dropdown form-select w-auto"> 
-                    <option value="placeholder" selected>placeholder</option> 
-                    <option value="1tileAuto">1tileAuto</option> 
-                    <option value="2tileAuto">2tileAuto</option> 
-                    <option value="3tileAuto">3tileAuto</option> 
-                    <option value="4tileAuto">4tileAuto</option> 
-                    <option value="5tileAuto">5tileAuto</option> 
-                    <option value="6tileAuto">6tileAuto</option> 
-                    <option value="7tileAuto">7tileAuto</option> 
-                    <option value="bookNow">bookNow</option> 
-                    <option value="flexDates">flexDates</option> 
-                    <option value="carbonFoot">carbonFoot</option> 
-                    <option value="rateTarget">rateTarget</option> 
-                    <option value="gate4">gate4</option> 
+                    ${dropdownOptionsHtml}
                   </select> 
                   <button type="button" class="btn btn-sm btn-outline-primary copy-banner-tile-code-btn">Copy Code</button> 
                 </div> 
@@ -898,8 +964,7 @@ min-width: 300px;
             if (selected === "placeholder") { 
               editor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim()); 
             } else { 
-              const url = templateURLs[selected]; 
-              if (!url) return; 
+              const url = getTileTemplateURL(selected);
               try { 
                 const response = await fetch(url); 
                 if (!response.ok) throw new Error("Failed to load template: " + response.status); 
@@ -925,11 +990,12 @@ min-width: 300px;
   </script>
 
   <script>
-  // Tile & Modal Section Logic (Matches structure from original html2canvas version)
-  document.addEventListener("DOMContentLoaded", function () {
+  // Tile & Modal Section Logic with Dynamic Template Loading
+  document.addEventListener("DOMContentLoaded", async function () {
     const toggleBtn = document.getElementById("toggleTileModalBtn");
     const tileModalContent = document.getElementById("tileModalContent");
     if (toggleBtn && tileModalContent) { toggleBtn.addEventListener("click", function () { if (tileModalContent.style.display === "none" || tileModalContent.style.display === "") { tileModalContent.style.display = "block"; toggleBtn.textContent = "Close Tile & Modal"; } else { tileModalContent.style.display = "none"; toggleBtn.textContent = "Open Tile & Modal"; } }); } else { console.error("Toggle button or content for Tile/Modal section not found.");}
+    
     const tileHtmlTextarea = document.getElementById("tileHtmlEditor");
     const modalHtmlTextarea = document.getElementById("modalHtmlEditor");
     let tileEditor, modalEditor;  
@@ -939,12 +1005,60 @@ min-width: 300px;
     const modalPreview = document.getElementById("modalPreview");
     if (tileEditor && tilePreview) { tileEditor.on("change", () => { tilePreview.innerHTML = tileEditor.getValue(); }); }
     if (modalEditor && modalPreview) { modalEditor.on("change", () => { modalPreview.innerHTML = modalEditor.getValue(); }); }
-    const standaloneTileTemplateURLs = { "1tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/1tileAuto.html", "2tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/2tileAuto.html", "3tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/3tileAuto.html", "4tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/4tileAuto.html", "5tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/5tileAuto.html", "6tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/6tileAuto.html", "7tileAuto": "https://info.tripkicks.com/hubfs/mock/auto/7tileAuto.html", "bookNow": "https://info.tripkicks.com/hubfs/mock/auto/bookNow.html", "flexDates": "https://info.tripkicks.com/hubfs/mock/auto/flexDates.html", "carbonFoot": "https://info.tripkicks.com/hubfs/mock/auto/carbonFoot.html", "rateTarget": "https://info.tripkicks.com/hubfs/mock/auto/rateTarget.html", "gate4": "https://info.tripkicks.com/hubfs/mock/auto/gate4.html" };
-    const modalTemplateURLs = { "1modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/1modalAuto.html", "2modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/2modalAuto.html", "3modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/3modalAuto.html", "4modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/4modalAuto.html", "5modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/5modalAuto.html", "6modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/6modalAuto.html", "7modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/7modalAuto.html", "8modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/8modalAuto.html", "9modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/9modalAuto.html", "10modalAuto": "https://info.tripkicks.com/hubfs/mock/auto/10modalAuto.html" };
+
+    // Populate dropdowns dynamically
     const tileTemplateDropdown = document.getElementById("tileTemplateDropdown");
-    if (tileTemplateDropdown && tileEditor) { tileTemplateDropdown.addEventListener("change", async () => { const selected = tileTemplateDropdown.value; if (selected === "placeholder") { tileEditor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim()); } else { const url = standaloneTileTemplateURLs[selected]; if (!url) return; try { const response = await fetch(url); if (!response.ok) throw new Error("Failed to load template: " + response.status); const templateHTML = await response.text(); tileEditor.setValue(templateHTML.trim()); } catch (err) { console.error("Error loading template:", err); alert("Could not load template from " + url); } } }); if (tileEditor.getValue() === '') tileTemplateDropdown.dispatchEvent(new Event('change'));}
     const modalTemplateDropdown = document.getElementById("modalTemplateDropdown");
-    if (modalTemplateDropdown && modalEditor) { modalTemplateDropdown.addEventListener("change", async () => { const selected = modalTemplateDropdown.value; if (selected === "placeholder") { modalEditor.setValue(` <div class="modal" style="position: relative; display: block; opacity: 1;"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title">Placeholder Modal</h5> </div> <div class="modal-body"> <p>This is a placeholder modal.</p> </div> </div> </div> </div> `.trim()); } else { const url = modalTemplateURLs[selected]; if (!url) return; try { const response = await fetch(url); if (!response.ok) throw new Error("Failed to load modal template: " + response.status); const templateHTML = await response.text(); modalEditor.setValue(templateHTML.trim()); } catch (err) { console.error("Error loading modal template:", err); alert("Could not load modal template from " + url); } } }); if (modalEditor.getValue() === '') modalTemplateDropdown.dispatchEvent(new Event('change'));}
+
+    if (tileTemplateDropdown) {
+      await populateTileDropdown(tileTemplateDropdown);
+    }
+    if (modalTemplateDropdown) {
+      await populateModalDropdown(modalTemplateDropdown);
+    }
+
+    if (tileTemplateDropdown && tileEditor) { 
+      tileTemplateDropdown.addEventListener("change", async () => { 
+        const selected = tileTemplateDropdown.value; 
+        if (selected === "placeholder") { 
+          tileEditor.setValue(`<div class="card border border-2 border-white text-dark bg-light"><div class="card-body">Placeholder Tile</div></div>`.trim()); 
+        } else { 
+          const url = getTileTemplateURL(selected);
+          try { 
+            const response = await fetch(url); 
+            if (!response.ok) throw new Error("Failed to load template: " + response.status); 
+            const templateHTML = await response.text(); 
+            tileEditor.setValue(templateHTML.trim()); 
+          } catch (err) { 
+            console.error("Error loading template:", err); 
+            alert("Could not load template from " + url); 
+          } 
+        } 
+      }); 
+      if (tileEditor.getValue() === '') tileTemplateDropdown.dispatchEvent(new Event('change'));
+    }
+
+    if (modalTemplateDropdown && modalEditor) { 
+      modalTemplateDropdown.addEventListener("change", async () => { 
+        const selected = modalTemplateDropdown.value; 
+        if (selected === "placeholder") { 
+          modalEditor.setValue(` <div class="modal" style="position: relative; display: block; opacity: 1;"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title">Placeholder Modal</h5> </div> <div class="modal-body"> <p>This is a placeholder modal.</p> </div> </div> </div> </div> `.trim()); 
+        } else { 
+          const url = getModalTemplateURL(selected);
+          try { 
+            const response = await fetch(url); 
+            if (!response.ok) throw new Error("Failed to load modal template: " + response.status); 
+            const templateHTML = await response.text(); 
+            modalEditor.setValue(templateHTML.trim()); 
+          } catch (err) { 
+            console.error("Error loading modal template:", err); 
+            alert("Could not load modal template from " + url); 
+          } 
+        } 
+      }); 
+      if (modalEditor.getValue() === '') modalTemplateDropdown.dispatchEvent(new Event('change'));
+    }
+
     const copyTileCodeBtn = document.getElementById("copyTileCodeBtn");
     const copyModalCodeBtn = document.getElementById("copyModalCodeBtn");
     if (copyTileCodeBtn && tileEditor) { copyTileCodeBtn.addEventListener("click", () => { navigator.clipboard.writeText(tileEditor.getValue()) .then(() => alert("Tile code copied to clipboard!")) .catch(() => alert("Failed to copy tile code.")); }); }
