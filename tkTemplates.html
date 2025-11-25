@@ -217,6 +217,7 @@ min-width: 300px;
       <label for="bannerType" class="me-3 fs-6 fw-lighter">Select Banner Type:</label>
       <select id="bannerType" class="form-select w-auto">
         <option value="search">Search (with city image)</option>
+        <option value="searchRight">Search Right</option>
         <option value="anytime">Anytime (without city image)</option>
       </select>
       <div id="cityInputs" class="d-flex align-items-center ms-4 d-none">
@@ -625,6 +626,30 @@ min-width: 300px;
         rowContainer.className = "row g-0";
         rowContainer.appendChild(cityCol);
         rowContainer.appendChild(tileCol);
+        bannerContent.appendChild(rowContainer);
+      } else if (bannerType === "searchRight") {
+        cityInputs.classList.remove("d-none");
+        const cityCol = document.createElement("div");
+        cityCol.className = "col-2";
+        cityCol.style.cssText = "display: flex; flex-direction: column;";
+        cityCol.innerHTML = `
+          <div class="card card-full"
+               style="height: 100%; min-height: 120px; border-radius: 0 8px 8px 0;
+                     background-image: url('${cityImageUrl}');
+                     background-repeat: no-repeat; background-position: center center;
+                     background-size: cover;">
+            <div class="card-img-overlay bg-gradient opacity-30 p-0">
+              <h4 style="position: absolute; bottom: 0;" class="text-white p-1 ps-2">${cityName}</h4>
+            </div>
+          </div>
+        `;
+        const tileCol = document.createElement("div");
+        tileCol.className = "col-10 d-flex flex-wrap align-items-stretch";
+        tileCol.appendChild(tileContainer);  
+        const rowContainer = document.createElement("div");
+        rowContainer.className = "row g-0";
+        rowContainer.appendChild(tileCol);
+        rowContainer.appendChild(cityCol);
         bannerContent.appendChild(rowContainer);
       } else {  
         cityInputs.classList.add("d-none");
