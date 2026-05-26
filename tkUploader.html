@@ -370,12 +370,13 @@
         metadata: widgetMetadata,
         tags: widgetTags
       };
-      // In custom-folder mode, preserve original filenames (no random suffix)
-      // and force the folder into the public_id so URLs are predictable:
-      // .../<folder>/<filename>.ext
+      // In custom-folder mode, force the folder into the public_id so URLs
+      // are predictable: .../<folder>/<filename>.ext
+      // Note: use_filename/unique_filename are not allowed in unsigned widget
+      // calls. They must be configured on the upload preset itself in the
+      // Cloudinary console: tk_unsigned_uploads -> "Use filename or externally
+      // defined Public ID" = ON, "Unique filename" = OFF.
       if (mode === 'folder') {
-        widgetConfig.use_filename = true;
-        widgetConfig.unique_filename = false;
         widgetConfig.folder = assetFolder;
       }
       myWidget = cloudinary.createUploadWidget(widgetConfig,
