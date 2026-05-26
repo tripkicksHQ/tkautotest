@@ -87,6 +87,25 @@
       <button id="logoutBtn" class="logout-btn" type="button">LOGOUT</button>
     </div>
 
+    <div class="field-group" style="display: flex; gap: 16px; align-items: center;">
+      <label style="margin: 0;">Upload mode</label>
+      <label style="display: inline-flex; align-items: center; gap: 6px; margin: 0; cursor: pointer; font-weight: 500;">
+        <input type="radio" name="uploadMode" value="client" checked style="width: auto;" />
+        By client
+      </label>
+      <label style="display: inline-flex; align-items: center; gap: 6px; margin: 0; cursor: pointer; font-weight: 500;">
+        <input type="radio" name="uploadMode" value="folder" style="width: auto;" />
+        Custom folder
+      </label>
+    </div>
+
+    <div class="field-group" id="folderModeGroup" style="display: none;">
+      <label for="customFolder">Folder path <span class="required">*</span></label>
+      <input type="text" id="customFolder" placeholder="e.g. tkSlackApp/icons" autocomplete="off" />
+      <div class="hint">Files upload directly to this Cloudinary folder. No client/location tagging applied.</div>
+    </div>
+
+    <div id="clientModeFields">
     <div class="field-group">
       <label for="client">Client <span class="required">*</span></label>
       <select id="client">
@@ -133,9 +152,10 @@
       </select>
       <div class="hint">Select a location tag for where this asset will be displayed</div>
     </div>
+    </div>
 
     <button id="openWidget">Upload Files</button>
-    <div class="hint">Files will be tagged with client and location metadata automatically.</div>
+    <div class="hint" id="uploadHint">Files will be tagged with client and location metadata automatically.</div>
 
     <div class="log" id="log">Ready to upload...</div>
     <div class="uploads-list" id="uploadsList"></div>
@@ -177,6 +197,32 @@
     const locationSel = document.getElementById('location');
     const logEl = document.getElementById('log');
     const uploadsList = document.getElementById('uploadsList');
+    const customFolderInput = document.getElementById('customFolder');
+    const folderModeGroup = document.getElementById('folderModeGroup');
+    const clientModeFields = document.getElementById('clientModeFields');
+    const uploadHint = document.getElementById('uploadHint');
+    const modeRadios = document.querySelectorAll('input[name="uploadMode"]');
+
+    function getMode() {
+      const checked = document.querySelector('input[name="uploadMode"]:checked');
+      return checked ? checked.value : 'client';
+    }
+
+    function applyMode() {
+      const mode = getMode();
+      if (mode === 'folder') {
+        clientModeFields.style.display = 'none';
+        folderModeGroup.style.display = '';
+        uploadHint.textContent = 'Files upload directly to the specified folder. No client tagging.';
+      } else {
+        clientModeFields.style.display = '';
+        folderModeGroup.style.display = 'none';
+        uploadHint.textContent = 'Files will be tagged with client and location metadata automatically.';
+      }
+    }
+
+    modeRadios.forEach(r => r.addEventListener('change', applyMode));
+    applyMode();
 
     function log(msg) {
       const timestamp = new Date().toLocaleTimeString();
@@ -254,23 +300,62 @@
     });
 
     openBtn.addEventListener("click", () => {
-      const client = clientSel.value?.trim();
-      const location = locationSel.value?.trim();
-
-      if (!client) {
-        alert("Please select a client before uploading.");
-        return;
-      }
-
-      if (!location) {
-        alert("Please select a location before uploading.");
-        return;
-      }
-
+      const mode = getMode();
       const uploadTimestamp = new Date().toISOString();
 
-      const basePath = getUploadPath(client);
-      const assetFolder = `${basePath}/${client}`;
+      let assetFolder, widgetContext, widgetMetadata, widgetTags, modeLabel;
+
+      if (mode === 'folder') {
+        const customFolder = (customFolderInput.value || '').trim().replace(/^\/+|\/+$/g, '');
+        if (!customFolder) {
+          alert("Please enter a folder path before uploading.");
+          return;
+        }
+        assetFolder = customFolder;
+        widgetContext = {
+          folder: customFolder,
+          uploaded_by: currentUser,
+          uploader_id: currentUserPassword,
+          upload_timestamp: uploadTimestamp
+        };
+        widgetMetadata = { folder: customFolder };
+        widgetTags = [
+          `folder:${customFolder}`,
+          `uploader:${currentUserPassword}`,
+          `uploaded_by:${currentUser?.replace(/\s+/g, '_') || ''}`
+        ];
+        modeLabel = `custom folder ${customFolder}`;
+      } else {
+        const client = clientSel.value?.trim();
+        const location = locationSel.value?.trim();
+
+        if (!client) {
+          alert("Please select a client before uploading.");
+          return;
+        }
+        if (!location) {
+          alert("Please select a location before uploading.");
+          return;
+        }
+
+        const basePath = getUploadPath(client);
+        assetFolder = `${basePath}/${client}`;
+        widgetContext = {
+          client: client,
+          location: location,
+          uploaded_by: currentUser,
+          uploader_id: currentUserPassword,
+          upload_timestamp: uploadTimestamp
+        };
+        widgetMetadata = { client: client, location: location };
+        widgetTags = [
+          `client:${client}`,
+          `location:${location}`,
+          `uploader:${currentUserPassword}`,
+          `uploaded_by:${currentUser?.replace(/\s+/g, '_') || ''}`
+        ];
+        modeLabel = `${client} (${location})`;
+      }
 
       myWidget = cloudinary.createUploadWidget({
         cloudName: CLOUD_NAME,
@@ -281,23 +366,9 @@
         maxImageWidth: 2000,
         validateMaxWidthHeight: true,
         asset_folder: assetFolder,
-        context: {
-          client: client,
-          location: location,
-          uploaded_by: currentUser,
-          uploader_id: currentUserPassword,
-          upload_timestamp: uploadTimestamp
-        },
-        metadata: {
-          client: client,
-          location: location
-        },
-        tags: [
-          `client:${client}`,
-          `location:${location}`,
-          `uploader:${currentUserPassword}`,
-          `uploaded_by:${currentUser?.replace(/\s+/g, '_') || ''}`
-        ]
+        context: widgetContext,
+        metadata: widgetMetadata,
+        tags: widgetTags
       },
       (error, result) => {
         if (error) {
@@ -379,7 +450,7 @@
         }
       });
 
-      log(`Opening upload widget for ${client} (${location}) - Path: ${assetFolder} - User: ${currentUser}...`);
+      log(`Opening upload widget for ${modeLabel} - Path: ${assetFolder} - User: ${currentUser}...`);
       myWidget.open();
     });
 
