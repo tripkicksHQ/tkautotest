@@ -357,19 +357,28 @@
         modeLabel = `${client} (${location})`;
       }
 
-      myWidget = cloudinary.createUploadWidget({
+      const widgetConfig = {
         cloudName: CLOUD_NAME,
         uploadPreset: UPLOAD_PRESET,
         sources: ['local', 'url', 'camera'],
         multiple: true,
-        maxFiles: 25,
+        maxFiles: 100,
         maxImageWidth: 2000,
         validateMaxWidthHeight: true,
         asset_folder: assetFolder,
         context: widgetContext,
         metadata: widgetMetadata,
         tags: widgetTags
-      },
+      };
+      // In custom-folder mode, preserve original filenames (no random suffix)
+      // and force the folder into the public_id so URLs are predictable:
+      // .../<folder>/<filename>.ext
+      if (mode === 'folder') {
+        widgetConfig.use_filename = true;
+        widgetConfig.unique_filename = false;
+        widgetConfig.folder = assetFolder;
+      }
+      myWidget = cloudinary.createUploadWidget(widgetConfig,
       (error, result) => {
         if (error) {
           console.error("Upload error:", error);
