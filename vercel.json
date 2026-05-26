@@ -4,9 +4,29 @@
     {
       "src": "app.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/tkUploader.html",
+      "dest": "/tkUploader.html"
+    },
+    {
+      "src": "/tkAuto.html",
+      "dest": "/tkAuto.html"
+    },
+    {
+      "src": "/tkTemplates.html",
+      "dest": "/tkTemplates.html"
+    },
+    {
+      "src": "/preview.html",
+      "dest": "/preview.html"
+    },
     {
       "src": "/(.*)",
       "dest": "app.js"
